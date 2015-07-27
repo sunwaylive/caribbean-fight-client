@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>BC6A3346-1AB9-4AEB-88D2-AAB4AB74DBFD</string>
+	<key>IDESourceControlProjectName</key>
+	<string>FantasyWarrior3D</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>9D16F13369ED977981336425DAAF7464079ADD75</key>
+		<string>https://github.com/sunwaylive/FantasyWarrior3D.git</string>
+		<key>FA48884EE00C77C7D5274EEBD116CE6D1C095EB2</key>
+		<string>https://github.com/sunwaylive/MiniGame.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>frameworks/runtime-src/proj.ios_mac/FantasyWarrior3D.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>9D16F13369ED977981336425DAAF7464079ADD75</key>
+		<string>../../../../../../FantasyWarrior3D</string>
+		<key>FA48884EE00C77C7D5274EEBD116CE6D1C095EB2</key>
+		<string>../../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/sunwaylive/MiniGame.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>FA48884EE00C77C7D5274EEBD116CE6D1C095EB2</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>9D16F13369ED977981336425DAAF7464079ADD75</string>
+			<key>IDESourceControlWCCName</key>
+			<string>FantasyWarrior3D</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>FA48884EE00C77C7D5274EEBD116CE6D1C095EB2</string>
+			<key>IDESourceControlWCCName</key>
+			<string>MiniGame</string>
+		</dict>
+	</array>
+</dict>
+</plist>
