@@ -172,7 +172,7 @@ function GameMaster:AddHeros()
    	mage:setPosition(battleSiteX[1], 100)--wei add.100
    	currentLayer:addChild(mage)
    	mage:idleMode()
-    mage:setVisible(false)--wei add
+    --mage:setVisible(false)--wei add
    	List.pushlast(HeroManager, mage)
    	--[[
     local archer = Archer:create()

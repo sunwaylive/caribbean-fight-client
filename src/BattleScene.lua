@@ -190,7 +190,7 @@ function BattleScene:enableTouch()
             end
         elseif self:UIcontainsPoint(touch:getLocation()) == "ATTACKBTN" then
             for val = HeroManager.first, HeroManager.last do
-                local sprite = HeroManager[val]
+                local spratite = HeroManager[val]
                 if sprite:getStateType() ~= EnumStateType.ATTACKING then
                     sprite:setStateType(EnumStateType.ATTACKING)
                 end
@@ -314,8 +314,7 @@ function BattleScene:UIcontainsPoint(position)
     if cc.rectContainsPoint(rectMage, position)  and uiLayer.MageAngry:getPercentage() == 100 then
         --cclog("rectMage")
         message = MessageDispatchCenter.MessageType.SPECIAL_MAGE
-        return
-    end   
+    end
     
     local rectJoystick = uiLayer.JoystickFrame:getBoundingBox()
     local rectAttackBtn = uiLayer.AttackBtn:getBoundingBox()

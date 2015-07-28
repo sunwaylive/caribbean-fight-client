@@ -44,6 +44,7 @@ function solveAttacks(dt)
                 end
             end
         end
+
         --根据duration判断超时
         attack.curDuration = attack.curDuration + dt
         if attack.curDuration > attack.duration then
