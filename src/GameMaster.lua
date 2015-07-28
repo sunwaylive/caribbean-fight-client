@@ -15,7 +15,7 @@ local monsterCount = {dragon=1,slime=7,piglet=2,rat = 0} --rat count must be 0.
 local EXIST_MIN_MONSTER = 4
 local scheduleid
 local stage = 0
-local battleSiteX = {-2800,-1800,-800} --设置了触发地点 和 刷新地点,经过这些地方之后，会刷新怪物
+local battleSiteX = {-2800,-1800,-800} --设置了触发地点 和 刷新地点,经过这些地方之后，会刷新怪物 -2800 -1800 -800
 local frontDistanceWithHeroX = 600
 local backwardDistanceWithHeroX = 800
 local distanceWithHeroX = 150
@@ -239,14 +239,14 @@ function GameMaster:showDragon(isFront)
         local appearPos = getFocusPointOfHeros()
         local randomvarX = math.random()*0.2+1
         if stage == 0 then
-            appearPos.x = appearPos.x + frontDistanceWithHeroX*randomvarX
+            appearPos.x = appearPos.x + frontDistanceWithHeroX * randomvarX
             dragon:setFacing(180)
         else
             if isFront then
-                appearPos.x = appearPos.x + frontDistanceWithHeroX*1.8*randomvarX
+                appearPos.x = appearPos.x + frontDistanceWithHeroX * 1.8 * randomvarX
                 dragon:setFacing(180)
             else
-                appearPos.x = appearPos.x - backwardDistanceWithHeroX*1.8*randomvarX
+                appearPos.x = appearPos.x - backwardDistanceWithHeroX * 1.8 * randomvarX
                 dragon:setFacing(0)
             end
         end

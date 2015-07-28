@@ -39,14 +39,13 @@ CelLine = 0.009
 
 BossTaunt = "Let's Duel!!"
 
---G values
+--G values,这个是场景里面的有效范围
 G =
 {
     winSize = cc.Director:getInstance():getWinSize(),
     bloodPercentDropSpeed = 2,
-    activearea = {left = -2800, right = 1000, bottom = 100, top = 700},
+    activearea = {left = -2800, right = 1000, bottom = -2000, top = 700},
 }
-
 
 --Audios
 BGM_RES = 

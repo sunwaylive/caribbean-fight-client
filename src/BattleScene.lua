@@ -77,21 +77,24 @@ local function updateParticlePos()
     end
 end
 
+--设置主场景中的地图和背景
 local function createBackground()
     local spriteBg = cc.Sprite3D:create("model/scene/changing.c3b")
 
     currentLayer:addChild(spriteBg)
     spriteBg:setScale(2.65)
     spriteBg:setPosition3D(cc.V3(-2300,-1000,0))
-    spriteBg:setRotation3D(cc.V3(90,0,0))
+    spriteBg:setRotation3D(cc.V3(90,0,90)) --添加了地图的旋转
     spriteBg:setGlobalZOrder(-10)
+
     --cc.Water:create 水的实现：在Water.cpp中。
     local water = cc.Water:create("shader3D/water.png", "shader3D/wave1.jpg", "shader3D/18.jpg", {width=5500, height=400}, 0.77, 0.3797, 1.2)
     currentLayer:addChild(water)
-    water:setPosition3D(cc.V3(-3500,-580,-110))
+    water:setScaleX(2)
+    water:setPosition3D(cc.V3(-1800,1200,-110)) --设定河流的位置
+    water:setRotation3D(cc.V3(0, 0, 90))
     water:setAnchorPoint(0,0)
     water:setGlobalZOrder(-10)
-    
 end
 
 --创建相机
@@ -115,10 +118,10 @@ end
 --核心控制游戏的地方
 local function gameController(dt)
     gameMaster:update(dt)--负责刷怪、刷新对话框、提示等等
+    moveHero(dt) --监听角色控制的移动,这个必须要放到collisionDetect(dt)前面，来保证角色移动之后，能检测是否出界
     collisionDetect(dt)--碰撞检测：由Manager.lua 来维护
     solveAttacks(dt)--伤害计算：由attackCommand来维护
     moveCamera(dt)--移动相机
-    moveHero(dt) --监听角色控制的移动
 end
 
 --初始化UI层
@@ -164,6 +167,7 @@ local function specialPerspective(param)
     cc.Director:getInstance():getScheduler():setTimeScale(param.speed)
 end
 
+--控制英雄行走
 function BattleScene:enableTouch()
     local function onTouchBegin(touch,event)
         --根据摇杆，控制英雄行走方向
