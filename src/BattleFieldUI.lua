@@ -28,6 +28,7 @@ function BattlefieldUI:avatarInit()
     local scale =0.7
     --全局变量G, 在GlobalVariables.lua中定义
     --方块头像
+    --[[
     self.KnightPng = cc.Sprite:createWithSpriteFrameName("UI-1136-640_03.png")
     self.KnightPng:setPosition3D(cc.V3(G.winSize.width*0.06,G.winSize.height*0.915,2))
     self.KnightPng:setScale(scale)
@@ -37,10 +38,13 @@ function BattlefieldUI:avatarInit()
     self.KnightPngFrame:setScale(scale)
     self.KnightPngFrame:setPosition3D(cc.V3(self.KnightPng:getPositionX()+1,self.KnightPng:getPositionY()-offset,1))
     self:addChild(self.KnightPngFrame,1)
+    --]]
 
-    --[[
     self.MagePng = cc.Sprite:createWithSpriteFrameName("UI-1136-640_18.png")
-    self.MagePng:setPosition3D(cc.V3(1070/1136 * G.winSize.width,70/640 * G.winSize.height,2))
+    --原始的位置，在屏幕的右下方
+    --self.MagePng:setPosition3D(cc.V3(1070/1136 * G.winSize.width,70/640 * G.winSize.height,2))
+    --换成屏幕左上方
+    self.MagePng:setPosition3D(cc.V3(G.winSize.width*0.06,G.winSize.height*0.915,2))
     self.MagePng:setScale(scale)    
     self:addChild(self.MagePng,2)
     
@@ -48,7 +52,7 @@ function BattlefieldUI:avatarInit()
     self.MagePngFrame:setScale(scale)
     self.MagePngFrame:setPosition3D(cc.V3(self.MagePng:getPositionX()+1,self.MagePng:getPositionY()-offset,1))
     self:addChild(self.MagePngFrame,1)
-    --]]
+   
     --[[
     self.ArcherPng = cc.Sprite:createWithSpriteFrameName("UI-1136-640_11.png")
     self.ArcherPng:setPosition3D(cc.V3(-self.MagePng:getContentSize().width + self.MagePng:getPositionX()+20,70/640*G.winSize.height,2))
@@ -70,6 +74,7 @@ function BattlefieldUI:bloodbarInit()
     local offset = 45
     local scale = 0.7
     --用进度条实现血条
+    --[[
     self.KnightBlood = cc.ProgressTimer:create(cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png"))
     self.KnightBlood:setColor(cc.c3b(149,254,26))
     self.KnightBlood:setType(cc.PROGRESS_TIMER_TYPE_BAR)
@@ -89,7 +94,8 @@ function BattlefieldUI:bloodbarInit()
     self.KnightBloodClone:setPosition3D(cc.V3(self.KnightPng:getPositionX()-1, self.KnightPng:getPositionY()-offset,3))
     self.KnightBloodClone:setScale(scale)
     self:addChild(self.KnightBloodClone,3)
-    
+    --]]
+
     --[[
     self.ArcherBlood = cc.ProgressTimer:create(cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png"))
     self.ArcherBlood:setColor(cc.c3b(149,254,26))
@@ -110,7 +116,8 @@ function BattlefieldUI:bloodbarInit()
     self.ArcherBloodClone:setPosition3D(cc.V3(self.ArcherPng:getPositionX()-1, self.ArcherPng:getPositionY()-offset,3))
     self.ArcherBloodClone:setScale(scale)
     self:addChild(self.ArcherBloodClone,3)
- 
+    --]]
+
     self.MageBlood = cc.ProgressTimer:create(cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png"))
     self.MageBlood:setColor(cc.c3b(149,254,26))
     self.MageBlood:setType(cc.PROGRESS_TIMER_TYPE_BAR)
@@ -130,7 +137,6 @@ function BattlefieldUI:bloodbarInit()
     self.MageBloodClone:setPosition3D(cc.V3(self.MagePng:getPositionX()-1, self.MagePng:getPositionY()-offset,3))
     self.MageBloodClone:setScale(scale)
     self:addChild(self.MageBloodClone,3)
-     --]]
 end
 
 function BattlefieldUI:angrybarInit()
@@ -141,6 +147,7 @@ function BattlefieldUI:angrybarInit()
     local grey = cc.c3b(113,103,76)
     local action = cc.RepeatForever:create(cc.RotateBy:create(1,cc.V3(0,0,360)))
 
+--[[
     self.KnightAngry = cc.ProgressTimer:create(cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png"))
     self.KnightAngry:setColor(yellow)
     self.KnightAngry:setType(cc.PROGRESS_TIMER_TYPE_BAR)
@@ -169,7 +176,6 @@ function BattlefieldUI:angrybarInit()
     self:addChild(self.KnightAngryFullSignal,4)
     self.KnightAngryFullSignal:setVisible(false)
 
---[[
     self.ArcherAngry = cc.ProgressTimer:create(cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png"))
     self.ArcherAngry:setColor(yellow)
     self.ArcherAngry:setType(cc.PROGRESS_TIMER_TYPE_BAR)
@@ -197,6 +203,7 @@ function BattlefieldUI:angrybarInit()
     self.ArcherAngryFullSignal:runAction(action:clone())
     self.ArcherAngryFullSignal:setScale(1)
     self.ArcherAngryFullSignal:setVisible(false)
+ --]]
 
     self.MageAngry = cc.ProgressTimer:create(cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png"))
     self.MageAngry:setColor(yellow)
@@ -225,7 +232,7 @@ function BattlefieldUI:angrybarInit()
     self.MageAngryFullSignal:runAction(action:clone())
     self.MageAngryFullSignal:setScale(1)
     self.MageAngryFullSignal:setVisible(false)
- --]]
+
 end
 
 function BattlefieldUI:touchButtonInit()
@@ -313,19 +320,21 @@ end
 --英雄死亡函数
 function BattlefieldUI:heroDead(hero)
     --给头像加上了灰色的shader效果，具体实现见 GreyShader.cpp
-    if hero._name =="Knight" then
+    --[[
+       if hero._name =="Knight" then
         cc.GreyShader:setGreyShader(self.KnightPng) --头像
         cc.GreyShader:setGreyShader(self.KnightPngFrame) --边框
         
         self.KnightAngryFullSignal:setVisible(false)   
         self.KnightAngryClone:setVisible(false)
-    --[[
-    elseif hero._name =="Mage" then
+    --]]
+    if hero._name =="Mage" then
         cc.GreyShader:setGreyShader(self.MagePng)
         cc.GreyShader:setGreyShader(self.MagePngFrame)
         
         self.MageAngryFullSignal:setVisible(false)
         self.MageAngryClone:setVisible(false)
+    --[[
     elseif hero._name=="Archer" then
         cc.GreyShader:setGreyShader(self.ArcherPng)
         cc.GreyShader:setGreyShader(self.ArcherPngFrame)

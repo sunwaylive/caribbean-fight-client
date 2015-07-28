@@ -297,22 +297,23 @@ function BattleScene:UIcontainsPoint(position)
     local message  = nil
 
     --获取右下角的三个职业的小方块
-    local rectKnight = uiLayer.KnightPngFrame:getBoundingBox()
+    --local rectKnight = uiLayer.KnightPngFrame:getBoundingBox()
     --没有法师和射手了
     --local rectArcher = uiLayer.ArcherPngFrame:getBoundingBox()
-    --local rectMage = uiLayer.MagePngFrame:getBoundingBox()
-    
+    local rectMage = uiLayer.MagePngFrame:getBoundingBox()
+
+    --[[
     if cc.rectContainsPoint(rectKnight, position) and uiLayer.KnightAngry:getPercentage() == 100 then
         --cclog("rectKnight")
         message = MessageDispatchCenter.MessageType.SPECIAL_KNIGHT        
-    --[[
+
     elseif cc.rectContainsPoint(rectArcher, position) and uiLayer.ArcherAngry:getPercentage() == 100  then
         --cclog("rectArcher")
-        message = MessageDispatchCenter.MessageType.SPECIAL_ARCHER   
-    elseif cc.rectContainsPoint(rectMage, position)  and uiLayer.MageAngry:getPercentage() == 100 then
+        message = MessageDispatchCenter.MessageType.SPECIAL_ARCHER
+     --]]
+    if cc.rectContainsPoint(rectMage, position)  and uiLayer.MageAngry:getPercentage() == 100 then
         --cclog("rectMage")
         message = MessageDispatchCenter.MessageType.SPECIAL_MAGE
-     --]]
         return
     end   
     
