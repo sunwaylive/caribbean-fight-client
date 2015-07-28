@@ -34,9 +34,9 @@ local function moveCamera(dt)
         local temp = cc.pLerp(cameraPosition,
                               cc.p(focusPoint.x + cameraOffset.x, cameraOffset.y + focusPoint.y - size.height * 3 / 4), 2 * dt)
         
-        local position = cc.V3(temp.x, temp.y, size.height / 2 - 100)
+        local position = cc.V3(temp.x, temp.y, size.height / 2 - 100 + 700)
         camera:setPosition3D(position)
-        camera:lookAt(cc.V3(position.x, focusPoint.y, 50.0), cc.V3(0.0, 0.0, 1.0))
+        camera:lookAt(cc.V3(position.x, focusPoint.y + 300, 50.0), cc.V3(0.0, 0.0, 1.0))
         --cclog("\ncalf %f %f %f \ncalf %f %f 50.000000", position.x, position.y, position.z, focusPoint.x, focusPoint.y)            
     end
 end
@@ -175,7 +175,7 @@ function BattleScene:enableTouch()
             local joystickFrameCenter = cc.p(uiLayer.JoystickFrame:getPosition())--getPosition两个返回值的，第一个x， 第二个y
             
             local heroMoveDir = cc.pNormalize(cc.p(touchPoint.x - joystickFrameCenter.x, touchPoint.y - joystickFrameCenter.y))
-            local heroMoveSpeed = 150
+            local heroMoveSpeed = 250 --设置玩家的移动速度
             for val = HeroManager.first, HeroManager.last do
                 local sprite = HeroManager[val]
                 sprite._heroMoveDir = heroMoveDir
@@ -204,7 +204,7 @@ function BattleScene:enableTouch()
             local joystickFrameCenter = cc.p(uiLayer.JoystickFrame:getPosition())
             
             local heroMoveDir = cc.pNormalize(cc.p(touchPoint.x - joystickFrameCenter.x, touchPoint.y - joystickFrameCenter.y))
-            local heroMoveSpeed = 150
+            local heroMoveSpeed = 250 --设置玩家的移动速度
             for val = HeroManager.first, HeroManager.last do
                 local sprite = HeroManager[val]
                 sprite._heroMoveDir = heroMoveDir
