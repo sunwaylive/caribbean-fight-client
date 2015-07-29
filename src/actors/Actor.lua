@@ -502,11 +502,16 @@ end
 
 --该函数在每一帧调用，因为需要频繁调整角色的朝向。
 function Actor:movementUpdate(dt)
+    --对于勾肥大战，需要关闭所有怪物的自动行走
+    if true then
+        return true
+    end
+
     --关闭英雄的AI
     if self._racetype == EnumRaceType.HERO then
         return true
     end
-    
+
     --如下这么代码也就是为了判断向左还是向右转：
     if self._curFacing ~= self._targetFacing then --如果还没有转到目标朝向
         local angleDt = self._curFacing - self._targetFacing

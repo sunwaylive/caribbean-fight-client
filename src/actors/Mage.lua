@@ -49,7 +49,7 @@ function Mage:specialAttack()
     --mage will create 3 ice spikes on the ground
     --get 3 positions
     ccexp.AudioEngine:play2d(MageProperty.specialAttackShout, false,0.5)
-    ccexp.AudioEngine:play2d(MageProperty.ice_special, false,1)
+    ccexp.AudiaddoEngine:play2d(MageProperty.ice_special, false,1)
     
     local pos1 = getPosTable(self)
     local pos2 = getPosTable(self)

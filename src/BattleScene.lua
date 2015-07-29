@@ -190,7 +190,7 @@ function BattleScene:enableTouch()
             end
         elseif self:UIcontainsPoint(touch:getLocation()) == "ATTACKBTN" then
             for val = HeroManager.first, HeroManager.last do
-                local spratite = HeroManager[val]
+                local sprite = HeroManager[val]
                 if sprite:getStateType() ~= EnumStateType.ATTACKING then
                     sprite:setStateType(EnumStateType.ATTACKING)
                 end
