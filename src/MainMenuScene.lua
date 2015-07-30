@@ -223,24 +223,29 @@ function MainMenuScene:addPointLight(layer)
     layer:getEventDispatcher():addEventListenerWithSceneGraphPriority(touchEventListener,layer)
 end
 
---add button to start game
+--add pve and pvp button to start game
 function MainMenuScene:addButton(layer)
-    local isTouchButton = false
-    local button_callback = function(sender,eventType)
-        if isTouchButton == false then
-            isTouchButton = true
+    --step1: 设置PVE start 的按钮
+    local isTouchButtonPVE = false
+    --可以设置按钮的响应函数
+    local button_callback_pve = function(sender,eventType)
+        if isTouchButtonPVE == false then
+            isTouchButtonPVE = true
             if eventType == ccui.TouchEventType.began then
                 ccexp.AudioEngine:play2d(BGM_RES.MAINMENUSTART, false,1)
                 ccexp.AudioEngine:stop(AUDIO_ID.MAINMENUBGM)
+                --替换场景
             	cc.Director:getInstance():replaceScene(require("ChooseRoleScene").create())
             end
         end
     end
 
-    local button = ccui.Button:create("start.png","","",ccui.TextureResType.plistType)
-    button:setPosition(self.size.width*0.5,self.size.height*0.15)
-    button:addTouchEventListener(button_callback)
-    layer:addChild(button,4)
+    local buttonPVE = ccui.Button:create("start.png","","",ccui.TextureResType.plistType)
+    buttonPVE:setPosition(self.size.width*0.5,self.size.height*0.15)
+    --用这种方式添加按钮响应函数
+    buttonPVE:addTouchEventListener(button_callback_pve)
+    layer:addChild(buttonPVE,4)
+
     --法相贴图实现凹凸效果
     local effectNormalMapped = cc.EffectNormalMapped:create("mainmenuscene/start_normal.png")
     effectNormalMapped:setPointLight(self._pointLight)
@@ -250,7 +255,38 @@ function MainMenuScene:addButton(layer)
     effectSprite:setPosition(self.size.width*0.5,self.size.height*0.15)
     layer:addChild(effectSprite,5)
     effectSprite:setEffect(effectNormalMapped)
+
+    --step2: 设置PVP start的按钮
+    local isTouchButtonPVP = false
+    local button_callback_pvp = function(sender, eventType)
+        if isTouchButtonPVP == false then
+            isTouchButtonPVP = true
+            if eventType == ccui.TouchEventType.began then
+                ccexp.AudioEngine:play2d(BGM_RES.MAINMENUSTART, false, 1)
+                ccexp.AudioEngine:stop(AUDIO_ID.MAINMENUBGM)
+                --替换场景
+                cc.Director:getInstance():replaceScene(require("ChooseRoleScene").create())
+            end
+        end
+    end
+
+    local buttonPVP = ccui.Button:create("start.png","","",ccui.TextureResType.plistType)
+    buttonPVP:setPosition(self.size.width*0.5 + 200 ,self.size.height*0.15)
+    --用这种方式添加按钮响应函数
+    buttonPVP:addTouchEventListener(button_callback_pvp)
+    layer:addChild(buttonPVP,4)
+
+    --法相贴图实现凹凸效果
+    local effectNormalMappedPVP = cc.EffectNormalMapped:create("mainmenuscene/start_normal.png")
+    effectNormalMappedPVP:setPointLight(self._pointLight)
+    effectNormalMappedPVP:setKBump(100)
+
+    local effectSpritePVP = cc.EffectSprite:create("mainmenuscene/start.png")
+    effectSpritePVP:setPosition(self.size.width*0.5 + 200,self.size.height*0.15)
+    layer:addChild(effectSpritePVP,5)
+    effectSprite:setEffect(effectNormalMappedPVP)
 end
+
 
 -- cloud action
 function MainMenuScene:addCloud(layer)
