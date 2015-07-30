@@ -265,7 +265,8 @@ function MainMenuScene:addButton(layer)
                 ccexp.AudioEngine:play2d(BGM_RES.MAINMENUSTART, false, 1)
                 ccexp.AudioEngine:stop(AUDIO_ID.MAINMENUBGM)
                 --替换场景,这里需要进入PVP的场景
-                cc.Director:getInstance():replaceScene(require("ChooseRoleScene").create())
+    
+                cc.Director:getInstance():replaceScene(require("PVPMainScene").create())
             end
         end
     end
