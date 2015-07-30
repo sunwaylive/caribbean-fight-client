@@ -338,7 +338,7 @@ function BattleScene.create()
 
     cc.Texture2D:setDefaultAlphaPixelFormat(cc.TEXTURE2_D_PIXEL_FORMAT_RG_B565)
 
-    --监听触摸事件
+    --监听触摸事件，这个可以仿照MainMenuScene:addButton 中使用另外一种更加高效的方式去实现
     scene:enableTouch()
     --监听键盘事件
     scene:enableKeyboard()

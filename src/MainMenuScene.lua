@@ -241,7 +241,7 @@ function MainMenuScene:addButton(layer)
     end
 
     local buttonPVE = ccui.Button:create("start.png","","",ccui.TextureResType.plistType)
-    buttonPVE:setPosition(self.size.width*0.5,self.size.height*0.15)
+    buttonPVE:setPosition(self.size.width*0.5 - 100,self.size.height*0.15)
     --用这种方式添加按钮响应函数
     buttonPVE:addTouchEventListener(button_callback_pve)
     layer:addChild(buttonPVE,4)
@@ -252,7 +252,7 @@ function MainMenuScene:addButton(layer)
     effectNormalMapped:setKBump(100)
     
     local effectSprite = cc.EffectSprite:create("mainmenuscene/start.png")
-    effectSprite:setPosition(self.size.width*0.5,self.size.height*0.15)
+    effectSprite:setPosition(self.size.width*0.5 - 100,self.size.height*0.15)
     layer:addChild(effectSprite,5)
     effectSprite:setEffect(effectNormalMapped)
 
@@ -264,27 +264,27 @@ function MainMenuScene:addButton(layer)
             if eventType == ccui.TouchEventType.began then
                 ccexp.AudioEngine:play2d(BGM_RES.MAINMENUSTART, false, 1)
                 ccexp.AudioEngine:stop(AUDIO_ID.MAINMENUBGM)
-                --替换场景
+                --替换场景,这里需要进入PVP的场景
                 cc.Director:getInstance():replaceScene(require("ChooseRoleScene").create())
             end
         end
     end
 
     local buttonPVP = ccui.Button:create("start.png","","",ccui.TextureResType.plistType)
-    buttonPVP:setPosition(self.size.width*0.5 + 200 ,self.size.height*0.15)
+    buttonPVP:setPosition(self.size.width*0.5 + 100 ,self.size.height*0.15)
     --用这种方式添加按钮响应函数
     buttonPVP:addTouchEventListener(button_callback_pvp)
     layer:addChild(buttonPVP,4)
 
     --法相贴图实现凹凸效果
-    local effectNormalMappedPVP = cc.EffectNormalMapped:create("mainmenuscene/start_normal.png")
-    effectNormalMappedPVP:setPointLight(self._pointLight)
-    effectNormalMappedPVP:setKBump(100)
+    --local effectNormalMappedPVP = cc.EffectNormalMapped:create("mainmenuscene/start_normal.png")
+    --effectNormalMappedPVP:setPointLight(self._pointLight)
+    --effectNormalMappedPVP:setKBump(100)
 
     local effectSpritePVP = cc.EffectSprite:create("mainmenuscene/start.png")
-    effectSpritePVP:setPosition(self.size.width*0.5 + 200,self.size.height*0.15)
+    effectSpritePVP:setPosition(self.size.width*0.5 + 100,self.size.height*0.15)
     layer:addChild(effectSpritePVP,5)
-    effectSprite:setEffect(effectNormalMappedPVP)
+    effectSprite:setEffect(effectNormalMapped)
 end
 
 
