@@ -265,7 +265,6 @@ function MainMenuScene:addButton(layer)
                 ccexp.AudioEngine:play2d(BGM_RES.MAINMENUSTART, false, 1)
                 ccexp.AudioEngine:stop(AUDIO_ID.MAINMENUBGM)
                 --替换场景,这里需要进入PVP的场景
-    
                 cc.Director:getInstance():replaceScene(require("PVPMainScene").create())
             end
         end
@@ -285,7 +284,7 @@ function MainMenuScene:addButton(layer)
     local effectSpritePVP = cc.EffectSprite:create("mainmenuscene/start.png")
     effectSpritePVP:setPosition(self.size.width*0.5 + 100,self.size.height*0.15)
     layer:addChild(effectSpritePVP,5)
-    effectSprite:setEffect(effectNormalMapped)
+    --effectSprite:setEffect(effectNormalMapped)
 end
 
 
