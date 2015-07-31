@@ -189,12 +189,12 @@ function BattleScene:enableTouch()
                 end
             end
         elseif self:UIcontainsPoint(touch:getLocation()) == "ATTACKBTN" then
-			--玩家点击攻击按钮时,显示范围和箭头
+            --玩家点击攻击按钮时,显示范围和箭头
 			uiLayer.AttackRange:setVisible(true)
 			uiLayer.AttackArrow:setVisible(true)
 			
-			-- 技能释放放到OnTouchEnd里执行
-            -- for val = HeroManager.first, HeroManager.last do
+			--技能释放应该放在OnTouchEnd里
+			-- for val = HeroManager.first, HeroManager.last do
                 -- local sprite = HeroManager[val]
                 -- if sprite:getStateType() ~= EnumStateType.ATTACKING then
                     -- sprite:setStateType(EnumStateType.ATTACKING)
@@ -222,7 +222,7 @@ function BattleScene:enableTouch()
                     sprite:walkMode()
                 end
             end
-		elseif self:UIcontainsPoint(touch:getLocation()) == "ATTACKRANGE" then
+        elseif self:UIcontainsPoint(touch:getLocation()) == "ATTACKRANGE" then
             --让技能摇杆箭头随手指移动
 			local m = cc.p(touch:getLocation().x - uiLayer.AttackArrow:getPositionX(), 
 							touch:getLocation().y - uiLayer.AttackArrow:getPositionY())
@@ -230,8 +230,7 @@ function BattleScene:enableTouch()
 			a = cc.pGetAngle(m,n)
 			local b = 180 * a / 3.14
 			uiLayer.AttackArrow:setRotation(b+135)
-			
-        end
+		end
         
         --不改变相机的视角
         --[[
@@ -247,7 +246,7 @@ function BattleScene:enableTouch()
         --松手之后，让英雄停止移动
         local location = touch:getLocation()
         local message = self:UIcontainsPoint(location)
-		
+
 		--松开手时，如果技能箭头可见，则说明应该释放技能
 		if uiLayer.AttackRange:isVisible() then
 			for val = HeroManager.first, HeroManager.last do
@@ -269,8 +268,7 @@ function BattleScene:enableTouch()
                 end
             end
 		end
-		
-		--将技能UI设为不可见
+		--重置技能UI为不可见
 		uiLayer.AttackRange:setVisible(false)
 		uiLayer.AttackArrow:setVisible(false)
 		
@@ -358,19 +356,19 @@ function BattleScene:UIcontainsPoint(position)
     
     local rectJoystick = uiLayer.JoystickFrame:getBoundingBox()
     local rectAttackBtn = uiLayer.AttackBtn:getBoundingBox()
-    local rectAttackRange = uiLayer.AttackRange:getBoundingBox() --新加的范围判断
+    local rectAttackRange = uiLayer.AttackRange:getBoundingBox() --新加的技能范围
 	
     if cc.rectContainsPoint(rectJoystick, position) then
         message = MessageDispatchCenter.MessageType.JOYSTICK
     elseif cc.rectContainsPoint(rectAttackBtn, position) then --到这了都是对的
         message = MessageDispatchCenter.MessageType.ATTACKBTN
-	elseif cc.rectContainsPoint(rectAttackRange, position) then
+    elseif cc.rectContainsPoint(rectAttackRange, position) then --如果技能范围显示出来
 		if uiLayer.AttackRange:isVisible() then
 			message = MessageDispatchCenter.MessageType.ATTACKRANGE
 		else
 			message = nil
 		end
-    end
+	end
     
     return message 
 end
