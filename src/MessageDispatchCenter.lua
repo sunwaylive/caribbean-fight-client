@@ -12,6 +12,7 @@ MessageDispatchCenter.MessageType = {
     ANGRY_CHANGE = "ANGRY_CHANGE",
     JOYSTICK = "JOYSTICK",
     ATTACKBTN = "ATTACKBTN",
+	ATTACKRANGE = "ATTACKRANGE",
 }
 
 MessageDispatchCenter.MessageQue = {}

@@ -487,6 +487,21 @@ function BattlefieldUI:attackBtnInit()
     self.AttackBtn:setPosition3D(cc.V3(1070 / 1136 * G.winSize.width, 70 / 640 * G.winSize.height, 2))
     self.AttackBtn:setScale(2.0, 2.0)
     self:addChild(self.AttackBtn, 1)
+	
+	--点击攻击按钮后显示的UI
+	--外面的圈
+	self.AttackRange = cc.Sprite:createWithSpriteFrameName("joystick_frame.png")
+	self.AttackRange:setPosition3D(cc.V3(1070 / 1136 * G.winSize.width, 70 / 640 * G.winSize.height, 2))
+	self.AttackRange:setScale(5.0, 5.0)
+	self:addChild(self.AttackRange, 2)
+	self.AttackRange:setVisible(false)
+	--箭头
+	self.AttackArrow = cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png")
+	self.AttackArrow:setAnchorPoint(1.0,0.0)
+    self.AttackArrow:setPosition3D(cc.V3(1070 / 1136 * G.winSize.width, 70 / 640 * G.winSize.height, 2))
+    self.AttackArrow:setScale(5.0, 5.0)
+	self:addChild(self.AttackArrow, 1)
+	self.AttackArrow:setVisible(false)
 end
 
 return BattlefieldUI
