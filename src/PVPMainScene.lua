@@ -26,7 +26,6 @@ function PVPMainScene:createLayer()
     return layer
 end
 
-
 function PVPMainScene:addCreateRoomBtn(layer)
     --step1: 添加 创建房间的按钮
     local isTouchButtonCreateRoom = false
@@ -37,8 +36,7 @@ function PVPMainScene:addCreateRoomBtn(layer)
             if eventType == ccui.TouchEventType.began then
                 ccexp.AudioEngine:play2d(BGM_RES.MAINMENUSTART, false, 1)
                 ccexp.AudioEngine:stop(AUDIO_ID.MAINMENUBGM)
-                cclog("create room btn is clicked")
-
+                createRoom()--创建PVP房间
             end
         end
     end
@@ -52,6 +50,13 @@ function PVPMainScene:addCreateRoomBtn(layer)
     local effectSpriteCreateRoom = cc.EffectSprite:create("mainmenuscene/start.png")
     effectSpriteCreateRoom:setPosition(self.size.width*0.5 + 100,self.size.height* 0.85)
     layer:addChild(effectSpriteCreateRoom,5)
+end
+
+--PVP create room
+function createRoom()
+    cclog("create room btn is clicked")
+    --这里需要实现 创建房间的功能
+    --cc.network.
 end
 
 function PVPMainScene:addBackBtn(layer)
