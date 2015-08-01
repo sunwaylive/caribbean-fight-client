@@ -189,12 +189,17 @@ function BattleScene:enableTouch()
                 end
             end
         elseif self:UIcontainsPoint(touch:getLocation()) == "ATTACKBTN" then
-            for val = HeroManager.first, HeroManager.last do
-                local sprite = HeroManager[val]
-                if sprite:getStateType() ~= EnumStateType.ATTACKING then
-                    sprite:setStateType(EnumStateType.ATTACKING)
-                end
-            end
+            --玩家点击攻击按钮时,显示范围和箭头
+			uiLayer.AttackRange:setVisible(true)
+			uiLayer.AttackArrow:setVisible(true)
+			
+			--技能释放应该放在OnTouchEnd里
+			-- for val = HeroManager.first, HeroManager.last do
+                -- local sprite = HeroManager[val]
+                -- if sprite:getStateType() ~= EnumStateType.ATTACKING then
+                    -- sprite:setStateType(EnumStateType.ATTACKING)
+                -- end
+            -- end
         end
         return true
     end
@@ -217,7 +222,15 @@ function BattleScene:enableTouch()
                     sprite:walkMode()
                 end
             end
-        end
+        elseif self:UIcontainsPoint(touch:getLocation()) == "ATTACKRANGE" then
+            --让技能摇杆箭头随手指移动
+			local m = cc.p(touch:getLocation().x - uiLayer.AttackArrow:getPositionX(), 
+							touch:getLocation().y - uiLayer.AttackArrow:getPositionY())
+			local n = cc.p(uiLayer:getAnchorPoint().x, uiLayer:getAnchorPoint().y)
+			a = cc.pGetAngle(m,n)
+			local b = 180 * a / 3.14
+			uiLayer.AttackArrow:setRotation(b+135)
+		end
         
         --不改变相机的视角
         --[[
@@ -234,6 +247,31 @@ function BattleScene:enableTouch()
         local location = touch:getLocation()
         local message = self:UIcontainsPoint(location)
 
+		--松开手时，如果技能箭头可见，则说明应该释放技能
+		if uiLayer.AttackRange:isVisible() then
+			for val = HeroManager.first, HeroManager.last do
+                local sprite = HeroManager[val]
+				--将角色转向调为箭头方向
+				local touchPoint = cc.p(touch:getLocation().x, touch:getLocation().y)
+				local heroMoveDir = cc.pNormalize(cc.p(touchPoint.x - uiLayer.AttackBtn:getPositionX(), touchPoint.y - uiLayer.AttackBtn:getPositionY()))
+				sprite._curFacing = cc.pToAngleSelf(heroMoveDir)
+				sprite._heroMoveDir = heroMoveDir
+				sprite:setRotation(60)
+				sprite:setFacing(60)
+				--sprite:setRotation(-RADIANS_TO_DEGREES(sprite._curFacing))
+			end
+			for val = HeroManager.first, HeroManager.last do
+                local sprite = HeroManager[val]
+				--攻击
+                if sprite:getStateType() ~= EnumStateType.ATTACKING then
+                    sprite:setStateType(EnumStateType.ATTACKING)
+                end
+            end
+		end
+		--重置技能UI为不可见
+		uiLayer.AttackRange:setVisible(false)
+		uiLayer.AttackArrow:setVisible(false)
+		
         if message == "ATTACKBTN" then
             --do nothing
         elseif message == "JOYSTICK" then
@@ -318,12 +356,19 @@ function BattleScene:UIcontainsPoint(position)
     
     local rectJoystick = uiLayer.JoystickFrame:getBoundingBox()
     local rectAttackBtn = uiLayer.AttackBtn:getBoundingBox()
-    
+    local rectAttackRange = uiLayer.AttackRange:getBoundingBox() --新加的技能范围
+	
     if cc.rectContainsPoint(rectJoystick, position) then
         message = MessageDispatchCenter.MessageType.JOYSTICK
     elseif cc.rectContainsPoint(rectAttackBtn, position) then --到这了都是对的
         message = MessageDispatchCenter.MessageType.ATTACKBTN
-    end
+    elseif cc.rectContainsPoint(rectAttackRange, position) then --如果技能范围显示出来
+		if uiLayer.AttackRange:isVisible() then
+			message = MessageDispatchCenter.MessageType.ATTACKRANGE
+		else
+			message = nil
+		end
+	end
     
     return message 
 end
