@@ -182,6 +182,50 @@ function Actor:hurt(collider, dirKnockMode)
     return 0
 end
 
+--被钩中时
+function Actor:hook(collider)
+    --首先被钩中的人要活着
+    if self._isalive == true then 
+        --TODO add sound effect
+                    
+        local damage = collider.damage
+        --calculate the real damage
+        local critical = false
+        local knock = collider.knock
+        
+        --计算伤害
+        damage = damage + damage * math.random(-1,1) * 0.15        
+        damage = damage - self._defense
+        damage = math.floor(damage)
+
+        if damage <= 0 then
+            damage = 1
+        end
+        self._hp = self._hp - damage
+		
+		self:hookMode(collider)
+        return damage        
+    end
+    return 0
+end
+
+function Actor:hookMode(collider)
+    self:setStateType(EnumStateType.HOOKING)
+    --self:playAnimation("knocked")
+    
+	self.dirHook = collider.facing
+	self.speed2 =collider.speed2
+end
+
+function Actor:hookingUpdate(dt)
+    if self:getStateType() == EnumStateType.HOOKING then
+		local selfPos = getPosTable(self)
+		local nextPos = cc.pRotateByAngle(cc.pAdd({x=self.speed2*dt, y=0},selfPos),selfPos,self.dirHook)
+		self:setPosition(nextPos)
+		print("hook")
+	end	
+end
+
 function Actor:normalAttackSoundEffects()
 -- to override
 end
@@ -296,6 +340,8 @@ function Actor:stateMachineUpdate(dt)
         self:knockingUpdate(dt)
     elseif state == EnumStateType.DYING then
         --I am dying.. there is not much i can do right?
+	elseif state == EnumStateType.HOOKING then
+		self:hookingUpdate(dt)	--被钩中
     end
 end
 

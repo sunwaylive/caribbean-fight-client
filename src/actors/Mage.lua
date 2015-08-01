@@ -36,7 +36,7 @@ end
 function Mage:normalAttack()
     ccexp.AudioEngine:play2d(MageProperty.normalAttackShout, false,0.4)
     ccexp.AudioEngine:play2d(MageProperty.ice_normal, false,0.8)
-    MageNormalAttack.create(getPosTable(self), self._curFacing, self._normalAttack, self._target, self)
+    HookAttack.create(getPosTable(self), self._curFacing, self._normalAttack, self._target, self)
 end
 
 --法师的特殊攻击，冰墙效果
