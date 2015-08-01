@@ -500,7 +500,7 @@ function BattlefieldUI:attackBtnInit()
 	self.AttackRange:setVisible(false)
 	--箭头
 	self.AttackArrow = cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png")
-	self.AttackArrow:setAnchorPoint(1.0,0.0)
+	self.AttackArrow:setAnchorPoint(1.0,0.5)
     self.AttackArrow:setPosition3D(self.AttackBtn:getPosition3D())
     self.AttackArrow:setScale(2.0, 2.0)
 	self:addChild(self.AttackArrow, 1)

@@ -5,6 +5,8 @@ require "MessageDispatchCenter"
 currentLayer = nil
 uiLayer = nil
 gameMaster = nil
+circle = nil --角色脚底圈
+arrow = nil --角色脚底箭头
 
 local specialCamera = {valid = false, position = cc.p(0,0)}
 local size = cc.Director:getInstance():getWinSize()
@@ -193,6 +195,9 @@ function BattleScene:enableTouch()
 			uiLayer.AttackRange:setVisible(true)
 			uiLayer.AttackArrow:setVisible(true)
 			
+			circle:setVisible(true)
+			arrow:setVisible(true)
+	
 			--技能释放应该放在OnTouchEnd里
 			-- for val = HeroManager.first, HeroManager.last do
                 -- local sprite = HeroManager[val]
@@ -224,12 +229,26 @@ function BattleScene:enableTouch()
             end
         elseif self:UIcontainsPoint(touch:getLocation()) == "ATTACKRANGE" then
             --让技能摇杆箭头随手指移动
+			--手指与圆心的方向
 			local m = cc.p(touch:getLocation().x - uiLayer.AttackArrow:getPositionX(), 
 							touch:getLocation().y - uiLayer.AttackArrow:getPositionY())
-			local n = cc.p(uiLayer:getAnchorPoint().x, uiLayer:getAnchorPoint().y)
+			--箭头初始方向
+			local n = cc.p(-1,0)
+			--m，n间的弧度
 			a = cc.pGetAngle(m,n)
+			--弧度转成角度
 			local b = 180 * a / 3.14
-			uiLayer.AttackArrow:setRotation(b+135)
+			uiLayer.AttackArrow:setRotation(b)
+			
+			--让角色脚底的箭头随手指移动
+			for val = HeroManager.first, HeroManager.last do
+                local sprite = HeroManager[val]
+				--箭头的方向为角色面向的反向，箭头与（-1，0）间的弧度 和 角色面向与（1，0）间的弧度相同
+				local c = cc.pGetAngle(cc.p(1,0),sprite._heroMoveDir)
+				local d = 180 * c / 3.14
+				
+				arrow:setRotation(b+d)
+            end
 		end
         
         --不改变相机的视角
@@ -272,6 +291,9 @@ function BattleScene:enableTouch()
 		uiLayer.AttackRange:setVisible(false)
 		uiLayer.AttackArrow:setVisible(false)
 		
+		circle:setVisible(false)
+		arrow:setVisible(false)
+	
         if message == "ATTACKBTN" then
             --do nothing
         elseif message == "JOYSTICK" then
@@ -394,6 +416,23 @@ function BattleScene.create()
     initUILayer()
     gameMaster = require("GameMaster").create()
     
+	--给角色脚底添加圆圈和箭头
+	circle = cc.Sprite:createWithSpriteFrameName("joystick_frame.png")
+    circle:setScale(12)
+	circle:setOpacity(255*0.7)
+	
+	arrow = cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png")
+    arrow:setScale(12)
+	arrow:setOpacity(255*0.7)
+	arrow:setAnchorPoint(0.95,0.5)
+	for val = HeroManager.first, HeroManager.last do
+		local sprite = HeroManager[val]
+		sprite:addChild(circle)
+		sprite:addChild(arrow)
+	end
+	circle:setVisible(false)
+	arrow:setVisible(false)
+	
     setCamera()
     --这里每一帧都执行gamecontroller
     gameControllerScheduleID = scheduler:scheduleScriptFunc(gameController, 0, false)
