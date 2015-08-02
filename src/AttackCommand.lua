@@ -612,4 +612,73 @@ function BossSuper:onUpdate(dt)
     self:setPosition(nextPos)
 end
 
+HookAttack = class("HookAttack", function()
+	return BasicCollider.new()
+end)
+
+function HookAttack.create(pos,facing,attackInfo, target, owner)
+    local ret = HookAttack.new()
+    ret:initData(pos,facing,attackInfo)
+    ret._target = target
+    ret.owner = owner
+    
+    ret.sp = cc.BillBoard:create("FX/FX.png", RECTS.iceBolt, 0)
+    --ret.sp:setCamera(camera)
+    ret.sp:setPosition3D(cc.V3(0,0,50))
+    ret.sp:setScale(2)
+    ret:addChild(ret.sp)
+	
+	ret.startPos = pos;
+	ret.state = "ATTACK"
+    
+    return ret
+end
+
+function HookAttack:onTimeOut()
+       
+    self.sp:setTextureRect(RECTS.iceSpike)
+    self.sp:runAction(cc.FadeOut:create(1))
+    self.sp:setScale(4)
+
+end
+
+function HookAttack:playHitAudio()
+    ccexp.AudioEngine:play2d(MageProperty.ice_normalAttackHit, false,1)
+end
+
+function HookAttack:onCollide(target)
+	if(self.state == "BACK") then
+	--返回状态下无效果，回到起点后消失
+		return
+	else
+	--钩中
+	target:hook(self)
+	--返回
+	self.state = "BACK"
+	end
+    -- self:hurtEffect(target)
+    -- self:playHitAudio()    
+    -- self.owner._angry = self.owner._angry + target:hurt(self)*0.3
+    -- local anaryChange = {_name = MageValues._name, _angry = self.owner._angry, _angryMax = self.owner._angryMax}
+    -- MessageDispatchCenter:dispatchMessage(MessageDispatchCenter.MessageType.ANGRY_CHANGE, anaryChange)
+    -- --set cur duration to its max duration, so it will be removed when checking time out
+    -- self.curDuration = self.duration+1
+end
+
+function HookAttack:onUpdate(dt)
+	if self.state == "ATTACK" then
+		local nextPos
+		local selfPos = getPosTable(self)
+		nextPos = cc.pRotateByAngle(cc.pAdd({x=self.speed*dt, y=0},selfPos),selfPos,self.facing)
+		self:setPosition(nextPos)
+	elseif self.state == "BACK" then
+		local selfPos = getPosTable(self)
+		local nextPos = cc.pRotateByAngle(cc.pAdd({x=self.speed2*dt, y=0},selfPos),selfPos,self.facing)
+		if (selfPos.x-self.startPos.x)*(nextPos.x-self.startPos.x)<=0 then
+			self:onTimeOut()
+		end
+		self:setPosition(nextPos)
+	end
+end
+
 return AttackManager

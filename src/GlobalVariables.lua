@@ -81,7 +81,8 @@ EnumStateType =
         "DEFENDING",
         "KNOCKING",
         "DYING",
-        "DEAD"
+        "DEAD",
+		"HOOKING" --新状态，被钩中
     }
 EnumStateType = CreateEnumTable(EnumStateType) 
 --common value is used to reset an actor
@@ -219,9 +220,11 @@ MageValues = {
         knock    = 10,
         damage   = 280,
         mask     = EnumRaceType.HERO,
-        duration = 2,
+        duration = 10,	--改为10s，原值为2
         speed    = 400,
-        criticalChance = 0.05
+		speed2	 = -400, --钩子返回的速度
+        criticalChance = 0.05,
+		length	 = 200 --新增的钩子长度属性
     }, 
     _specialAttack   = {
         minRange = 0,
