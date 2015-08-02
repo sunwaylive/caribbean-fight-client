@@ -29,6 +29,7 @@ end
 
 HeroManager = List.new()
 MonsterManager = List.new()
+PropManager = List.new()
 
 local function solveCollision(object1, object2)
     local miniDistance = object1._radius + object2._radius
@@ -47,6 +48,7 @@ local function solveCollision(object1, object2)
     end  
 end
 
+--碰撞检测
 local function collision(object)
     for val = HeroManager.first, HeroManager.last do
         local sprite = HeroManager[val]
@@ -60,7 +62,15 @@ local function collision(object)
         if sprite._isalive == true and sprite ~= object then
             solveCollision(sprite, object)
         end                  
-    end      
+    end
+
+    --加入道具到碰撞检测中去
+    for val = PropManager.first, PropManager.last do
+        local sprite = PropManager[val]
+        if sprite._isalive == true and sprite ~= object then
+            solveCollision(sprite, object)
+        end
+    end
 end
 
 local function isOutOfBound(object)
@@ -106,7 +116,18 @@ function collisionDetect(dt)
         else
             List.remove(MonsterManager, val)
         end
-    end           
+    end
+
+    for val = PropManager.last, PropManager.first, -1 do
+        local sprite = PropManager[val]
+        if sprite._isalive == true then
+            collision(sprite)
+            isOutOfBound(sprite)
+        else
+            --List.remove(MonsterManager, val)
+            --道具需要循环利用，不能删除
+        end
+    end
 end
 
 --获取英雄的平均位置， 在battle scene中被调用

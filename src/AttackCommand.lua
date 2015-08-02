@@ -4,6 +4,7 @@ require "GlobalVariables"
 
 AttackManager = List.new()
 
+--攻击对象判定
 function solveAttacks(dt)
     for val = AttackManager.last, AttackManager.first, -1 do
         local attack = AttackManager[val]

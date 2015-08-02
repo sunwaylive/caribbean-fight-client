@@ -42,8 +42,8 @@ end
 
 function Slime:play3DAnim()
     self._sprite3d:runAction(cc.RepeatForever:create(createAnimation(file,0,22,0.7)))
-    
 end
+
 function Slime:playAnimation(name, loop)
     if self._curAnimation ~= name then --using name to check which animation is playing
         self._sprite3d:stopAction(self._curAnimation3d)
@@ -58,6 +58,7 @@ function Slime:playAnimation(name, loop)
         self._curAnimation = name
     end
 end
+
 function Slime:init3D()
     self:initShadow()
     self._sprite3d = cc.EffectSprite3D:create(file)
@@ -69,6 +70,7 @@ function Slime:init3D()
     self._sprite3d:setRotation(-90)
 end
 --
+
 function Slime:walkMode()
     self:angryFace(false)
     Actor.walkMode(self)
