@@ -213,17 +213,18 @@ function Actor:hookMode(collider)
     self:setStateType(EnumStateType.HOOKING)
     --self:playAnimation("knocked")
     
-	self.dirHook = collider.facing
+	self.hookDir = collider.facing
 	self.speed2 =collider.speed2
+	self.hookStartPos = collider.startPos
 end
 
 function Actor:hookingUpdate(dt)
-    if self:getStateType() == EnumStateType.HOOKING then
-		local selfPos = getPosTable(self)
-		local nextPos = cc.pRotateByAngle(cc.pAdd({x=self.speed2*dt, y=0},selfPos),selfPos,self.dirHook)
-		self:setPosition(nextPos)
-		print("hook")
-	end	
+	local selfPos = getPosTable(self)
+	local nextPos = cc.pRotateByAngle(cc.pAdd({x=self.speed2*dt, y=0},selfPos),selfPos,self.hookDir)
+	if (selfPos.x-self.hookStartPos.x)*(nextPos.x-self.hookStartPos.x)<=0 then
+		self:idleMode()
+	end
+	self:setPosition(nextPos)
 end
 
 function Actor:normalAttackSoundEffects()
@@ -393,7 +394,11 @@ function Actor:AI()
     if self._racetype == EnumRaceType.HERO then
         return true
     end
-    
+    --如果被钩中，不执行AI
+	if self:getStateType() == EnumStateType.HOOKING then
+		return true
+	end
+	
     if self._isalive then
         local state = self:getStateType()
         local allDead
