@@ -81,10 +81,11 @@ end
 
 --设置主场景中的地图和背景
 local function createBackground()
-    local spriteBg = cc.Sprite3D:create("model/scene/changing.c3b")
+    --local spriteBg = cc.Sprite3D:create("model/scene/changing.c3b")
+    local spriteBg = cc.Sprite3D:create("model/scene/BackGround.c3t")
 
     currentLayer:addChild(spriteBg)
-    spriteBg:setScale(2.65)
+    spriteBg:setScale(2000) --要放很大，不然看不见
     spriteBg:setPosition3D(cc.V3(-2300,-1000,0))
     spriteBg:setRotation3D(cc.V3(90,0,90)) --添加了地图的旋转
     spriteBg:setGlobalZOrder(-10)
