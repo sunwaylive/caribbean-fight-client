@@ -29,8 +29,8 @@ local function main()
     -- initialize director
     local director = cc.Director:getInstance()
 
-    --turn on display FPS,不现实左下角的状态显示
-    director:setDisplayStats(false)
+    --turn on display FPS,不现实左下角的状态显示    director:setDisplayStats(false)
+
 
     --set FPS. the default value is 1.0/60 if you don't call this
     director:setAnimationInterval(1.0 / 60)

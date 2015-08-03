@@ -391,7 +391,6 @@ function GameMaster:showProp()
     curProp:setVisible(true)
     local function hideCurProp()
         curProp:setVisible(false)
-        cclog("here")
     end
     curProp:runAction(cc.Sequence:create(cc.MoveBy:create(10.0,cc.V3(0,1200,0)), cc.CallFunc:create(hideCurProp)))
     --当道具划过之后，如果中途没有被勾勾住，则需要隐藏掉

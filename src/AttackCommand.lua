@@ -7,7 +7,7 @@ AttackManager = List.new()
 --攻击对象判定
 function solveAttacks(dt)
     for val = AttackManager.last, AttackManager.first, -1 do
-        local attack = AttackManager[val]
+        local attack = AttackManager[val] --看看这个attackmanager是什么？？,这个应该是管理具体攻击类型信息的
         local apos = getPosTable(attack)
         --如果是英雄发出攻击
         if attack.mask == EnumRaceType.HERO then
@@ -25,6 +25,23 @@ function solveAttacks(dt)
                     --如果怪物在角色的攻击范围之内，调用onCollide
                     if(afacing + attack.angle / 2) > angle and angle > (afacing- attack.angle/2) then
                         attack:onCollide(monster)
+                    end
+                end
+            end
+
+            --这里需要加入 对道具的碰撞检测
+            for pkey = PropManager.last, PropManager.first, -1 do
+                local prop = PropManager[pkey]
+                local ppos = prop._myPos
+                local dist = cc.pGetDistance(apos, ppos)
+
+                if dist < (attack.maxRange + prop._radius) and dist > attack.minRange then
+                    --在距离满足条件的情况下，检测攻击角度是否满足
+                    local angle = radNormalize(cc.pToAngleSelf(cc.pSub(ppos,apos)))
+                    local afacing = radNormalize(attack.facing)
+                    --如果怪物在角色的攻击范围之内，调用onCollide
+                    if(afacing + attack.angle / 2) > angle and angle > (afacing- attack.angle/2) then
+                        attack:onCollide(prop)
                     end
                 end
             end

@@ -11,7 +11,7 @@ arrow = nil --角色脚底箭头
 local specialCamera = {valid = false, position = cc.p(0,0)}
 local size = cc.Director:getInstance():getWinSize()
 local scheduler = cc.Director:getInstance():getScheduler()
-local cameraOffset =  cc.V3(150, 0, 0)
+local cameraOffset =  cc.V3(0 * 0.5, -800 * 0.5, 300 * 0.5)
 local cameraOffsetMin = {x=-300, y=-400}
 local cameraOffsetMax = {x=300, y=400}
 
@@ -33,12 +33,13 @@ local function moveCamera(dt)
         camera:lookAt(cc.V3(position.x, specialCamera.position.y, 50.0), cc.V3(0.0, 1.0, 0.0))
     elseif List.getSize(HeroManager) > 0 then
         --更新相机的位置，每一帧都更新。自动随着角色的移动而更新相机的位置。让camera 和 FocusPoint 的y坐标保持一致
-        local temp = cc.pLerp(cameraPosition,
-                              cc.p(focusPoint.x + cameraOffset.x, cameraOffset.y + focusPoint.y - size.height * 3 / 4), 2 * dt)
-        
+        --local temp = cc.pLerp(cameraPosition,
+          --                    cc.p(focusPoint.x + cameraOffset.x, cameraOffset.y + focusPoint.y - size.height * 3 / 4), 2 * dt)
+        --上一句是为了平滑过渡相机，这里我们不需要，直接设置相机的位置和便宜更加有控制感
+        local temp = cc.V3(focusPoint.x + cameraOffset.x, cameraOffset.y + focusPoint.y - size.height * 3 / 4)
         local position = cc.V3(temp.x, temp.y, size.height / 2 - 100 + 700)
         camera:setPosition3D(position)
-        camera:lookAt(cc.V3(position.x, focusPoint.y + 300, 50.0), cc.V3(0.0, 0.0, 1.0))
+        camera:lookAt(cc.V3(position.x, focusPoint.y + 500, 50.0), cc.V3(0.0, 0.0, 1.0)) --TODO: 要调整相机的视角，可以修改cameraOffset！！！
         --cclog("\ncalf %f %f %f \ncalf %f %f 50.000000", position.x, position.y, position.z, focusPoint.x, focusPoint.y)            
     end
 end
@@ -87,7 +88,7 @@ local function createBackground()
     currentLayer:addChild(spriteBg)
     spriteBg:setScale(2000) --要放很大，不然看不见
     spriteBg:setPosition3D(cc.V3(-2300,-1000,0))
-    spriteBg:setRotation3D(cc.V3(90,0,90)) --添加了地图的旋转
+    spriteBg:setRotation3D(cc.V3(90,0,0)) --添加了地图的旋转
     spriteBg:setGlobalZOrder(-10)
 
     --cc.Water:create 水的实现：在Water.cpp中。
@@ -98,6 +99,8 @@ local function createBackground()
     water:setRotation3D(cc.V3(0, 0, 90))
     water:setAnchorPoint(0,0)
     water:setGlobalZOrder(-10)
+    --先隐藏河流
+    water:setVisible(false)
 end
 
 --创建相机
