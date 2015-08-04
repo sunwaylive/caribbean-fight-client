@@ -674,13 +674,6 @@ function HookAttack:onCollide(target)
 	--返回
 	self.state = "BACK"
 	end
-    -- self:hurtEffect(target)
-    -- self:playHitAudio()    
-    -- self.owner._angry = self.owner._angry + target:hurt(self)*0.3
-    -- local anaryChange = {_name = MageValues._name, _angry = self.owner._angry, _angryMax = self.owner._angryMax}
-    -- MessageDispatchCenter:dispatchMessage(MessageDispatchCenter.MessageType.ANGRY_CHANGE, anaryChange)
-    -- --set cur duration to its max duration, so it will be removed when checking time out
-    -- self.curDuration = self.duration+1
 end
 
 function HookAttack:onUpdate(dt)
@@ -689,11 +682,15 @@ function HookAttack:onUpdate(dt)
 		local selfPos = getPosTable(self)
 		nextPos = cc.pRotateByAngle(cc.pAdd({x=self.speed*dt, y=0},selfPos),selfPos,self.facing)
 		self:setPosition(nextPos)
+		if cc.pGetDistance(self.startPos, nextPos) >= self.length then
+			self.state = "BACK"
+		end
 	elseif self.state == "BACK" then
 		local selfPos = getPosTable(self)
 		local nextPos = cc.pRotateByAngle(cc.pAdd({x=self.speed2*dt, y=0},selfPos),selfPos,self.facing)
 		if (selfPos.x-self.startPos.x)*(nextPos.x-self.startPos.x)<=0 then
 			self:onTimeOut()
+			return
 		end
 		self:setPosition(nextPos)
 	end

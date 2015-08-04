@@ -224,7 +224,7 @@ MageValues = {
         speed    = 400,
 		speed2	 = -400, --钩子返回的速度
         criticalChance = 0.05,
-		length	 = 200 --新增的钩子长度属性
+		length	 = 1000 --新增的钩子长度属性
     }, 
     _specialAttack   = {
         minRange = 0,

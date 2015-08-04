@@ -202,17 +202,30 @@ function Actor:hook(collider)
             damage = 1
         end
         self._hp = self._hp - damage
-		
-		self:hookMode(collider)
+
+        if self._hp > 0 then
+            if collider.knock and damage ~= 1 then
+                self:hookMode(collider)
+                self:hurtSoundEffects()
+            else
+                self:hurtSoundEffects()
+            end
+        else
+            self._hp = 0
+            self._isalive = false --角色死亡，进入dyingMode
+            self:dyingMode(getPosTable(collider),knock)        
+        end
+        
+        --three param judge if crit
+        local blood = self._hpCounter:showBloodLossNum(damage,self,critical)
+        self:addEffect(blood)
         return damage        
     end
     return 0
 end
 
 function Actor:hookMode(collider)
-    self:setStateType(EnumStateType.HOOKING)
-    --self:playAnimation("knocked")
-    
+    self:setStateType(EnumStateType.HOOKING) 
 	self.hookDir = collider.facing
 	self.speed2 =collider.speed2
 	self.hookStartPos = collider.startPos

@@ -434,6 +434,8 @@ function BattleScene.create()
 		sprite:addChild(circle)
 		sprite:addChild(arrow)
 	end
+	circle:setGlobalZOrder(2)
+	arrow:setGlobalZOrder(2)
 	circle:setVisible(false)
 	arrow:setVisible(false)
 	
