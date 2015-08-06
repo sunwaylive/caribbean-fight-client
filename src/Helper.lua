@@ -170,7 +170,8 @@ function List.removeObj(list, obj)
     		List.remove(list,index)
     		break
     	end
-    end    
+    end
+	return index
 end
 
 --在Actor中被用到

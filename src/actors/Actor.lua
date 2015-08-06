@@ -1,5 +1,6 @@
 require "Helper"
 require "AttackCommand"
+require "Manager"
 --type
 
 
@@ -27,6 +28,23 @@ function Actor:ctor()
     if uiLayer~=nil then
         currentLayer:addChild(self._effectNode)
     end
+	
+	if bloodbarLayer~=nil then
+		self._bloodbar = cc.ProgressTimer:create(cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png"))
+		self._bloodbar:setColor(cc.c3b(149,254,26))
+		self._bloodbar:setType(cc.PROGRESS_TIMER_TYPE_BAR)
+		self._bloodbar:setMidpoint(cc.vertex2F(0,0))
+		self._bloodbar:setBarChangeRate(cc.vertex2F(1,0))
+		self._bloodbar:setPercentage(100)
+		self._bloodbar:setPosition3D(cc.V3(self:getPositionX(), self:getPositionY(),4))
+		self._bloodbar:setScale(1)
+		if self:getRaceType() == EnumRaceType.HERO then
+			List.pushlast(bloodbarList,self._bloodbar)
+		elseif self:getRaceType() == EnumRaceType.MONSTER then
+			List.pushlast(monsterBloodbarList,self._bloodbar)
+		end
+		bloodbarLayer:addChild(self._bloodbar)
+	end
 end
 
 --给角色添加特效攻击
@@ -309,14 +327,14 @@ function Actor:dyingMode(knockSource, knockAmount)
     if self._racetype == EnumRaceType.HERO then
         --回收对象
         uiLayer:heroDead(self)
-        List.removeObj(HeroManager,self) 
+        List.removeObj(HeroManager,self)
         self:runAction(cc.Sequence:create(cc.DelayTime:create(3),cc.MoveBy:create(1.0,cc.V3(0,0,-50)),cc.RemoveSelf:create()))
         
         self._angry = 0
         local anaryChange = {_name = self._name, _angry = self._angry, _angryMax = self._angryMax}
         MessageDispatchCenter:dispatchMessage(MessageDispatchCenter.MessageType.ANGRY_CHANGE, anaryChange)          
     else --可以看到这里有一个3秒后回收到pool的操作
-        List.removeObj(MonsterManager,self) 
+        List.removeObj(MonsterManager,self)
         local function recycle()
             self:setVisible(false)
             List.pushlast(getPoolByName(self._name),self)

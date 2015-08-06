@@ -213,6 +213,7 @@ function GameMaster:addDragon()
         dragon:setVisible(false)
         dragon:setAIEnabled(false)
         List.pushlast(DragonPool,dragon)
+		List.pushlast(MonsterList,dragon)
     end   
 end
 
@@ -223,6 +224,7 @@ function GameMaster:addSlime()
         slime:setVisible(false)
         slime:setAIEnabled(false)
         List.pushlast(SlimePool,slime)
+		List.pushlast(MonsterList,slime)
     end 
 end
 
@@ -233,6 +235,7 @@ function GameMaster:addPiglet()
     	piglet:setVisible(false)
     	piglet:setAIEnabled(false)
     	List.pushlast(PigletPool,piglet)
+		List.pushlast(MonsterList,piglet)
     end   
 end
 
@@ -243,6 +246,7 @@ function GameMaster:addRat()
         rat:setVisible(false)
         rat:setAIEnabled(false)
         List.pushlast(RatPool,rat)
+		List.pushlast(MonsterList,rat)
     end  
 end
 

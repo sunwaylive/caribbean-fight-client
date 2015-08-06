@@ -1,7 +1,9 @@
 require "Helper"
 require "Manager"
 require "MessageDispatchCenter"
+require "BloodbarUI"
 
+bloodbarLayer = nil
 currentLayer = nil
 uiLayer = nil
 gameMaster = nil
@@ -126,8 +128,10 @@ local function gameController(dt)
     gameMaster:update(dt)--负责刷怪、刷新对话框、提示等等
     moveHero(dt) --监听角色控制的移动,这个必须要放到collisionDetect(dt)前面，来保证角色移动之后，能检测是否出界
     collisionDetect(dt)--碰撞检测：由Manager.lua 来维护
+	BloodbarUpdate(dt)
     solveAttacks(dt)--伤害计算：由attackCommand来维护
     moveCamera(dt)--移动相机
+	print("before")
 end
 
 --初始化UI层
@@ -139,6 +143,46 @@ local function initUILayer()
     uiLayer:setScale(0.25)--设置UI的大小
     uiLayer:ignoreAnchorPointForPosition(false)
     uiLayer:setGlobalZOrder(3000)--确保UI盖在最上面
+end
+
+function BloodbarUpdate(dt)
+	bloodBarClone = cc.ProgressTimer:create(cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png"))
+	bloodBarClone:setType(cc.PROGRESS_TIMER_TYPE_BAR)
+	bloodBarClone:setMidpoint(cc.vertex2F(0,0))
+	bloodBarClone:setBarChangeRate(cc.vertex2F(1,0))
+	bloodBarClone:setScale(1,2)
+	
+	for val = HeroManager.first, HeroManager.last do
+        local actor = HeroManager[val]
+		local percent = actor._hp/actor._maxhp*100
+        local progressTo = cc.ProgressTo:create(0.3,percent)
+		local progressToClone = cc.ProgressTo:create(1,percent)
+		print("H",val)
+		bloodbarList[val]:setPercentage(percent)
+		bloodbarList[val]:stopAllActions()
+		bloodbarList[val]:setPosition3D(cc.V3(actor._myPos.x,actor._myPos.y,actor._heroHeight+10))
+		bloodbarList[val]:runAction(progressTo)
+		bloodBarClone:setPercentage(percent)
+		bloodBarClone:runAction(progressToClone)
+    end
+	for val = MonsterList.first, MonsterList.last do
+        local actor = MonsterList[val]
+		print("M",val,actor._hp)
+		if actor._isalive then
+			local percent = actor._hp/actor._maxhp*100
+			local progressTo = cc.ProgressTo:create(0.3,percent)
+			local progressToClone = cc.ProgressTo:create(1,percent)
+			monsterBloodbarList[val]:setVisible(true)
+			monsterBloodbarList[val]:setPercentage(percent)
+			monsterBloodbarList[val]:stopAllActions()
+			monsterBloodbarList[val]:setPosition3D(cc.V3(actor._myPos.x,actor._myPos.y,actor._heroHeight+10))
+			monsterBloodbarList[val]:runAction(progressTo)
+			bloodBarClone:setPercentage(percent)
+			bloodBarClone:runAction(progressToClone)
+		else 
+			monsterBloodbarList[val]:setVisible(false)
+		end
+    end
 end
 
 --类定义
@@ -418,8 +462,15 @@ function BattleScene.create()
     createBackground()
     
     initUILayer()
+	--initBloodbarLayer()
+	
     gameMaster = require("GameMaster").create()
     
+	bloodbarLayer = require("BloodbarUI").create()
+    bloodbarLayer:setGlobalZOrder(2000)--确保UI盖在最上面
+	bloodbarLayer:init()
+	scene:addChild(bloodbarLayer)
+	
 	--给角色脚底添加圆圈和箭头
 	circle = cc.Sprite:createWithSpriteFrameName("joystick_frame.png")
     circle:setScale(12)
