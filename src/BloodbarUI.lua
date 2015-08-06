@@ -1,7 +1,6 @@
 require "GlobalVariables"
 require "Actor"
 require "Manager"
-
 	
 local BloodbarLayer = class("bloodbarLayer",function() return cc.Layer:create() end)
 
@@ -22,6 +21,7 @@ function BloodbarLayer:ctor()
 end
 
 function BloodbarLayer:init()
+	--英雄的血条
 	for val = HeroManager.first, HeroManager.last do
         local actor = HeroManager[val]
 		bloodbar = cc.ProgressTimer:create(cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png"))
@@ -35,6 +35,7 @@ function BloodbarLayer:init()
 		List.pushlast(bloodbarList,bloodbar)
 		self:addChild(bloodbar)
     end
+	--小怪的血条，实际可能用不到，或者给AI用
 	for val = MonsterList.first, MonsterList.last do
         local actor = MonsterList[val]
 		bloodbar = cc.ProgressTimer:create(cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png"))
@@ -50,7 +51,5 @@ function BloodbarLayer:init()
 		self:addChild(bloodbar)
     end
 end
-
-
 
 return BloodbarLayer
