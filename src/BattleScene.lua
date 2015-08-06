@@ -190,7 +190,7 @@ function initArrowCircle(layer)
 	layer.circle = cc.Sprite:createWithSpriteFrameName("joystick_frame.png")
     layer.circle:setScale(12)
 	layer.circle:setOpacity(255*0.7)
-	layer.circle:setGlobalZOrder(2)
+	layer.circle:setGlobalZOrder(0)
 	layer.circle:setVisible(false)
 	layer:addChild(layer.circle)
 	
@@ -198,7 +198,7 @@ function initArrowCircle(layer)
     layer.arrow:setScale(12)
 	layer.arrow:setOpacity(255*0.7)
 	layer.arrow:setAnchorPoint(0.95,0.5)
-	layer.arrow:setGlobalZOrder(2)
+	layer.arrow:setGlobalZOrder(0)
 	layer.arrow:setVisible(false)
 	layer:addChild(layer.arrow)
 end
@@ -259,6 +259,9 @@ function BattleScene:enableTouch()
             local heroMoveSpeed = 250 --设置玩家的移动速度
             for val = HeroManager.first, HeroManager.last do
                 local sprite = HeroManager[val]
+				if(sprite:getStateType()==EnumStateType.ATTACKING) then
+					break;
+				end
                 sprite._heroMoveDir = heroMoveDir
                 sprite._heroMoveSpeed = heroMoveSpeed
                 if sprite:getStateType() ~= EnumStateType.WALKING then
@@ -289,6 +292,9 @@ function BattleScene:enableTouch()
             local heroMoveSpeed = 250 --设置玩家的移动速度
             for val = HeroManager.first, HeroManager.last do
                 local sprite = HeroManager[val]
+				if(sprite:getStateType()==EnumStateType.ATTACKING) then
+					break;
+				end
                 sprite._heroMoveDir = heroMoveDir
                 sprite._heroMoveSpeed = heroMoveSpeed
                 if sprite:getStateType() ~= EnumStateType.WALKING then
@@ -361,6 +367,9 @@ function BattleScene:enableTouch()
         
             for val = HeroManager.first, HeroManager.last do
                 local sprite = HeroManager[val]
+				if(sprite:getStateType()==EnumStateType.ATTACKING) then
+					break;
+				end
                 --sprite._heroMoveDir = heroMoveDir --方向不变
                 sprite._heroMoveSpeed = 0 --速度变为0
                 if sprite:getStateType() ~= EnumStateType.IDLE then
