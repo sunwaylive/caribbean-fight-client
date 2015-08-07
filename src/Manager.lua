@@ -9,6 +9,12 @@ PigletPool = List.new()
 RatPool = List.new()
 BossPool = List.new()
 
+--所有角色的血条、箭头和圈
+bloodbarList = List.new()
+monsterBloodbarList = List.new()
+arrowList = List.new()
+circleList = List.new()
+
 --getPoolByName
 function getPoolByName(name)
     if name == "Piglet" then
@@ -30,6 +36,7 @@ end
 HeroManager = List.new()
 MonsterManager = List.new()
 PropManager = List.new()
+MonsterList = List.new() --MonsterManager和各种Pool里所有的Monster列表
 
 local function solveCollision(object1, object2)
     local miniDistance = object1._radius + object2._radius
