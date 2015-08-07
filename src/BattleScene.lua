@@ -338,14 +338,8 @@ function BattleScene:enableTouch()
 				--将角色转向调为箭头方向
 				local touchPoint = cc.p(touch:getLocation().x, touch:getLocation().y)
 				local heroMoveDir = cc.pNormalize(cc.p(touchPoint.x - uiLayer.AttackBtn:getPositionX(), touchPoint.y - uiLayer.AttackBtn:getPositionY()))
-				sprite._curFacing = cc.pToAngleSelf(heroMoveDir)
 				sprite._heroMoveDir = heroMoveDir
-				sprite:setRotation(60)
-				sprite:setFacing(60)
-				--sprite:setRotation(-RADIANS_TO_DEGREES(sprite._curFacing))
-			end
-			for val = HeroManager.first, HeroManager.last do
-                local sprite = HeroManager[val]
+				sprite._heroMoveSpeed = 0
 				--攻击
                 if sprite:getStateType() ~= EnumStateType.ATTACKING then
                     sprite:setStateType(EnumStateType.ATTACKING)
@@ -368,7 +362,7 @@ function BattleScene:enableTouch()
             for val = HeroManager.first, HeroManager.last do
                 local sprite = HeroManager[val]
 				if(sprite:getStateType()==EnumStateType.ATTACKING) then
-					break;
+					break
 				end
                 --sprite._heroMoveDir = heroMoveDir --方向不变
                 sprite._heroMoveSpeed = 0 --速度变为0
