@@ -9,6 +9,7 @@ uiLayer = nil
 gameMaster = nil
 circle = nil
 arrow = nil
+t = nil
 
 local specialCamera = {valid = false, position = cc.p(0,0)}
 local size = cc.Director:getInstance():getWinSize()
@@ -132,6 +133,11 @@ local function gameController(dt)
 	ArrowUpdate(dt)
     solveAttacks(dt)--伤害计算：由attackCommand来维护
     moveCamera(dt)--移动相机
+	-- local count = 000000
+	-- for i, val in pairs(t) do
+		-- count = count + 1
+	-- end
+	-- print(count)
 end
 
 --初始化UI层
@@ -146,28 +152,20 @@ local function initUILayer()
 end
 
 function BloodbarUpdate(dt)
-	bloodBarClone = cc.ProgressTimer:create(cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png"))
-	bloodBarClone:setType(cc.PROGRESS_TIMER_TYPE_BAR)
-	bloodBarClone:setMidpoint(cc.vertex2F(0,0))
-	bloodBarClone:setBarChangeRate(cc.vertex2F(1,0))
-	bloodBarClone:setScale(1,2)
-	
 	for val = HeroManager.first, HeroManager.last do
         local actor = HeroManager[val]
 		local percent = actor._hp/actor._maxhp*100
         local progressTo = cc.ProgressTo:create(0.3,percent)
 		local progressToClone = cc.ProgressTo:create(1,percent)
-		--print("H",val)
 		bloodbarList[val]:setPercentage(percent)
 		bloodbarList[val]:stopAllActions()
 		bloodbarList[val]:setPosition3D(cc.V3(actor._myPos.x,actor._myPos.y,actor._heroHeight+10))
-		bloodbarList[val]:runAction(progressTo)
-		bloodBarClone:setPercentage(percent)
-		bloodBarClone:runAction(progressToClone)
+		--bloodbarList[val]:runAction(progressTo)
+		-- bloodBarClone:setPercentage(percent)
+		-- bloodBarClone:runAction(progressToClone)
     end
 	for val = MonsterList.first, MonsterList.last do
         local actor = MonsterList[val]
-		--print("M",val,actor._hp)
 		if actor._isalive then
 			local percent = actor._hp/actor._maxhp*100
 			local progressTo = cc.ProgressTo:create(0.3,percent)
@@ -176,9 +174,6 @@ function BloodbarUpdate(dt)
 			monsterBloodbarList[val]:setPercentage(percent)
 			monsterBloodbarList[val]:stopAllActions()
 			monsterBloodbarList[val]:setPosition3D(cc.V3(actor._myPos.x,actor._myPos.y,actor._heroHeight+10))
-			monsterBloodbarList[val]:runAction(progressTo)
-			bloodBarClone:setPercentage(percent)
-			bloodBarClone:runAction(progressToClone)
 		else 
 			monsterBloodbarList[val]:setVisible(false)
 		end
@@ -460,6 +455,9 @@ end
 --创建场景
 function BattleScene.create()
     local scene = BattleScene:new()
+	
+	t = {}
+	setmetatable(t, {__mode = "k"})
     --wei add, heros and monsters are both on currentLayer
     currentLayer = cc.Layer:create()
     currentLayer:setCascadeColorEnabled(true) --自节点能够随着父节点的颜色改变而改变
