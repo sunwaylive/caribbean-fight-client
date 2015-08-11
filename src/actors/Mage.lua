@@ -93,8 +93,8 @@ do
     Mage._action = {
         idle = createAnimation(file,206,229,0.7),
         walk = createAnimation(file,99,119,0.7),
-        attack1 = createAnimation(file,12,30,0.7),
-        attack2 = createAnimation(file,31,49,0.7),
+        attack1 = createAnimation(file,12,30,1),
+        attack2 = createAnimation(file,31,49,1),
         specialattack1 = createAnimation(file,56,74,1),
         specialattack2 = createAnimation(file,75,92,1),
         defend = createAnimation(file,1,5,0.7),

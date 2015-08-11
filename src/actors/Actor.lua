@@ -24,7 +24,7 @@ function Actor:ctor()
     self._heroHeight = 150
     self._heroMoveSpeed = 0
     self._heroMoveDir = cc.p(0, 0)
-    
+	
     if uiLayer~=nil then
         currentLayer:addChild(self._effectNode)
     end
@@ -126,6 +126,7 @@ function Actor:setStateType(type)
             self._puff:setEmissionRate(0)
         end
     end
+	
 end
 
 function Actor:setTarget(target)
@@ -279,16 +280,26 @@ end
 
 --======State Machine switching functions, 各种mode其实就是执行一下对应的动画
 function Actor:idleMode() --switch into idle mode
+	if self._raceType == EnumRaceType.HERO then
+		print("HERO: idleMode")
+    end
+	print(123141)
     self:setStateType(EnumStateType.IDLE)
     self:playAnimation("idle", true)
 end
 
 function Actor:walkMode() --switch into walk mode
-    self:setStateType(EnumStateType.WALKING)
+	if self._raceType == EnumRaceType.HERO then
+		print("HERO: walkMode")
+    end
+	self:setStateType(EnumStateType.WALKING)
     self:playAnimation("walk", true)
 end
 
 function Actor:attackMode() --switch into walk mode
+	if self._raceType == EnumRaceType.HERO then
+		print("HERO: attackMode")
+    end
     self:setStateType(EnumStateType.ATTACKING)
     self:playAnimation("idle", true)
     self._attackTimer = self._attackFrequency * 3 / 4
@@ -355,12 +366,13 @@ end
 --状态机循环更新，配合Actor:AI()两个函数使用
 function Actor:stateMachineUpdate(dt)
     local state = self:getStateType()
-    
+    --print(state)
     --执行相应更新状态的函数
     if state == EnumStateType.WALKING  then
         self:walkUpdate(dt)
     elseif state == EnumStateType.IDLE then
         --do nothing :p
+		--print("stateMachine:IDLE")
     elseif state == EnumStateType.ATTACKING then
         --I am attacking someone, I probably has a target
         self:attackUpdate(dt)
@@ -507,13 +519,16 @@ function Actor:attackUpdate(dt)
         return true
     end
      --]]
-    
+	-- 上一个攻击状态还没结束，不进行任何动作
     self._attackTimer = self._attackTimer + dt
     if self._attackTimer > self._attackFrequency then
-        
+		if self._cooldown == true then
+			return
+		end
         self._attackTimer = self._attackTimer - self._attackFrequency
-        local function playIdle()
+		local function playIdle()
             self:setStateType(EnumStateType.IDLE)--打完一下之后，设置成idle状态，免得一直在攻击
+			print("IDLE")
             self:playAnimation("idle", true)
             self._cooldown = false
         end
@@ -525,8 +540,7 @@ function Actor:attackUpdate(dt)
                 self:normalAttack()
             end
             --攻击动画播放的快慢，在每个角色自己的lua文件中被初始化
-            local attackAction = cc.Sequence:create(self._action.attack1:clone(),cc.CallFunc:create(createCol),self._action.attack2:clone(),cc.CallFunc:create(playIdle))
-            
+            local attackAction = cc.Sequence:create(self._action.attack1:clone(),cc.CallFunc:create(createCol),self._action.attack2:clone(),cc.CallFunc:create(playIdle))			
             self._sprite3d:stopAction(self._curAnimation3d)
             self._sprite3d:runAction(attackAction)
             self._curAnimation = attackAction
