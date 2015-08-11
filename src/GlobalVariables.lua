@@ -221,8 +221,8 @@ MageValues = {
         damage   = 280,
         mask     = EnumRaceType.HERO,
         duration = 10,	--改为10s，原值为2
-        speed    = 400,
-		speed2	 = -400, --钩子返回的速度
+        speed    = 800,
+		speed2	 = -1200, --钩子返回的速度
         criticalChance = 0.05,
 		length	 = 1000 --新增的钩子长度属性
     }, 

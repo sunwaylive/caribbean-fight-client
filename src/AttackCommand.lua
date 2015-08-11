@@ -648,6 +648,7 @@ function HookAttack.create(pos,facing,attackInfo, target, owner)
 	
 	ret.startPos = pos;
 	ret.state = "ATTACK"
+	ret.hasTarget = false
     
     return ret
 end
@@ -665,14 +666,21 @@ function HookAttack:playHitAudio()
 end
 
 function HookAttack:onCollide(target)
-	if(self.state == "BACK") then
-	--返回状态下无效果，回到起点后消失
+	-- if(self.state == "ATTACK") then
+		-- 测试钩子返回过程中是否可以钩人以及碰撞
+		-- return
+	-- end
+	if(self.hasTarget == true) then
+		--如果已经发生了碰撞，则不再生效
 		return
 	else
-	--钩中
-	target:hook(self)
-	--返回
-	self.state = "BACK"
+		--钩中
+		target:hook(self)
+		--已钩到人
+		self.hasTarget = true
+		print("Peng!")
+		--返回
+		self.state = "BACK"
 	end
 end
 
