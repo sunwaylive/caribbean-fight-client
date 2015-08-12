@@ -182,18 +182,18 @@ end
 --初始化箭头和圈
 function initArrowCircle(layer)
 	--角色脚下的圈和箭头，放在这儿实现可以解决双摇杆操纵箭头方向的问题。
-	layer.circle = cc.Sprite:createWithSpriteFrameName("joystick_frame.png")
-    layer.circle:setScale(12)
+	layer.circle = cc.Sprite:createWithSpriteFrameName("circle.png")
+    layer.circle:setScale(6.2)
 	layer.circle:setOpacity(255*0.7)
-	layer.circle:setGlobalZOrder(0)
+	layer.circle:setGlobalZOrder(1)
 	layer.circle:setVisible(false)
 	layer:addChild(layer.circle)
 	
-	layer.arrow = cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png")
-    layer.arrow:setScale(12)
+	layer.arrow = cc.Sprite:createWithSpriteFrameName("arrow.png")
+    layer.arrow:setScale(2.2)
 	layer.arrow:setOpacity(255*0.7)
-	layer.arrow:setAnchorPoint(0.95,0.5)
-	layer.arrow:setGlobalZOrder(0)
+	layer.arrow:setAnchorPoint(0.05,0.5)
+	layer.arrow:setGlobalZOrder(1)
 	layer.arrow:setVisible(false)
 	layer:addChild(layer.arrow)
 end
@@ -268,7 +268,7 @@ function BattleScene:enableTouch()
 			uiLayer.AttackRange:setVisible(true)
 			uiLayer.AttackArrow:setVisible(true)
 			
-			bloodbarLayer.circle:setVisible(true)
+			--bloodbarLayer.circle:setVisible(true)
 			bloodbarLayer.arrow:setVisible(true)
 	
         end
@@ -302,7 +302,7 @@ function BattleScene:enableTouch()
 			local m = cc.p(touch:getLocation().x - uiLayer.AttackArrow:getPositionX(), 
 							touch:getLocation().y - uiLayer.AttackArrow:getPositionY())
 			--箭头初始方向
-			local n = cc.p(-1,0)
+			local n = cc.p(1,0)
 			--m，n间的弧度
 			a = cc.pGetAngle(m,n)
 			--弧度转成角度
@@ -334,6 +334,7 @@ function BattleScene:enableTouch()
 				local touchPoint = cc.p(touch:getLocation().x, touch:getLocation().y)
 				local heroMoveDir = cc.pNormalize(cc.p(touchPoint.x - uiLayer.AttackBtn:getPositionX(), touchPoint.y - uiLayer.AttackBtn:getPositionY()))
 				sprite._heroMoveDir = heroMoveDir
+				sprite._curFacing = heroMoveDir
 				sprite._heroMoveSpeed = 0
 				--攻击
                 if sprite:getStateType() ~= EnumStateType.ATTACKING then
@@ -352,7 +353,7 @@ function BattleScene:enableTouch()
             --do nothing
         elseif message == "JOYSTICK" then
             --恢复按钮的位置
-            uiLayer.JoystickBtn:setPosition(uiLayer.JoystickFrame:getContentSize().width - 30, uiLayer.JoystickFrame:getContentSize().height - 30)
+            uiLayer.JoystickBtn:setPosition(uiLayer.JoystickFrame:getPosition())
         
             for val = HeroManager.first, HeroManager.last do
                 local sprite = HeroManager[val]
@@ -361,6 +362,7 @@ function BattleScene:enableTouch()
 				end
                 --sprite._heroMoveDir = heroMoveDir --方向不变
                 sprite._heroMoveSpeed = 0 --速度变为0
+				--print("stop walking")
                 if sprite:getStateType() ~= EnumStateType.IDLE then
                     sprite:idleMode()
                 end
@@ -371,7 +373,7 @@ function BattleScene:enableTouch()
         elseif message == nil then
             --nil message
             --恢复按钮的位置
-            uiLayer.JoystickBtn:setPosition(uiLayer.JoystickFrame:getContentSize().width - 30, uiLayer.JoystickFrame:getContentSize().height - 30)
+            uiLayer.JoystickBtn:setPosition(uiLayer.JoystickFrame:getPosition())
             for val = HeroManager.first, HeroManager.last do
                 local sprite = HeroManager[val]
                 --sprite._heroMoveDir = heroMoveDir --方向不变
@@ -475,6 +477,18 @@ function BattleScene.create()
     
     initUILayer()
 	--initBloodbarLayer()
+	
+	local sprite = cc.Sprite3D:create("minigame/mao.c3b")
+	sprite:setScale(3)
+	sprite:setPosition3D(cc.V3(-2000,-500,30))
+	sprite:setRotation3D(cc.V3(90,0,0))
+	currentLayer:addChild(sprite,1,5)
+	
+	local sprite2 = cc.Sprite3D:create("minigame/maolianNEW.c3b")
+	sprite2:setScale(3)
+	sprite2:setPosition3D(cc.V3(-2200,-500,30))
+	sprite2:setRotation3D(cc.V3(90,0,90))
+	currentLayer:addChild(sprite2,1,5)
 	
     gameMaster = require("GameMaster").create()
     

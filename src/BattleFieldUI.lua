@@ -470,14 +470,14 @@ self:addChild(self.KnightPngFrame,1)
 
 --添加摇杆
 function BattlefieldUI:joystickInit()
-    self.JoystickFrame = cc.Sprite:createWithSpriteFrameName("joystick_frame.png")
-    self.JoystickFrame:setPosition(self.JoystickFrame:getContentSize().width - 30, self.JoystickFrame:getContentSize().height - 30)
-    self.JoystickFrame:setScale(1.5, 1.5)
+    self.JoystickFrame = cc.Sprite:createWithSpriteFrameName("edition handhold-outsaid.png")
+    self.JoystickFrame:setPosition(cc.p(250 / 1136 * G.winSize.width - 100, 70 / 640 * G.winSize.height + 100))
+    self.JoystickFrame:setScale(0.5, 0.5)
     self:addChild(self.JoystickFrame, 1)
     
-    self.JoystickBtn = cc.Sprite:createWithSpriteFrameName("joystick_btn.png")
-    self.JoystickBtn:setPosition(self.JoystickFrame:getContentSize().width - 30, self.JoystickFrame:getContentSize().height - 30)
-    self.JoystickBtn:setScale(1.0, 1.0)
+    self.JoystickBtn = cc.Sprite:createWithSpriteFrameName("editon-handhold-mid.png")
+    self.JoystickBtn:setPosition(self.JoystickFrame:getPosition())
+    self.JoystickBtn:setScale(0.5, 0.5)
     self:addChild(self.JoystickBtn, 2)
 end
 
@@ -492,17 +492,17 @@ function BattlefieldUI:attackBtnInit()
     --TODO:位置应该跟着英雄走
 
 	--外面的圈
-	self.AttackRange = cc.Sprite:createWithSpriteFrameName("joystick_frame.png")
+	self.AttackRange = cc.Sprite:createWithSpriteFrameName("circle.png")
 	--self.AttackRange:setPosition3D(cc.V3(1070 / 1136 * G.winSize.width, 70 / 640 * G.winSize.height, 2))
     self.AttackRange:setPosition3D(self.AttackBtn:getPosition3D())
-	self.AttackRange:setScale(2.0, 2.0)
+	self.AttackRange:setScale(1.0, 1.0)
 	self:addChild(self.AttackRange, 1)
 	self.AttackRange:setVisible(false)
 	--箭头
-	self.AttackArrow = cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png")
-	self.AttackArrow:setAnchorPoint(1.0,0.5)
+	self.AttackArrow = cc.Sprite:createWithSpriteFrameName("arrow.png")
+	self.AttackArrow:setAnchorPoint(0,0.5)
     self.AttackArrow:setPosition3D(self.AttackBtn:getPosition3D())
-    self.AttackArrow:setScale(2.0, 2.0)
+    self.AttackArrow:setScale(0.3, 0.3)
 	self:addChild(self.AttackArrow, 1)
 	self.AttackArrow:setVisible(false)
 end

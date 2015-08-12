@@ -630,6 +630,38 @@ function BossSuper:onUpdate(dt)
     self:setPosition(nextPos)
 end
 
+Chain = class("Chain", function()
+	return BasicCollider.new()
+end)
+function Chain.create(pos,facing,attackInfo, target, owner)
+    local ret = Chain.new()
+    ret:initData(pos,facing,attackInfo)
+    ret._target = target
+    ret.owner = owner
+    
+    --ret.sp = cc.BillBoard:create("FX/FX.png", RECTS.iceBolt, 0)
+	ret.sp = cc.Sprite3D:create("minigame/maolianNEW.c3b")
+    --ret.sp:setCamera(camera)
+    ret.sp:setPosition3D(cc.V3(0,0,50))
+    ret.sp:setScale(1.5)
+	ret.sp:setRotation3D(cc.V3(90,0,270 - facing * 180 / 3.14))
+	
+    ret:addChild(ret.sp)
+	ret.startPos = pos;
+    return ret
+end
+function Chain:onTimeOut()
+    self:removeFromParent()       
+end
+function Chain:onCollide(target)
+	if target == self.owner then
+		print("destroy")
+		self:onTimeOut()
+	else
+		return
+	end
+end
+
 HookAttack = class("HookAttack", function()
 	return BasicCollider.new()
 end)
@@ -640,25 +672,27 @@ function HookAttack.create(pos,facing,attackInfo, target, owner)
     ret._target = target
     ret.owner = owner
     
-    ret.sp = cc.BillBoard:create("FX/FX.png", RECTS.iceBolt, 0)
+    --ret.sp = cc.BillBoard:create("FX/FX.png", RECTS.iceBolt, 0)
+	ret.sp = cc.Sprite3D:create("minigame/maoNEW.c3b")
     --ret.sp:setCamera(camera)
     ret.sp:setPosition3D(cc.V3(0,0,50))
-    ret.sp:setScale(2)
+    ret.sp:setScale(1.5)
+	ret.sp:setRotation3D(cc.V3(90,0,270 - facing * 180 / 3.14))
+	
     ret:addChild(ret.sp)
 	
 	ret.startPos = pos;
 	ret.state = "ATTACK"
 	ret.hasTarget = false
-    
+	-- 链条的位置
+    ret.chainPos = pos
+	ret.chainList = List.new()
     return ret
 end
 
 function HookAttack:onTimeOut()
-       
-    self.sp:setTextureRect(RECTS.iceSpike)
-    self.sp:runAction(cc.FadeOut:create(1))
-    self.sp:setScale(4)
-
+	List.removeObj(AttackManager, self)
+    self:removeFromParent()       
 end
 
 function HookAttack:playHitAudio()
@@ -690,13 +724,45 @@ function HookAttack:onUpdate(dt)
 		local selfPos = getPosTable(self)
 		nextPos = cc.pRotateByAngle(cc.pAdd({x=self.speed*dt, y=0},selfPos),selfPos,self.facing)
 		self:setPosition(nextPos)
+
+		if cc.pGetDistance(self.chainPos, nextPos) >= 50 then
+			local sprite = cc.Sprite3D:create("minigame/maolianNEW.c3b")
+			sprite:setPosition3D(cc.V3(nextPos.x,nextPos.y,50))
+			sprite:setScale(2.5)
+			sprite:setRotation3D(cc.V3(90,0,360 - self.facing * 180 / 3.14))
+			currentLayer:addChild(sprite)			
+			List.pushlast(self.chainList, sprite)
+			print("ATTACK",List.getSize(self.chainList))
+			self.chainPos = nextPos
+		end
 		if cc.pGetDistance(self.startPos, nextPos) >= self.length then
+			self.chainPos = nextPos
+			local sprite = List.poplast(self.chainList)
+			sprite:removeFromParent()
+			print("BACK",List.getSize(self.chainList))
 			self.state = "BACK"
 		end
 	elseif self.state == "BACK" then
 		local selfPos = getPosTable(self)
+		-- if sp ~= nil then
+			-- sp:onTimeOut()
+		-- end
 		local nextPos = cc.pRotateByAngle(cc.pAdd({x=self.speed2*dt, y=0},selfPos),selfPos,self.facing)
-		if (selfPos.x-self.startPos.x)*(nextPos.x-self.startPos.x)<=0 then
+		
+		if cc.pGetDistance(self.chainPos, nextPos) >= 50 then
+			local sprite = List.poplast(self.chainList)
+			sprite:removeFromParent()
+			print("BACK",List.getSize(self.chainList))
+			self.chainPos = nextPos
+		end
+		-- 判断钩子是否回到原地
+		--if (selfPos.x-self.startPos.x)*(nextPos.x-self.startPos.x)<=0 then
+		if cc.pGetDistance(self.startPos, nextPos) <= 10 then
+			for index=self.chainList.first, List.getSize(self.chainList) do	
+				if self.chainList[index]  then
+					self.chainList[index]:removeFromParent()
+				end
+			end
 			self:onTimeOut()
 			return
 		end

@@ -5,11 +5,14 @@ Monster Actors Values：
 
 ---hurtEffect
 cc.SpriteFrameCache:getInstance():addSpriteFrames("FX/FX.plist")
+cc.SpriteFrameCache:getInstance():addSpriteFrames("minigame/UI.plist")
+
 RECTS = {
     iceBolt = cc.SpriteFrameCache:getInstance():getSpriteFrame("icebolt.png"):getRect(),
     iceSpike =cc.SpriteFrameCache:getInstance():getSpriteFrame("iceSpike1.png"):getRect(),
     fireBall = cc.SpriteFrameCache:getInstance():getSpriteFrame("fireball1.png"):getRect(),
     thunderBall = cc.SpriteFrameCache:getInstance():getSpriteFrame("thunderball.png"):getRect(),
+	--hook = cc.SpriteFrameCache:getInstance():getSpriteFrame("minigame/mao.c3b"):getRect(),
 }
 --这里存放了所有battleUI中用到的图片资源
 cc.SpriteFrameCache:getInstance():addSpriteFrames("battlefieldUI/battleFieldUI.plist")
