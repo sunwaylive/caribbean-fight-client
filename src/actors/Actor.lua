@@ -253,7 +253,8 @@ end
 function Actor:hookingUpdate(dt)
 	local selfPos = getPosTable(self)
 	local nextPos = cc.pRotateByAngle(cc.pAdd({x=self.speed2*dt, y=0},selfPos),selfPos,self.hookDir)
-	if (selfPos.x-self.hookStartPos.x)*(nextPos.x-self.hookStartPos.x)<=0 then
+	--if (selfPos.x-self.hookStartPos.x)*(nextPos.x-self.hookStartPos.x)<=0 then
+	if cc.pGetDistance(self.hookStartPos, nextPos) <= 100 then
 		self:idleMode()
 	end
 	self:setPosition(nextPos)

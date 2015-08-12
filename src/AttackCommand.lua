@@ -686,6 +686,7 @@ function HookAttack.create(pos,facing,attackInfo, target, owner)
 	ret.hasTarget = false
 	-- 链条的位置
     ret.chainPos = pos
+	ret.chainList = List.new()
     return ret
 end
 
@@ -729,17 +730,39 @@ function HookAttack:onUpdate(dt)
 			sprite:setPosition3D(cc.V3(nextPos.x,nextPos.y,50))
 			sprite:setScale(2.5)
 			sprite:setRotation3D(cc.V3(90,0,360 - self.facing * 180 / 3.14))
-			currentLayer:addChild(sprite)
+			currentLayer:addChild(sprite)			
+			List.pushlast(self.chainList, sprite)
+			print("ATTACK",List.getSize(self.chainList))
 			self.chainPos = nextPos
-			print("chain!!!!!!!!!!!")
 		end
 		if cc.pGetDistance(self.startPos, nextPos) >= self.length then
+			self.chainPos = nextPos
+			local sprite = List.poplast(self.chainList)
+			sprite:removeFromParent()
+			print("BACK",List.getSize(self.chainList))
 			self.state = "BACK"
 		end
 	elseif self.state == "BACK" then
 		local selfPos = getPosTable(self)
+		-- if sp ~= nil then
+			-- sp:onTimeOut()
+		-- end
 		local nextPos = cc.pRotateByAngle(cc.pAdd({x=self.speed2*dt, y=0},selfPos),selfPos,self.facing)
-		if (selfPos.x-self.startPos.x)*(nextPos.x-self.startPos.x)<=0 then
+		
+		if cc.pGetDistance(self.chainPos, nextPos) >= 50 then
+			local sprite = List.poplast(self.chainList)
+			sprite:removeFromParent()
+			print("BACK",List.getSize(self.chainList))
+			self.chainPos = nextPos
+		end
+		-- 判断钩子是否回到原地
+		--if (selfPos.x-self.startPos.x)*(nextPos.x-self.startPos.x)<=0 then
+		if cc.pGetDistance(self.startPos, nextPos) <= 10 then
+			for index=self.chainList.first, List.getSize(self.chainList) do	
+				if self.chainList[index]  then
+					self.chainList[index]:removeFromParent()
+				end
+			end
 			self:onTimeOut()
 			return
 		end
