@@ -1,3 +1,6 @@
+--导入socket库
+local socket = require("socket") --如果不行换这个试试 require('socket.core');
+
 local PVPMainScene  = class("PVPMainScene",function ()
 return cc.Scene:create()
 end)
@@ -52,12 +55,35 @@ function PVPMainScene:addCreateRoomBtn(layer)
     layer:addChild(effectSpriteCreateRoom,5)
 end
 
+--pvp list room
+function listRoom()
+
+end
+
 --PVP create room
 function createRoom()
     cclog("create room btn is clicked")
+
     --这里需要实现 创建房间的功能
-    --cc.network.
+    local host = "112.74.199.45"
+    local port = 8383
+    local client_socket = socket.tcp()
+    --client_socket:settimeout(0)
+
+    if client_socket:connect(host, port) == 1 then
+        cclog('socket connected');
+    end
+
+    local r, e = client_socket:send("CreateRoom") --第一个参数是发送的字节数的意思
+    cclog(r)
 end
+
+--PVP join room
+function joinRoom()
+
+end
+
+--below is for create UI elements
 
 function PVPMainScene:addBackBtn(layer)
     local isTouchBtnBack = false
