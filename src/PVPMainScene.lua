@@ -26,11 +26,12 @@ function PVPMainScene:createLayer()
     local layer = cc.Layer:create()
     --连接服务器
     self:connectToServer()
-    --添加 创建房间,以及返回上一层的按钮
+    --创建UI元素
     self:addBackBtn(layer)
     self:addCreateRoomBtn(layer)
     self:addJoinRoomBtn(layer)
     self:addStartGameBtn(layer)
+    
     return layer
 end
 
@@ -64,10 +65,9 @@ function PVPMainScene:joinRoom()
 end
 
 function PVPMainScene:startGame()
-    --local scene = require("BattleScene")
-    --cc.Director:getInstance():replaceScene(scene.create())
+    local scene = require("PVPBattleScene")
+    cc.Director:getInstance():replaceScene(scene.create())
 end
-
 
 --below is for create UI elements
 function PVPMainScene:addBackBtn(layer)
