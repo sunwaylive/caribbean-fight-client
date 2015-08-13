@@ -64,7 +64,7 @@ function GameMaster:update(dt)
 		self._totaltime = self._totaltime - self._logicFrq
 		self:logicUpdate()
 	end
-
+ 
     --这里控制道具的刷新
     self._totaltime_prop = self._totaltime_prop + dt
     if self._totaltime_prop > self._propFrq then
