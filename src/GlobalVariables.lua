@@ -47,7 +47,8 @@ G =
 {
     winSize = cc.Director:getInstance():getWinSize(),
     bloodPercentDropSpeed = 2,
-    activearea = {left = -2800, right = 1000, bottom = -2000, top = 700},
+	-- 中心点以-2000，0
+    activearea = {left = -3000, right = -1000, bottom = -500, top = 500},
 }
 
 --Audios
@@ -227,7 +228,7 @@ MageValues = {
         speed    = 800,
 		speed2	 = -1200, --钩子返回的速度
         criticalChance = 0.05,
-		length	 = 1000 --新增的钩子长度属性
+		attackLength	 = 1000 --新增的钩子长度属性
     }, 
     _specialAttack   = {
         minRange = 0,

@@ -16,10 +16,18 @@ function BattlefieldUI:ctor()
     self:timeInit()
     self:joystickInit()
     self:attackBtnInit()
+	self:closeBtnInit()
 --    self:showVictoryUI()
     
     ccexp.AudioEngine:stopAll()
     AUDIO_ID.BATTLEFIELDBGM = ccexp.AudioEngine:play2d(BGM_RES.BATTLEFIELDBGM, true,0.6)
+end
+
+function BattlefieldUI:closeBtnInit()
+	self.CloseBtn = cc.Sprite:createWithSpriteFrameName("attackBtn.png")
+    self.CloseBtn:setPosition3D(cc.V3(1070 / 1136 * G.winSize.width , 70 / 640 * G.winSize.height + 480, 2))
+    self.CloseBtn:setScale(2.0, 2.0)
+    self:addChild(self.CloseBtn, 1)
 end
 
 --添加头像到UI层
@@ -45,13 +53,15 @@ function BattlefieldUI:avatarInit()
     --self.MagePng:setPosition3D(cc.V3(1070/1136 * G.winSize.width,70/640 * G.winSize.height,2))
     --换成屏幕左上方
     self.MagePng:setPosition3D(cc.V3(G.winSize.width*0.06,G.winSize.height*0.915,2))
-    self.MagePng:setScale(scale)    
+    self.MagePng:setScale(scale)  
+	self.MagePng:setVisible(false)
     self:addChild(self.MagePng,2)
     
     self.MagePngFrame = cc.Sprite:createWithSpriteFrameName("UI-2.png")
     self.MagePngFrame:setScale(scale)
     self.MagePngFrame:setPosition3D(cc.V3(self.MagePng:getPositionX()+1,self.MagePng:getPositionY()-offset,1))
-    self:addChild(self.MagePngFrame,1)
+    self.MagePngFrame:setVisible(false)
+	self:addChild(self.MagePngFrame,1)
    
     --[[
     self.ArcherPng = cc.Sprite:createWithSpriteFrameName("UI-1136-640_11.png")
@@ -127,7 +137,8 @@ function BattlefieldUI:bloodbarInit()
     self.MageBlood:setPosition3D(cc.V3(self.MagePng:getPositionX()-1, self.MagePng:getPositionY()-offset,4))
     self.MageBlood:setScale(scale)
     self:addChild(self.MageBlood,4)
-    
+	self.MageBlood:setVisible(false) 
+	
     self.MageBloodClone = cc.ProgressTimer:create(cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png"))
     self.MageBloodClone:setColor(cc.c3b(255,83,23))
     self.MageBloodClone:setType(cc.PROGRESS_TIMER_TYPE_BAR)
@@ -137,6 +148,7 @@ function BattlefieldUI:bloodbarInit()
     self.MageBloodClone:setPosition3D(cc.V3(self.MagePng:getPositionX()-1, self.MagePng:getPositionY()-offset,3))
     self.MageBloodClone:setScale(scale)
     self:addChild(self.MageBloodClone,3)
+	self.MageBloodClone:setVisible(false) 
 end
 
 function BattlefieldUI:angrybarInit()
@@ -214,6 +226,7 @@ function BattlefieldUI:angrybarInit()
     self.MageAngry:setPosition3D(cc.V3(self.MagePng:getPositionX()-1, self.MagePng:getPositionY() - offset,4))
     self.MageAngry:setScale(0.7)
     self:addChild(self.MageAngry,4)
+	self.MageAngry:setVisible(false)
 
     self.MageAngryClone = cc.ProgressTimer:create(cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png"))
     self.MageAngryClone:setColor(grey)
@@ -225,6 +238,7 @@ function BattlefieldUI:angrybarInit()
     self.MageAngryClone:setScaleX(0.7)
     self.MageAngryClone:setScaleY(0.75)
     self:addChild(self.MageAngryClone,3)
+	self.MageAngryClone:setVisible(false)
     
     self.MageAngryFullSignal = cc.Sprite:createWithSpriteFrameName("specialLight.png")
     self.MageAngryFullSignal:setPosition3D(cc.V3(self.MagePng:getPositionX(), self.MagePng:getPositionY() + fullAngerStarOffset,4))
@@ -232,7 +246,6 @@ function BattlefieldUI:angrybarInit()
     self.MageAngryFullSignal:runAction(action:clone())
     self.MageAngryFullSignal:setScale(1)
     self.MageAngryFullSignal:setVisible(false)
-
 end
 
 function BattlefieldUI:touchButtonInit()
@@ -240,29 +253,34 @@ function BattlefieldUI:touchButtonInit()
     self._setBtn:setPosition3D(cc.V3(1093/1136*G.winSize.width,591/640*G.winSize.height,3))
     self._setBtn:setScale(0.8)
     self:addChild(self._setBtn,3)
+	self._setBtn:setVisible(false)
     
     self._chest = cc.Sprite:createWithSpriteFrameName("chest.png")
     self._chest:setPosition3D(cc.V3(861/1136*G.winSize.width,595/640*G.winSize.height,3))
     self._chest:setScale(0.8)
     self:addChild(self._chest,3)
+	self._chest:setVisible(false)
     
     self._coin = cc.Sprite:createWithSpriteFrameName("coins.png")
     self._coin:setPosition3D(cc.V3(1028.49/1136*G.winSize.width,593/640*G.winSize.height,3))
     self._coin:setScaleX(0.8)
     self._coin:setScaleY(0.8)
     self:addChild(self._coin,3)
+	self._coin:setVisible(false)
     
     self._chestAmount = cc.Sprite:createWithSpriteFrameName("UI-1.png")
     self._chestAmount:setPosition3D(cc.V3(785/1136*G.winSize.width,590/640*G.winSize.height,2))
     self._chestAmount:setScaleX(0.8)
     self._chestAmount:setScaleY(0.7)
     self:addChild(self._chestAmount,2)
+	self._chestAmount:setVisible(false)
     
     self._coinAmount = cc.Sprite:createWithSpriteFrameName("UI-1.png")
     self._coinAmount:setPosition3D(cc.V3(957/1136*G.winSize.width,590/640*G.winSize.height,2))
     self._coinAmount:setScaleX(0.8)
     self._coinAmount:setScaleY(0.7)
     self:addChild(self._coinAmount,2)
+	self._coinAmount:setVisible(false)
 end
 
 local scheduleID = nil

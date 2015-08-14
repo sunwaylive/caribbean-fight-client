@@ -13,6 +13,8 @@ MessageDispatchCenter.MessageType = {
     JOYSTICK = "JOYSTICK",
     ATTACKBTN = "ATTACKBTN",
 	ATTACKRANGE = "ATTACKRANGE",
+	CLOSE = "CLOSE",
+	JOYSTICKRANGE = "JOYSTICKRANGE",
 }
 
 MessageDispatchCenter.MessageQue = {}

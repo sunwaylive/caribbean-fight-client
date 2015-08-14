@@ -630,37 +630,6 @@ function BossSuper:onUpdate(dt)
     self:setPosition(nextPos)
 end
 
-Chain = class("Chain", function()
-	return BasicCollider.new()
-end)
-function Chain.create(pos,facing,attackInfo, target, owner)
-    local ret = Chain.new()
-    ret:initData(pos,facing,attackInfo)
-    ret._target = target
-    ret.owner = owner
-    
-    --ret.sp = cc.BillBoard:create("FX/FX.png", RECTS.iceBolt, 0)
-	ret.sp = cc.Sprite3D:create("minigame/maolianNEW.c3b")
-    --ret.sp:setCamera(camera)
-    ret.sp:setPosition3D(cc.V3(0,0,50))
-    ret.sp:setScale(1.5)
-	ret.sp:setRotation3D(cc.V3(90,0,270 - facing * 180 / 3.14))
-	
-    ret:addChild(ret.sp)
-	ret.startPos = pos;
-    return ret
-end
-function Chain:onTimeOut()
-    self:removeFromParent()       
-end
-function Chain:onCollide(target)
-	if target == self.owner then
-		print("destroy")
-		self:onTimeOut()
-	else
-		return
-	end
-end
 
 HookAttack = class("HookAttack", function()
 	return BasicCollider.new()
@@ -673,11 +642,11 @@ function HookAttack.create(pos,facing,attackInfo, target, owner)
     ret.owner = owner
     
     --ret.sp = cc.BillBoard:create("FX/FX.png", RECTS.iceBolt, 0)
-	ret.sp = cc.Sprite3D:create("minigame/maoNEW.c3b")
+	ret.sp = cc.Sprite3D:create("minigame/maoRedoUv.c3b")
     --ret.sp:setCamera(camera)
     ret.sp:setPosition3D(cc.V3(0,0,50))
-    ret.sp:setScale(1.5)
-	ret.sp:setRotation3D(cc.V3(90,0,270 - facing * 180 / 3.14))
+    ret.sp:setScale(7,42)
+	ret.sp:setRotation3D(cc.V3(0,0,180+270 - facing * 180 / 3.14))
 	
     ret:addChild(ret.sp)
 	
@@ -692,7 +661,8 @@ end
 
 function HookAttack:onTimeOut()
 	List.removeObj(AttackManager, self)
-    self:removeFromParent()       
+    self:removeFromParent()
+	--uiLayer.label:setString("HookTimeOut")
 end
 
 function HookAttack:playHitAudio()
@@ -704,6 +674,9 @@ function HookAttack:onCollide(target)
 		-- 测试钩子返回过程中是否可以钩人以及碰撞
 		-- return
 	-- end
+	if(target._isalive == false) then
+		return
+	end
 	if(self.hasTarget == true) then
 		--如果已经发生了碰撞，则不再生效
 		return
@@ -720,44 +693,50 @@ end
 
 function HookAttack:onUpdate(dt)
 	if self.state == "ATTACK" then
+		--uiLayer.label:setString("HookAttack")
 		local nextPos
 		local selfPos = getPosTable(self)
 		nextPos = cc.pRotateByAngle(cc.pAdd({x=self.speed*dt, y=0},selfPos),selfPos,self.facing)
 		self:setPosition(nextPos)
 
-		if cc.pGetDistance(self.chainPos, nextPos) >= 50 then
-			local sprite = cc.Sprite3D:create("minigame/maolianNEW.c3b")
-			sprite:setPosition3D(cc.V3(nextPos.x,nextPos.y,50))
-			sprite:setScale(2.5)
-			sprite:setRotation3D(cc.V3(90,0,360 - self.facing * 180 / 3.14))
+		if cc.pGetDistance(self.chainPos, selfPos) >= 30 then
+			local sprite = cc.Sprite3D:create("minigame/maolianRedoUv.c3b")
+			sprite:setPosition3D(cc.V3(selfPos.x,selfPos.y,50))
+			sprite:setScale(0.5)
+			sprite:setRotation3D(cc.V3(90,0,90+360 - self.facing * 180 / 3.14))
 			currentLayer:addChild(sprite)			
 			List.pushlast(self.chainList, sprite)
-			print("ATTACK",List.getSize(self.chainList))
-			self.chainPos = nextPos
+			--print("ATTACK",List.getSize(self.chainList))
+			self.chainPos = selfPos
 		end
-		if cc.pGetDistance(self.startPos, nextPos) >= self.length then
-			self.chainPos = nextPos
-			local sprite = List.poplast(self.chainList)
-			sprite:removeFromParent()
-			print("BACK",List.getSize(self.chainList))
+		if cc.pGetDistance(self.startPos, selfPos) >= self.attackLength then
+			self.chainPos = selfPos
+			-- local sprite = List.poplast(self.chainList)
+			-- sprite:removeFromParent()
 			self.state = "BACK"
 		end
 	elseif self.state == "BACK" then
+		--uiLayer.label:setString("HookBack")
 		local selfPos = getPosTable(self)
 		-- if sp ~= nil then
 			-- sp:onTimeOut()
 		-- end
 		local nextPos = cc.pRotateByAngle(cc.pAdd({x=self.speed2*dt, y=0},selfPos),selfPos,self.facing)
-		
-		if cc.pGetDistance(self.chainPos, nextPos) >= 50 then
+		local distance = cc.pGetDistance(self.startPos, selfPos)
+		for i=1, List.getSize(self.chainList) do
+			-- 获取列表中最后的点，如果这个点到起点的距离没有当前点到起点的距离大，就把他放回去
+			-- 如果比之大，则删除这个链条
 			local sprite = List.poplast(self.chainList)
+			if cc.pGetDistance(cc.p(sprite:getPositionX(),sprite:getPositionY()),self.startPos)+30 <= distance then
+				List.pushlast(self.chainList,sprite)
+				break
+			end
 			sprite:removeFromParent()
-			print("BACK",List.getSize(self.chainList))
-			self.chainPos = nextPos
 		end
+		self.chainPos = selfPos
 		-- 判断钩子是否回到原地
 		--if (selfPos.x-self.startPos.x)*(nextPos.x-self.startPos.x)<=0 then
-		if cc.pGetDistance(self.startPos, nextPos) <= 10 then
+		if cc.pGetDistance(self.startPos, selfPos) <= 100 then
 			for index=self.chainList.first, List.getSize(self.chainList) do	
 				if self.chainList[index]  then
 					self.chainList[index]:removeFromParent()

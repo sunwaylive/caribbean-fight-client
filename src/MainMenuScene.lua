@@ -234,8 +234,17 @@ function MainMenuScene:addButton(layer)
             if eventType == ccui.TouchEventType.began then
                 ccexp.AudioEngine:play2d(BGM_RES.MAINMENUSTART, false,1)
                 ccexp.AudioEngine:stop(AUDIO_ID.MAINMENUBGM)
-                --替换场景
-            	cc.Director:getInstance():replaceScene(require("ChooseRoleScene").create())
+                -- --替换场景
+            	-- cc.Director:getInstance():replaceScene(require("ChooseRoleScene").create())
+				--replace scene， 跳转之前清空对象
+                package.loaded["BattleScene"]=nil
+                package.loaded["Manager"]=nil
+                package.loaded["Helper"]=nil
+                package.loaded["MessageDispatchCenter"]=nil
+                package.loaded["BattleFieldUI"]=nil
+                --进入战斗场景
+                local scene = require("BattleScene")
+                cc.Director:getInstance():replaceScene(scene.create())
             end
         end
     end
