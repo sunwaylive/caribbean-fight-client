@@ -568,7 +568,10 @@ function Actor:attackUpdate(dt)
      --]]
 	-- 上一个攻击状态还没结束，不进行任何动作
     self._attackTimer = self._attackTimer + dt
-	uiLayer.label:setString(math.ceil(self._attackTimer*10))
+	if uiLayer.label ~= nil then
+        uiLayer.label:setString(math.ceil(self._attackTimer*10))
+    end
+    
     if self._attackTimer > self._attackFrequency then
 		if self._cooldown == true then
 			return

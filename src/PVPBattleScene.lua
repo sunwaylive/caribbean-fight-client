@@ -66,7 +66,7 @@ end
 local function heroAttack(dt)
     for val = HeroManager.first, HeroManager.last do
         local sprite = HeroManager[val]
-        if sprite:getStateType() == EnumStateType.ATTACKING then
+        if sprite ~= nil and sprite:getStateType() == EnumStateType.ATTACKING then
             sprite:attackUpdate(dt)
         end
     end
