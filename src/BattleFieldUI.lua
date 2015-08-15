@@ -16,18 +16,18 @@ function BattlefieldUI:ctor()
     self:timeInit()
     self:joystickInit()
     self:attackBtnInit()
-	self:closeBtnInit()
+	self:backBtnInit()
 --    self:showVictoryUI()
     
     ccexp.AudioEngine:stopAll()
     AUDIO_ID.BATTLEFIELDBGM = ccexp.AudioEngine:play2d(BGM_RES.BATTLEFIELDBGM, true,0.6)
 end
 
-function BattlefieldUI:closeBtnInit()
-	self.CloseBtn = cc.Sprite:createWithSpriteFrameName("attackBtn.png")
-    self.CloseBtn:setPosition3D(cc.V3(1070 / 1136 * G.winSize.width , 70 / 640 * G.winSize.height + 480, 2))
-    self.CloseBtn:setScale(2.0, 2.0)
-    self:addChild(self.CloseBtn, 1)
+function BattlefieldUI:backBtnInit()
+	self.BackBtn = cc.Sprite:createWithSpriteFrameName("attackBtn.png")
+    self.BackBtn:setPosition3D(cc.V3(1070 / 1136 * G.winSize.width , 70 / 640 * G.winSize.height + 480, 2))
+    self.BackBtn:setScale(2.0, 2.0)
+    self:addChild(self.BackBtn, 1)
 end
 
 --添加头像到UI层

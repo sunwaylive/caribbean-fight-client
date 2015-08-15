@@ -270,9 +270,15 @@ function BattleScene:enableTouch()
 			
 			--bloodbarLayer.circle:setVisible(true)
 			bloodbarLayer.arrow:setVisible(true)
-		elseif self:UIcontainsPoint(touch:getLocation()) == "CLOSE" then
-			print("CLOSE")
-			cc.Director:getInstance():endToLua()
+		elseif self:UIcontainsPoint(touch:getLocation()) == "BACK" then
+			print("BACK")
+			-- cc.Director:getInstance():endToLua()
+			-- package.loaded["MainMenuScene"] = nil
+			-- package.loaded["Helper"]=nil
+			cc.Director:getInstance():getScheduler():unscheduleScriptEntry(gameControllerScheduleID)
+			cc.Director:getInstance():getScheduler():unscheduleScriptEntry(uiLayer._tmSchedule)
+			local scene = require("MainMenuScene")
+            cc.Director:getInstance():replaceScene(scene.create())
         end
         return true
     end
@@ -446,14 +452,14 @@ function BattleScene:UIcontainsPoint(position)
     local rectAttackBtn = uiLayer.AttackBtn:getBoundingBox()
     --local rectAttackRange = uiLayer.AttackRange:getBoundingBox() --新加的技能范围
 	local rectAttackRange = {x=size.width/2,y=0,width=size.width/2,height=size.height}
-	local rectCloseBtn = uiLayer.CloseBtn:getBoundingBox()
+	local rectBackBtn = uiLayer.BackBtn:getBoundingBox()
 	
     if cc.rectContainsPoint(rectJoystick, position) then
         message = MessageDispatchCenter.MessageType.JOYSTICK
     elseif cc.rectContainsPoint(rectAttackBtn, position) then --到这了都是对的
         message = MessageDispatchCenter.MessageType.ATTACKBTN
-	elseif cc.rectContainsPoint(rectCloseBtn, position) then
-		message = MessageDispatchCenter.MessageType.CLOSE
+	elseif cc.rectContainsPoint(rectBackBtn, position) then
+		message = MessageDispatchCenter.MessageType.BACK
     elseif cc.rectContainsPoint(rectAttackRange, position) then --如果技能范围显示出来
 		if uiLayer.AttackRange:isVisible() then
 			message = MessageDispatchCenter.MessageType.ATTACKRANGE

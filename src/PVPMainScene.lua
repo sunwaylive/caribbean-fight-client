@@ -2,7 +2,10 @@
 local socket = require("socket") --如果不行换这个试试 require('socket.core');
 
 client_socket = nil --本客户端和服务器通信的tcp链接
-
+local label1
+local label2
+local str = "0"
+local num = 0
 local PVPMainScene  = class("PVPMainScene",function ()
                             return cc.Scene:create()
                             end)
@@ -11,19 +14,45 @@ local PVPMainScene  = class("PVPMainScene",function ()
 function PVPMainScene:ctor()
     --get win size
     self.size = cc.Director:getInstance():getVisibleSize()
+	self.label = nil
 end
 
 function PVPMainScene.create()
     local scene = PVPMainScene.new()
-    local layer = scene:createLayer()
+    layer = scene:createLayer()
     scene:addChild(layer)
     
     return scene
 end
 
+local function tcpListener(dt)
+	local r = client_socket:receive('*l')
+	-- io.output("out.txt")
+	-- if r~= nil then
+		-- io.write(r)
+	-- else
+		-- io.write("nil\n")
+	-- end
+	-- io.output():close()
+	if r==nil then
+		--str = str + "nil"
+		--label1:setString("nil")
+		return
+	else
+		str = str.."x"..r
+		label1:setString(str)
+		--label1:setString(r)
+	end
+end
+
+local function update(dt)
+	label2:setString(str..num)
+end
+
 function PVPMainScene:createLayer()
     --create layer
     local layer = cc.Layer:create()
+	self:addLabel(layer)
     --连接服务器
     self:connectToServer()
     --创建UI元素
@@ -31,20 +60,24 @@ function PVPMainScene:createLayer()
     self:addCreateRoomBtn(layer)
     self:addJoinRoomBtn(layer)
     self:addStartGameBtn(layer)
-    
+	listener = cc.Director:getInstance():getScheduler():scheduleScriptFunc(tcpListener, 0, false)
+	scheduler = cc.Director:getInstance():getScheduler():scheduleScriptFunc(update, 0, false)
     return layer
 end
 
 --pvp establish tcp connect
 function PVPMainScene:connectToServer()
     local server_ip = "112.74.199.45"
-    local server_port = 8383
+    local server_port = 2348
     client_socket = socket.tcp()
     client_socket:settimeout(5)
     
     --In case of error, the method returns nil followed by a string describing the error. In case of success, the method returns 1.
     if client_socket:connect(server_ip, server_port) == 1 then
         cclog('socket connect!')
+		self.label:setString("Yooooo!!")
+	else
+		self.label:setString("Nooooo!!")
     end
 end
 
@@ -55,8 +88,18 @@ end
 
 --PVP create room
 function PVPMainScene:createRoom()
-    local r, e = client_socket:send("CreateRoom") --第一个返回值是发送的字节数的意思, 第二个返回值是错误码，如果成功则返回nil
-    cclog(r)
+	self.label:setString("createRoom"..num)
+	num = num + 1
+	print(num)
+	--label1:setString("createRoom")
+	--label1:setString(str)
+    local r, e = client_socket:send("createRoom 2\n") --第一个返回值是发送的字节数的意思, 第二个返回值是错误码，如果成功则返回nil
+    --cclog(r)
+	print(r,e)
+	if e~= nil then
+		self.label:setString(e)
+	end
+	print("OK")
 end
 
 --PVP join room
@@ -101,7 +144,7 @@ function PVPMainScene:addCreateRoomBtn(layer)
     local button_callback_createroom = function(sender, eventType)
         --确保这个按钮只被点击了一次
         if isTouchButtonCreateRoom == false then
-            isTouchButtonCreateRoom = true
+            --isTouchButtonCreateRoom = true
             if eventType == ccui.TouchEventType.began then
                 ccexp.AudioEngine:play2d(BGM_RES.MAINMENUSTART, false, 1)
                 ccexp.AudioEngine:stop(AUDIO_ID.MAINMENUBGM)
@@ -168,7 +211,25 @@ function PVPMainScene:addStartGameBtn(layer)
     btnStartGame:addTouchEventListener(button_callback_startgame)
     layer:addChild(btnStartGame, 5)
 end
-
-
+--用于显示调试信息
+function PVPMainScene:addLabel(layer)
+    self.label = cc.Label:createWithTTF("Hello World","chooseRole/actor_param.ttf", 20)
+    self.label:setPosition(self.size.width*0.5,self.size.height*0.5)
+	self.label:setColor(cc.V3(255,0,0))
+	--self.label:setVisible(false)
+    self:addChild(self.label,1)
+	
+	label1 = cc.Label:createWithTTF("Hello World","chooseRole/actor_param.ttf", 20)
+    label1:setPosition(self.size.width*0.5,self.size.height*0.4)
+	label1:setColor(cc.V3(255,0,0))
+	self:addChild(label1,1)
+	label1:setString("hello")
+	
+	label2 = cc.Label:createWithTTF("Hello World","chooseRole/actor_param.ttf", 20)
+    label2:setPosition(self.size.width*0.5,self.size.height*0.2)
+	label2:setColor(cc.V3(255,0,0))
+	self:addChild(label2,1)
+	label2:setString("hello")
+end
 
 return PVPMainScene
