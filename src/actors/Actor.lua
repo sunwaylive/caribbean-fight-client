@@ -213,6 +213,7 @@ function Actor:hook(collider)
         local knock = collider.knock
         
         --计算伤害
+		-- 瞬间伤害部分
         damage = damage + damage * math.random(-1,1) * 0.15        
         damage = damage - self._defense
         damage = math.floor(damage)
@@ -247,6 +248,7 @@ function Actor:hookMode(collider)
     self:setStateType(EnumStateType.HOOKING) 
 	self.hookDir = collider.facing
 	self.speed2 =collider.speed2
+	self.damageDistance = cc.pGetDistance(getPosTable(collider), collider.startPos)
 	self.hookStartPos = collider.startPos
 end
 
@@ -254,7 +256,23 @@ function Actor:hookingUpdate(dt)
 	local selfPos = getPosTable(self)
 	local nextPos = cc.pRotateByAngle(cc.pAdd({x=self.speed2*dt, y=0},selfPos),selfPos,self.hookDir)
 	--if (selfPos.x-self.hookStartPos.x)*(nextPos.x-self.hookStartPos.x)<=0 then
-	if cc.pGetDistance(self.hookStartPos, nextPos) <= 100 then
+	local distance = cc.pGetDistance(self.hookStartPos, nextPos)
+	if self.damageDistance - distance >= 200 then
+		self._hp = self._hp - 60
+		local critical = false
+        local blood = self._hpCounter:showBloodLossNum(60,self,critical)
+        self:addEffect(blood)
+		self.damageDistance = self.damageDistance - 200
+		if(self.damageDistance < 200) then
+			self.damageDistance = 0
+		end
+		if self._hp <=0 then
+			self._isalive = false --角色死亡，进入dyingMode
+            self:dyingMode()   
+		end
+	end
+	print("Distance:", distance)
+	if distance <= 100 or distance >= cc.pGetDistance(self.hookStartPos, selfPos) and distance <= 300 then
 		self:idleMode()
 	end
 	self:setPosition(nextPos)
@@ -360,6 +378,34 @@ function Actor:dyingMode(knockSource, knockAmount)
         local newPos = cc.pRotateByAngle(cc.pAdd({x=knockAmount,y=0}, p),p,angle)
         self:runAction(cc.EaseCubicActionOut:create(cc.MoveTo:create(self._action.knocked:getDuration()*3,newPos)))
     end
+    self._AIEnabled = false
+end
+
+--死亡模式
+function Actor:dyingMode()
+    --死亡特效
+    self:setStateType(EnumStateType.DYING)
+    self:playAnimation("dead")
+    self:playDyingEffects()
+    
+    if self._racetype == EnumRaceType.HERO then
+        --回收对象
+        uiLayer:heroDead(self)
+        List.removeObj(HeroManager,self)
+        self:runAction(cc.Sequence:create(cc.DelayTime:create(3),cc.MoveBy:create(1.0,cc.V3(0,0,-50)),cc.RemoveSelf:create()))
+        
+        self._angry = 0
+        local anaryChange = {_name = self._name, _angry = self._angry, _angryMax = self._angryMax}
+        MessageDispatchCenter:dispatchMessage(MessageDispatchCenter.MessageType.ANGRY_CHANGE, anaryChange)          
+    else --可以看到这里有一个3秒后回收到pool的操作
+        List.removeObj(MonsterManager,self)
+        local function recycle()
+            self:setVisible(false)
+            List.pushlast(getPoolByName(self._name),self)
+        end
+        self:runAction(cc.Sequence:create(cc.DelayTime:create(3),cc.MoveBy:create(1.0,cc.V3(0,0,-50)),cc.CallFunc:create(recycle)))
+    end
+    
     self._AIEnabled = false
 end
 
@@ -522,6 +568,7 @@ function Actor:attackUpdate(dt)
      --]]
 	-- 上一个攻击状态还没结束，不进行任何动作
     self._attackTimer = self._attackTimer + dt
+	uiLayer.label:setString(math.ceil(self._attackTimer*10))
     if self._attackTimer > self._attackFrequency then
 		if self._cooldown == true then
 			return
