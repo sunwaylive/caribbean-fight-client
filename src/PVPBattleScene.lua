@@ -2,6 +2,7 @@ require "Helper"
 require "Manager"
 require "MessageDispatchCenter"
 require "BloodbarUI"
+require "PVPMainScene"
 
 bloodbarLayer = nil
 currentLayer = nil
@@ -17,6 +18,48 @@ local scheduler = cc.Director:getInstance():getScheduler()
 local cameraOffset =  cc.V3(0 * 0.5, -800 * 0.5, 300 * 0.5)
 local cameraOffsetMin = {x=-300, y=-400}
 local cameraOffsetMax = {x=300, y=400}
+
+local totalTime = 0.0
+local receiveDataFrq = 0.2
+
+--TODO:对接受到的数据，分类处理
+--包括： 所有玩家的位置 和 朝向； 玩家目前的状态(攻击， walk)
+local function onReceiveData()
+    if client_socket == nil then return end
+    
+    back, err, partial = client_socket:receive("*l")
+    if err ~= "closed" then
+        if back then
+            handleMessage(back)
+        end
+    else
+        cclog("TCP Connection is closed!")
+        client_socket = nil --if tcp is dis-connect
+        return
+    end
+end
+
+local function handleMessage(msg)
+    cclog(msg)
+end
+
+local function onSendData()
+   if client_socket ~= nil then
+       msg = "StartGame\n"
+       
+       r, e = client_socket:send(msg)
+       if r == nil then
+           cclog("ERROR: I can't send data to Server: " .. e)
+       else
+            cclog("sent successfully!")
+       end
+   else
+        cclog("Error: Tcp socket is dis-connect!")
+   end   
+   --TODO:打包当前玩家的数据，发送给服务器，然后由服务器转发
+   --client_socket:send()
+end
+
 
 --移动相机
 local function moveCamera(dt)
@@ -47,6 +90,7 @@ local function moveCamera(dt)
     end
 end
 
+--不需要在这里接受服务器端的数据，这里只负责更具玩家的朝向计算下一个位置
 local function moveHero(dt)
     --首先更新角色的朝向
     for val = HeroManager.last, HeroManager.first , -1 do
@@ -124,20 +168,32 @@ local function setCamera()
     camera:addChild(uiLayer)
 end
 
+
 --核心控制游戏的地方
+--TODO:这里应该从服务器拿到数据，更新客户端，其他玩家的状态
 local function gameController(dt)
+    --设置时间间隔，每隔一定的时间接受从服务器过来的数据，更新其它玩家的状态;并向服务器发送自己的状态
+    totalTime = totalTime + dt
+    if totalTime > receiveDataFrq then
+        onReceiveData()
+        onSendData()
+        totalTime = totalTime - receiveDataFrq
+    end
+    
     pvpGameMaster:update(dt)--负责刷怪、刷新对话框、提示等等
+    
     moveHero(dt) --监听角色控制的移动,这个必须要放到collisionDetect(dt)前面，来保证角色移动之后，能检测是否出界
+    
     collisionDetect(dt)--碰撞检测：由Manager.lua 来维护
-	BloodbarUpdate(dt)
-	ArrowUpdate(dt)
+    BloodbarUpdate(dt)
+    ArrowUpdate(dt)
     solveAttacks(dt)--伤害计算：由attackCommand来维护
     moveCamera(dt)--移动相机
-	-- local count = 000000
-	-- for i, val in pairs(t) do
-		-- count = count + 1
-	-- end
-	-- print(count)
+    -- local count = 000000
+    -- for i, val in pairs(t) do
+    -- count = count + 1
+    -- end
+    -- print(count)
 end
 
 --初始化UI层
@@ -462,6 +518,7 @@ function PVPBattleScene.create()
 	
 	t = {}
 	setmetatable(t, {__mode = "k"})
+    
     --wei add, heros and monsters are both on currentLayer
     currentLayer = cc.Layer:create()
     currentLayer:setCascadeColorEnabled(true) --自节点能够随着父节点的颜色改变而改变
@@ -491,7 +548,7 @@ function PVPBattleScene.create()
 	sprite2:setPosition3D(cc.V3(-2200,-500,30))
 	sprite2:setRotation3D(cc.V3(90,0,90))
 	currentLayer:addChild(sprite2,1,5)
-	
+    
     pvpGameMaster = require("PVPGameMaster").create()
     
 	bloodbarLayer = require("BloodbarUI").create()

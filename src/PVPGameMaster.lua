@@ -77,7 +77,7 @@ function PVPGameMaster:logicUpdate()
     
 end
 
---创建英雄
+--这里要根据服务器下发的位置 放置玩家
 function PVPGameMaster:AddHeros()
 	--[[local knight = Knight:create()
    	knight:setPosition(battleSiteX[1], 10)
@@ -133,8 +133,8 @@ function PVPGameMaster:showProp()
     --当道具划过之后，如果中途没有被勾勾住，则需要隐藏掉
 end
 
-function PVPGameMaster:showVictoryUI()
-    uiLayer:showVictoryUI()
-end
+--function PVPGameMaster:showVictoryUI()
+    --uiLayer:showVictoryUI()
+--end
 
 return PVPGameMaster

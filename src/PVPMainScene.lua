@@ -1,7 +1,7 @@
 --导入socket库
 local socket = require("socket") --如果不行换这个试试 require('socket.core');
 
-local client_socket
+client_socket = nil --本客户端和服务器通信的tcp链接
 
 local PVPMainScene  = class("PVPMainScene",function ()
                             return cc.Scene:create()
