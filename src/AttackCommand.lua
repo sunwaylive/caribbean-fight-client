@@ -1,4 +1,4 @@
-re "Helper"
+require "Helper"
 require "Manager"
 require "GlobalVariables"
 
