@@ -45,7 +45,7 @@ local function solveCollision(object1, object2)
     local tempDistance = cc.pGetDistance(obj1Pos, obj2Pos)
     
     if tempDistance < miniDistance then
-        local angle = cc.pToAngleSelf(cc.pSub(obj1Pos, obj2Pos))
+        local angle = cc.pToAngleSelf(cc.pSub(obj1Pos, obj2Pos  ))
         local distance = miniDistance - tempDistance + 1 -- Add extra 1 to avoid 'tempDistance < miniDistance' is always true
         local distance1 = (1 - object1._mass / (object1._mass + object2._mass) ) * distance
         local distance2 = distance - distance1

@@ -6,7 +6,7 @@ require "BloodbarUI"
 bloodbarLayer = nil
 currentLayer = nil
 uiLayer = nil
-gameMaster = nil
+pvpGameMaster = nil
 circle = nil
 arrow = nil
 t = nil
@@ -126,7 +126,7 @@ end
 
 --核心控制游戏的地方
 local function gameController(dt)
-    gameMaster:update(dt)--负责刷怪、刷新对话框、提示等等
+    pvpGameMaster:update(dt)--负责刷怪、刷新对话框、提示等等
     moveHero(dt) --监听角色控制的移动,这个必须要放到collisionDetect(dt)前面，来保证角色移动之后，能检测是否出界
     collisionDetect(dt)--碰撞检测：由Manager.lua 来维护
 	BloodbarUpdate(dt)
@@ -179,6 +179,7 @@ function BloodbarUpdate(dt)
 		end
     end
 end
+
 --初始化箭头和圈
 function initArrowCircle(layer)
 	--角色脚下的圈和箭头，放在这儿实现可以解决双摇杆操纵箭头方向的问题。
@@ -197,6 +198,7 @@ function initArrowCircle(layer)
 	layer.arrow:setVisible(false)
 	layer:addChild(layer.arrow)
 end
+
 --更新圈和箭头的位置和方向
 function ArrowUpdate(dt)
 	for val = HeroManager.first, HeroManager.last do
@@ -490,12 +492,12 @@ function PVPBattleScene.create()
 	sprite2:setRotation3D(cc.V3(90,0,90))
 	currentLayer:addChild(sprite2,1,5)
 	
-    gameMaster = require("GameMaster").create()
+    pvpGameMaster = require("PVPGameMaster").create()
     
 	bloodbarLayer = require("BloodbarUI").create()
     bloodbarLayer:setGlobalZOrder(2000)--确保UI盖在最上面
 	bloodbarLayer:init()
-	scene:addChild(bloodbarLayer)
+	scene:addChild(bloodbarLayer) 
 	
 	initArrowCircle(bloodbarLayer)
 	

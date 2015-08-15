@@ -751,9 +751,11 @@ function HookAttack:onUpdate(dt)
 		
 		if cc.pGetDistance(self.chainPos, nextPos) >= 50 then
 			local sprite = List.poplast(self.chainList)
-			sprite:removeFromParent()
-			print("BACK",List.getSize(self.chainList))
-			self.chainPos = nextPos
+            if sprite ~= nil then
+                sprite:removeFromParent()
+                print("BACK",List.getSize(self.chainList))
+                self.chainPos = nextPos
+            end
 		end
 		-- 判断钩子是否回到原地
 		--if (selfPos.x-self.startPos.x)*(nextPos.x-self.startPos.x)<=0 then

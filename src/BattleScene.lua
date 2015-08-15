@@ -490,6 +490,7 @@ function BattleScene.create()
 	sprite2:setRotation3D(cc.V3(90,0,90))
 	currentLayer:addChild(sprite2,1,5)
 	
+    --这句控制了各种角色的创建，包括英雄，怪物，道具等等
     gameMaster = require("GameMaster").create()
     
 	bloodbarLayer = require("BloodbarUI").create()
