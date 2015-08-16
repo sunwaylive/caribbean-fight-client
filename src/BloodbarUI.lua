@@ -9,7 +9,7 @@ function BloodbarLayer.create()
 	return layer
 end
 
---��ʼ������������Ǹ��ݽ�ɫ������Ѫ��
+--≥ı ºªØ◊ˆµƒ ¬«ÈæÕ «∏˘æ›Ω«…´ ˝‘ˆº”—™Ãı
 function BloodbarLayer:ctor()
 	-- self.bloodbarList = List.new()
 	-- --self.bloodbarBackList = List.new()
@@ -20,12 +20,18 @@ function BloodbarLayer:ctor()
 	-- self:addChild(self.circleList)
 end
 
-function BloodbarLayer:init()
-	--Ӣ�۵�Ѫ��
+function BloodbarLayer:init(client_idx)
+	--”¢–€µƒ—™Ãı
 	for val = HeroManager.first, HeroManager.last do
         local actor = HeroManager[val]
 		bloodbar = cc.ProgressTimer:create(cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png"))
-		bloodbar:setColor(cc.c3b(149,254,26))
+        --血条颜色跟阵营信息有关系
+        if actor._camp == HeroManager[client_idx]._camp then
+            bloodbar:setColor(cc.c3b(149,254,26))
+        else
+            bloodbar:setColor(cc.c3b(255,0,0))
+        end
+        
 		bloodbar:setType(cc.PROGRESS_TIMER_TYPE_BAR)
 		bloodbar:setMidpoint(cc.vertex2F(0,0))
 		bloodbar:setBarChangeRate(cc.vertex2F(1,0))
@@ -35,7 +41,7 @@ function BloodbarLayer:init()
 		List.pushlast(bloodbarList,bloodbar)
 		self:addChild(bloodbar)
     end
-	--С�ֵ�Ѫ����ʵ�ʿ����ò��������߸�AI��
+	--–°π÷µƒ—™Ãı£¨ µº ø…ƒ‹”√≤ªµΩ£¨ªÚ’ﬂ∏¯AI”√
 	for val = MonsterList.first, MonsterList.last do
         local actor = MonsterList[val]
 		bloodbar = cc.ProgressTimer:create(cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png"))

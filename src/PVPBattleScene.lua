@@ -600,25 +600,13 @@ function PVPBattleScene.create(sg_msg)
     
     initUILayer()
 	--initBloodbarLayer()
-	
-	local sprite = cc.Sprite3D:create("minigame/mao.c3b")
-	sprite:setScale(3)
-	sprite:setPosition3D(cc.V3(-2000,-500,30))
-	sprite:setRotation3D(cc.V3(90,0,0))
-	currentLayer:addChild(sprite,1,5)
-	
-	local sprite2 = cc.Sprite3D:create("minigame/maolianNEW.c3b")
-	sprite2:setScale(3)
-	sprite2:setPosition3D(cc.V3(-2200,-500,30))
-	sprite2:setRotation3D(cc.V3(90,0,90))
-	currentLayer:addChild(sprite2,1,5)
     
     pvpGameMaster = require("PVPGameMaster").create(sg_msg)
     client_socket:settimeout(0.1) --设置socket为不等待
     
 	bloodbarLayer = require("BloodbarUI").create()
     bloodbarLayer:setGlobalZOrder(2000)--确保UI盖在最上面
-	bloodbarLayer:init()
+	bloodbarLayer:init(pvpGameMaster._myIdx)
 	scene:addChild(bloodbarLayer) 
 	
 	initArrowCircle(bloodbarLayer)

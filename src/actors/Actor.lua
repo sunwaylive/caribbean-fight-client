@@ -24,7 +24,7 @@ function Actor:ctor()
     self._heroHeight = 150
     self._heroMoveSpeed = 0
     self._heroMoveDir = cc.p(0, 0)
-	self._camp = 0 --为每个角色添加阵营信息
+	self._camp = "A" --为每个角色添加阵营信息
     
     
     if uiLayer~=nil then
