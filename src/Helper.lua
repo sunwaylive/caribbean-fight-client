@@ -193,3 +193,16 @@ end
 function RADIANS_TO_DEGREES(__ANGLE__)
     return __ANGLE__ * 57.29577951
 end
+
+--分割函数
+function mysplit(inputstr, sep)
+    if sep == nil then
+        sep = "%s"
+    end
+    local t={} ; i=1
+    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+        t[i] = str
+        i = i + 1
+    end
+    return t
+end

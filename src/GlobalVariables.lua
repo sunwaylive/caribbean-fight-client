@@ -79,14 +79,14 @@ EnumRaceType = CreateEnumTable(EnumRaceType)
 
 EnumStateType =
     {
-        "IDLE",
-        "WALKING",
-        "ATTACKING",
-        "DEFENDING",
-        "KNOCKING",
-        "DYING",
-        "DEAD",
-		"HOOKING" --新状态，被钩中
+        "IDLE", --0
+        "WALKING",--1
+        "ATTACKING",--2
+        "DEFENDING",--3
+        "KNOCKING",--4
+        "DYING",--5
+        "DEAD",--6
+		"HOOKING" --7 新状态，被钩中
     }
 EnumStateType = CreateEnumTable(EnumStateType) 
 --common value is used to reset an actor

@@ -65,8 +65,25 @@ function PVPMainScene:joinRoom()
 end
 
 function PVPMainScene:startGame()
-    local scene = require("PVPBattleScene")
-    cc.Director:getInstance():replaceScene(scene.create())
+    --local scene = require("PVPBattleScene")
+    --cc.Director:getInstance():replaceScene(scene.create())
+    if client_socket ~= nil then
+        sn, se = client_socket:send("STARTGAME\n")
+        if se ~= nil then
+            cclog("ERROR: In startGame() in PVPMainScene.lua, I can't send start game request!" .. se)
+        end
+        
+        r, re = client_socket:receive("*l")
+        if re ~= nil then
+            cclog("ERROR: In startGame() in PVPMainScene.lua, I can't receive start game request!" .. re)
+            return
+        end
+        
+        cclog("I have received msg from server: " .. r)
+        --这个时候只会有一个回包出现，就是响应开始游戏的回包
+        local scene = require("PVPBattleScene")
+        cc.Director:getInstance():replaceScene(scene.create(r))
+    end
 end
 
 --below is for create UI elements

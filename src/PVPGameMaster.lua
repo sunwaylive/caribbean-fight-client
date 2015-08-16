@@ -8,6 +8,7 @@ require "Slime"
 require "Rat"
 require "Dragon"
 require "Archer"
+require "Helper"
 --require "Boss"
 
 local gloableZOrder = 1
@@ -33,18 +34,22 @@ function PVPGameMaster:ctor()
 
     self._totaltime_prop = 0 --用来控制道具的刷新
     self._propFrq = 20.0 --每5秒钟刷新一个道具
+    
+    self._myIdx = 0 --默认自己为0号位置上的玩家
 end
 
-function PVPGameMaster.create()
+function PVPGameMaster.create(sg_tbl)
 	local gm = PVPGameMaster.new()
-	gm:init()
+    print("in PVPGameMastser.create(): " .. sg_tbl)
+	gm:init(sg_tbl)
 
 	return gm
 end
 
 --统一把角色创建好，然后分批放出来
-function PVPGameMaster:init()
-	self:AddHeros()
+function PVPGameMaster:init(sg_msg)
+    print("in PVPGameMastser:init(): " .. sg_msg)
+	self:AddHeros(sg_msg)
 
     self:addProps() --添加道具
 
@@ -78,7 +83,90 @@ function PVPGameMaster:logicUpdate()
 end
 
 --这里要根据服务器下发的位置 放置玩家
-function PVPGameMaster:AddHeros()
+function PVPGameMaster:AddHeros(sg_msg) --startgame string
+    cclog("in PVPGameMaster:AddHeros()")
+    sg_tbl = mysplit(sg_msg, '#')
+    
+    print(#(sg_tbl))
+    
+    if #(sg_tbl) >= 2 then
+        players_one_side = sg_tbl[2]
+        cclog("单边玩家的数量: " .. players_one_side)
+    end
+    
+    if players_one_side == "1" then --如果是1v1，则后面应该跟本客户端的index和两个玩家的信息
+        print("in 1v1: " .. #(sg_tbl))
+        if #(sg_tbl) < 5 then return end
+        
+        
+        cclog("清空原来的所有玩家，并生成 1v1 的两个玩家")
+        List.removeAll(HeroManager)
+        self._myIdx = sg_tbl[3]
+        
+        --0号位置的玩家
+        local mage0 = Mage:create()
+        mage0:setPosition(battleSiteX[1], 100)
+        currentLayer:addChild(mage0)
+        mage0:idleMode()
+        mage0._camp = string.sub(sg_tbl[4], 3, 3)--camp
+        mage0:setVisible(true)
+        List.pushlast(HeroManager, mage0)
+        
+        --1号位置的玩家
+        local mage1 = Mage:create()
+        mage1:setPosition(battleSiteX[1], 300)
+        currentLayer:addChild(mage1)
+        mage1:idleMode()
+        mage1._camp = string.sub(sg_tbl[5], 3, 3)--camp
+        mage1:setVisible(true)
+        List.pushlast(HeroManager, mage1)
+    elseif players_one_side == "2" then --如果是2v2，则后面应该跟本客户端的index和4个玩家的信息
+        print("in 2v2: " .. #(sg_tbl))
+        if #(sg_tbl) < 7 then return end
+    
+    
+        cclog("清空原来的所有玩家，并生成 2v2 的两个玩家")
+        List.removeAll(HeroManager)
+        self._myIdx = sg_tbl[3]
+    
+        --0号位置的玩家
+        local mage0 = Mage:create()
+        mage0:setPosition(battleSiteX[1], 100)
+        currentLayer:addChild(mage0)
+        mage0:idleMode()
+        mage0._camp = string.sub(sg_tbl[4], 3, 3)--camp
+        mage0:setVisible(true)
+        List.pushlast(HeroManager, mage0)
+    
+        --1号位置的玩家
+        local mage1 = Mage:create()
+        mage1:setPosition(battleSiteX[1], 300)
+        currentLayer:addChild(mage1)
+        mage1:idleMode()
+        mage1._camp = string.sub(sg_tbl[5], 3, 3)--camp
+        mage1:setVisible(true)
+        List.pushlast(HeroManager, mage1)
+        
+        --2号位置的玩家
+        local mage2 = Mage:create()
+        mage2:setPosition(battleSiteX[1] + 500, 100)
+        currentLayer:addChild(mage2)
+        mage2:idleMode()
+        mage2._camp = string.sub(sg_tbl[6], 3, 3)--camp
+        mage2:setVisible(true)
+        List.pushlast(HeroManager, mage2)
+        
+        --3号位置的玩家
+        local mage3 = Mage:create()
+        mage3:setPosition(battleSiteX[1] + 500, 300)
+        currentLayer:addChild(mage3)
+        mage3:idleMode()
+        mage3._camp = string.sub(sg_tbl[7], 3, 3)--camp
+        mage3:setVisible(true)
+        List.pushlast(HeroManager, mage3)
+    end
+    
+    
 	--[[local knight = Knight:create()
    	knight:setPosition(battleSiteX[1], 10)
     currentLayer:addChild(knight)
@@ -87,12 +175,12 @@ function PVPGameMaster:AddHeros()
     --]]
 
     --删除场景中的法师和射手，只留下战士，需要相应的删除左下角的方块头像
-    local mage = Mage:create()
-   	mage:setPosition(battleSiteX[1], 100)--wei add.100
-   	currentLayer:addChild(mage)
-   	mage:idleMode()
+    --local mage = Mage:create()
+   	--mage:setPosition(battleSiteX[1], 100)--wei add.100
+   	--currentLayer:addChild(mage)
+   	--mage:idleMode()
     --mage:setVisible(false)--wei add
-   	List.pushlast(HeroManager, mage)
+   	--List.pushlast(HeroManager, mage)
     
    	--[[
     local archer = Archer:create()

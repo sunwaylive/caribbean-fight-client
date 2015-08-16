@@ -11,6 +11,8 @@ pvpGameMaster = nil
 circle = nil
 arrow = nil
 t = nil
+isGameStart = false
+
 
 local specialCamera = {valid = false, position = cc.p(0,0)}
 local size = cc.Director:getInstance():getWinSize()
@@ -22,7 +24,20 @@ local cameraOffsetMax = {x=300, y=400}
 local totalTime = 0.0
 local receiveDataFrq = 0.2
 
+
 --TODO:对接受到的数据，分类处理
+local function handleMessage(msg)
+    if msg == nil then return end
+    
+    local msg_token = mysplit(msg, '#')
+    if msg_token == nil then return end
+    --for i, v in ipairs(msg_token) do
+    --cclog("value is: " .. v)
+    --end
+    
+    
+end
+
 --包括： 所有玩家的位置 和 朝向； 玩家目前的状态(攻击， walk)
 local function onReceiveData()
     if client_socket == nil then return end
@@ -30,7 +45,7 @@ local function onReceiveData()
     back, err, partial = client_socket:receive("*l")
     if err ~= "closed" then
         if back then
-            handleMessage(back)
+            handleMessage(back) --核心处理消息的函数
         end
     else
         cclog("TCP Connection is closed!")
@@ -39,19 +54,16 @@ local function onReceiveData()
     end
 end
 
-local function handleMessage(msg)
-    cclog(msg)
-end
 
 local function onSendData()
    if client_socket ~= nil then
        msg = "StartGame\n"
        
-       r, e = client_socket:send(msg)
+       --r, e = client_socket:send(msg)
        if r == nil then
            cclog("ERROR: I can't send data to Server: " .. e)
        else
-            cclog("sent successfully!")
+            --cclog("sent successfully!")
        end
    else
         cclog("Error: Tcp socket is dis-connect!")
@@ -102,7 +114,6 @@ local function moveHero(dt)
         local newPos = cc.pAdd(curPos, cc.p(sprite._heroMoveDir.x * sprite._heroMoveSpeed * dt, sprite._heroMoveDir.y * sprite._heroMoveSpeed * dt))
         sprite:setPosition(newPos)
     end
-    
     return true
 end
 
@@ -513,9 +524,9 @@ function PVPBattleScene:UIcontainsPoint(position)
 end
 
 --创建场景
-function PVPBattleScene.create()
+function PVPBattleScene.create(sg_msg)
     local scene = PVPBattleScene:new()
-	
+    
 	t = {}
 	setmetatable(t, {__mode = "k"})
     
@@ -549,7 +560,7 @@ function PVPBattleScene.create()
 	sprite2:setRotation3D(cc.V3(90,0,90))
 	currentLayer:addChild(sprite2,1,5)
     
-    pvpGameMaster = require("PVPGameMaster").create()
+    pvpGameMaster = require("PVPGameMaster").create(sg_msg)
     
 	bloodbarLayer = require("BloodbarUI").create()
     bloodbarLayer:setGlobalZOrder(2000)--确保UI盖在最上面
