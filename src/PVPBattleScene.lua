@@ -31,15 +31,59 @@ local function handleMessage(msg)
     
     local msg_token = mysplit(msg, '#')
     if msg_token == nil then return end
+    
+    if msg_token[1] == "UPDATESTATUS" then
+        if #(msg_token) < 10 then cclog("Error package from server!") end
+        
+        local client_index = tonumber(msg_token[2])
+        print(client_index)
+        if client_index < 1 or client_index > #(HeroManager) then return end
+        
+        local hero = HeroManager[client_index]
+        print(tonumber(msg_token[3]))
+        print(tonumber(msg_token[4]))
+        hero:setPosition(cc.p(tonumber(msg_token[3]), tonumber(msg_token[4])))
+        print(msg_token[5])
+        hero._curFacing = tonumber(msg_token[5])
+        print(msg_token[6])
+        print(msg_token[7])
+        hero._heroMoveDir = cc.p(tonumber(msg_token[6]), tonumber(msg_token[7]))
+        print(msg_token[8])
+        hero._heroMoveSpeed = tonumber(msg_token[8])
+        print(msg_token[9])
+        hero._hp = tonumber(msg_token[9])
+        print(msg_token[10])
+        hero:setStateType(tonumber(msg_token[10]))
+    end
 end
 
 --包括： 所有玩家的位置 和 朝向； 玩家目前的状态(攻击， walk)
 local function onReceiveData()
     if client_socket == nil then return end
+    --[[
+    recvt, sendt, status = socket.select({client_socket}, nil, 1)
+    cclog("111111")
+    print(recvt)
+    while #recvt > 0 do
+        cclog("222222")
+        local response, receive_status = client_socket:receive("*l")
+        if receive_status ~= "closed" then
+            cclog("333333")
+            print(response)
+            if response then
+                print(response)
+                recvt, sendt, status = socket.select({client_socket}, nil, 1)
+            end
+        else
+            break
+        end
+    end
+    --]]
     
-    back, err, partial = client_socket:receive("*l") --
+    back, err, partial = client_socket:receive("*l") --按行读取
     if err ~= "closed" then
         if back then
+            cclog("I have received msg: " .. back)
             handleMessage(back) --核心处理消息的函数
         end
     else
@@ -49,32 +93,29 @@ local function onReceiveData()
     end
 end
 
-
 local function onSendData()
    if client_socket ~= nil then
-       --TODO:打包当前玩家的数据，发送给服务器，然后由服务器转发 pvpGameMaster
+       --打包当前玩家的数据，发送给服务器，然后由服务器转发
        local head = "UPDATESTATUS"
        local client_index = pvpGameMaster._myIdx
        local hero = pvpGameMaster:GetClientOwnPlayer()
        local pos_x = hero:getPositionX()
        local pos_y = hero:getPositionY()
        
-       local facing = hero._heroMoveDir
-       --print("movedir.x: " .. facing.x)
-       --print("movedir.y: " .. facing.y)
+       local curFacing = hero._curFacing
+       local move_dir = hero._heroMoveDir
        local speed = hero._heroMoveSpeed
        local hp = hero._hp
        local state = hero:getStateType() --state 是number类型
        
-       msg = table.concat({head, client_index, pos_x, pos_y, facing.x, facing.y, speed, hp, state}, "#")
+       msg = table.concat({head, client_index, pos_x, pos_y, curFacing, move_dir.x, move_dir.y, speed, hp, state}, "#")
        msg = msg .. "\n"
-       print(msg)
        
        r, e = client_socket:send(msg)
        if r == nil then
            cclog("ERROR: I can't send data to Server: " .. e)
        else
-            cclog("sent successfully!")
+            --cclog("sent successfully!")
        end
    else
         cclog("Error: Tcp socket is dis-connect!")
@@ -114,6 +155,7 @@ end
 --不需要在这里接受服务器端的数据，这里只负责更具玩家的朝向计算下一个位置
 local function moveHero(dt)
     --首先更新角色的朝向
+    
     for val = HeroManager.last, HeroManager.first , -1 do
         local sprite = HeroManager[val]
         
@@ -195,8 +237,8 @@ local function gameController(dt)
     --设置时间间隔，每隔一定的时间接受从服务器过来的数据，更新其它玩家的状态;并向服务器发送自己的状态
     totalTime = totalTime + dt
     if totalTime > receiveDataFrq then
-        onReceiveData() --这里会阻塞
         onSendData()
+        onReceiveData() --这里会阻塞, 设置了timeout之后就不会阻塞了
         totalTime = totalTime - receiveDataFrq
     end
     
@@ -572,7 +614,7 @@ function PVPBattleScene.create(sg_msg)
 	currentLayer:addChild(sprite2,1,5)
     
     pvpGameMaster = require("PVPGameMaster").create(sg_msg)
-    client_socket:settimeout(0) --设置socket为不等待
+    client_socket:settimeout(0.1) --设置socket为不等待
     
 	bloodbarLayer = require("BloodbarUI").create()
     bloodbarLayer:setGlobalZOrder(2000)--确保UI盖在最上面

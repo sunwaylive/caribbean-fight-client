@@ -83,7 +83,7 @@ function PVPGameMaster:logicUpdate()
 end
 
 function PVPGameMaster:GetClientOwnPlayer()
-    cclog("!!!!!本客户端的玩家索引号: " .. self._myIdx)
+    --cclog("!!!!!本客户端的玩家索引号: " .. self._myIdx)
     if HeroManager ~= nil and self._myIdx <= #(HeroManager) then
         return HeroManager[self._myIdx]
     else
@@ -137,7 +137,7 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
         cclog("清空原来的所有玩家，并生成 2v2 的两个玩家")
         List.removeAll(HeroManager)
         self._myIdx = tonumber(sg_tbl[3])
-    
+        
         --0号位置的玩家
         local mage0 = Mage:create()
         mage0:setPosition(battleSiteX[1], 100)
@@ -146,7 +146,7 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
         mage0._camp = string.sub(sg_tbl[4], 3, 3)--camp
         mage0:setVisible(true)
         List.pushlast(HeroManager, mage0)
-    
+        
         --1号位置的玩家
         local mage1 = Mage:create()
         mage1:setPosition(battleSiteX[1], 300)
@@ -173,6 +173,7 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
         mage3._camp = string.sub(sg_tbl[7], 3, 3)--camp
         mage3:setVisible(true)
         List.pushlast(HeroManager, mage3)
+        print("4 在生成的时候， HeroManager 大小： " .. #HeroManager) --输出为3，因为自定义的List，下标从0开始，而#从下标为1的位置开始
     end
     
     --删除场景中的战士和射手，只留下法师，需要相应的删除左下角的方块头像
