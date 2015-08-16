@@ -28,6 +28,22 @@ function solveAttacks(dt)
                     end
                 end
             end
+            
+            --if heroes attack, then lets check monsters
+            for hkey = HeroManager.last, HeroManager.first, -1 do
+                --check distance first
+                local hero = HeroManager[hkey]
+                local hpos = hero._myPos
+                local dist = cc.pGetDistance(getPosTable(attack), hpos)
+                if dist < (attack.maxRange + hero._radius) and dist > attack.minRange then
+                    --range test passed, now angle test
+                    local angle = cc.pToAngleSelf(cc.pSub(hpos,getPosTable(attack)))
+                    --如果是有效攻击，调用onCollide
+                    if(attack.facing + attack.angle/2)>angle and angle > (attack.facing- attack.angle/2) then
+                        attack:onCollide(hero)
+                    end
+                end
+            end
 
             --这里需要加入 对道具的碰撞检测
             for pkey = PropManager.last, PropManager.first, -1 do
@@ -674,6 +690,10 @@ function HookAttack:onCollide(target)
 		-- 测试钩子返回过程中是否可以钩人以及碰撞
 		-- return
 	-- end
+    if target == self.owner then
+        return
+    end
+    
 	if(target._isalive == false) then
 		return
 	end

@@ -102,7 +102,13 @@ local function onSendData()
        local pos_x = hero:getPositionX()
        local pos_y = hero:getPositionY()
        
-       local curFacing = hero._curFacing
+       if hero._curFacing == nil then
+           curFacing = 0
+        else
+            curFacing = hero._curFacing
+        end
+       
+       --local curFacing = hero._curFacing
        local move_dir = hero._heroMoveDir
        local speed = hero._heroMoveSpeed
        local hp = hero._hp
