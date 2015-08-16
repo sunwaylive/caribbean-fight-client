@@ -17,7 +17,7 @@ isGameStart = false
 local specialCamera = {valid = false, position = cc.p(0,0)}
 local size = cc.Director:getInstance():getWinSize()
 local scheduler = cc.Director:getInstance():getScheduler()
-local cameraOffset =  cc.V3(0 * 0.5, -800 * 0.5, 300 * 0.5)
+local cameraOffset =  cc.V3(0, -1000, 300 * 0.5)
 local cameraOffsetMin = {x=-300, y=-400}
 local cameraOffsetMax = {x=300, y=400}
 
@@ -139,7 +139,7 @@ local function moveCamera(dt)
     local cameraPosition = getPosTable(camera)
     --获取英雄的平均位置
     local focusPoint = getFocusPointOfHeros() --在manager.lua中被定义
-    
+    focusPoint = cc.p(pvpGameMaster:GetClientOwnPlayer():getPositionX(),pvpGameMaster:GetClientOwnPlayer():getPositionY())
     --如果正在特写
     --实际上是在specialCamera.valid被置为true的几秒内，临时改变了 camera位置的朝向(lookAt)的计算方式。
     if specialCamera.valid == true then
@@ -152,10 +152,10 @@ local function moveCamera(dt)
         --local temp = cc.pLerp(cameraPosition,
           --                    cc.p(focusPoint.x + cameraOffset.x, cameraOffset.y + focusPoint.y - size.height * 3 / 4), 2 * dt)
         --上一句是为了平滑过渡相机，这里我们不需要，直接设置相机的位置和便宜更加有控制感
-        local temp = cc.V3(focusPoint.x + cameraOffset.x, cameraOffset.y + focusPoint.y - size.height * 3 / 4)
-        local position = cc.V3(temp.x, temp.y, size.height / 2 - 100 + 700)
+        local temp = cc.V3(focusPoint.x + cameraOffset.x, cameraOffset.y + focusPoint.y)
+        local position = cc.V3(temp.x, temp.y, 1000)
         camera:setPosition3D(position)
-        camera:lookAt(cc.V3(position.x, focusPoint.y + 500, 50.0), cc.V3(0.0, 0.0, 1.0)) --TODO: 要调整相机的视角，可以修改cameraOffset！！！
+        camera:lookAt(cc.V3(focusPoint.x, focusPoint.y + 0, 10.0), cc.V3(0.0, 0.0, 1.0)) --TODO: 要调整相机的视角，可以修改cameraOffset！！！
         --cclog("\ncalf %f %f %f \ncalf %f %f 50.000000", position.x, position.y, position.z, focusPoint.x, focusPoint.y)            
     end
 end
@@ -200,11 +200,11 @@ end
 --设置主场景中的地图和背景
 local function createBackground()
     --local spriteBg = cc.Sprite3D:create("model/scene/changing.c3b")
-    local spriteBg = cc.Sprite3D:create("model/scene/BackGround.c3t")
+    local spriteBg = cc.Sprite3D:create("minigame/map5.c3t")
 
     currentLayer:addChild(spriteBg)
     spriteBg:setScale(2000) --要放很大，不然看不见
-    spriteBg:setPosition3D(cc.V3(-2300,-1000,0))
+    spriteBg:setPosition3D(cc.V3(-2000,0,0))
     spriteBg:setRotation3D(cc.V3(90,0,0)) --添加了地图的旋转
     spriteBg:setGlobalZOrder(-10)
 
@@ -269,7 +269,7 @@ end
 --初始化UI层
 local function initUILayer()
     --创建战场层, uiLayer就是BattleFieldUI的一个实例
-    uiLayer = require("PVPBattleFieldUI").create()
+    uiLayer = require("BattleFieldUI").create()
 
     uiLayer:setPositionZ(-1 * cc.Director:getInstance():getZEye()/4)--getZEye获取到近平面的距离
     uiLayer:setScale(0.25)--设置UI的大小
@@ -317,7 +317,7 @@ function initArrowCircle(layer)
 	layer:addChild(layer.circle)
 	
 	layer.arrow = cc.Sprite:createWithSpriteFrameName("arrow.png")
-    layer.arrow:setScale(2.2)
+    layer.arrow:setScale(1.8)
 	layer.arrow:setOpacity(255*0.7)
 	layer.arrow:setAnchorPoint(0.05,0.5)
 	layer.arrow:setGlobalZOrder(1)
@@ -400,7 +400,16 @@ function PVPBattleScene:enableTouch()
 			
 			--bloodbarLayer.circle:setVisible(true)
 			bloodbarLayer.arrow:setVisible(true)
-	
+		elseif self:UIcontainsPoint(touch:getLocation()) == "BACK" then
+			print("BACK")
+			-- cc.Director:getInstance():endToLua()
+			-- package.loaded["MainMenuScene"] = nil
+			-- package.loaded["Helper"]=nil
+			cc.Director:getInstance():getScheduler():unscheduleScriptEntry(gameControllerScheduleID)
+			cc.Director:getInstance():getScheduler():unscheduleScriptEntry(uiLayer._tmSchedule)
+			package.loaded["PVPMainScene"]=nil
+			local scene = require("PVPMainScene")
+            cc.Director:getInstance():replaceScene(scene.create())
         end
         return true
     end
@@ -428,7 +437,7 @@ function PVPBattleScene:enableTouch()
             if sprite:getStateType() ~= EnumStateType.WALKING then
                 sprite:walkMode()
             end
-        elseif self:UIcontainsPoint(touch:getLocation()) == "ATTACKRANGE" then
+        elseif self:UIcontainsPoint(touch:getLocation()) == "ATTACKRANGE" or self:UIcontainsPoint(touch:getLocation()) == "ATTACKBTN"then
             --让技能摇杆箭头随手指移动
 			--手指与圆心的方向
 			local m = cc.p(touch:getLocation().x - uiLayer.AttackArrow:getPositionX(), 
@@ -441,6 +450,8 @@ function PVPBattleScene:enableTouch()
 			local b = 180 * a / 3.14
 			uiLayer.AttackArrow:setRotation(b)
 			bloodbarLayer.arrow:setRotation(b)
+			
+			uiLayer.label:setString("AttackBegin 1")
 		end
         
         --不改变相机的视角
@@ -458,8 +469,9 @@ function PVPBattleScene:enableTouch()
         local location = touch:getLocation()
         local message = self:UIcontainsPoint(location)
 
+		if message == "ATTACKBTN" or message == "ATTACKRANGE" then
 		--松开手时，如果技能箭头可见，则说明应该释放技能
-		if uiLayer.AttackRange:isVisible() then
+			if uiLayer.AttackRange:isVisible() then
                 local sprite = pvpGameMaster:GetClientOwnPlayer()
 				--将角色转向调为箭头方向
 				local touchPoint = cc.p(touch:getLocation().x, touch:getLocation().y)
@@ -471,31 +483,27 @@ function PVPBattleScene:enableTouch()
                 if sprite:getStateType() ~= EnumStateType.ATTACKING then
                     sprite:setStateType(EnumStateType.ATTACKING)
                 end
-		end
-		--重置技能UI为不可见
-		uiLayer.AttackRange:setVisible(false)
-		uiLayer.AttackArrow:setVisible(false)
-		
-		bloodbarLayer.circle:setVisible(false)
-		bloodbarLayer.arrow:setVisible(false)
-	
-        if message == "ATTACKBTN" then
+			end
+			--重置技能UI为不可见
+			uiLayer.AttackRange:setVisible(false)
+			uiLayer.AttackArrow:setVisible(false)
+			
+			bloodbarLayer.circle:setVisible(false)
+			bloodbarLayer.arrow:setVisible(false)
+
             --do nothing
         elseif message == "JOYSTICK" then
             --恢复按钮的位置
             uiLayer.JoystickBtn:setPosition(uiLayer.JoystickFrame:getPosition())
         
-            for val = HeroManager.first, HeroManager.last do
-                local sprite = HeroManager[val]
+				local sprite = pvpGameMaster:GetClientOwnPlayer()
 				if(sprite:getStateType()==EnumStateType.ATTACKING) then
-					break
+					return
 				end
                 --sprite._heroMoveDir = heroMoveDir --方向不变
                 sprite._heroMoveSpeed = 0 --速度变为0
-				--print("stop walking")
                 if sprite:getStateType() ~= EnumStateType.IDLE then
                     sprite:idleMode()
-                end
             end
         elseif message ~= nil then
             --处理其他的消息，如
@@ -504,14 +512,12 @@ function PVPBattleScene:enableTouch()
             --nil message
             --恢复按钮的位置
             uiLayer.JoystickBtn:setPosition(uiLayer.JoystickFrame:getPosition())
-            for val = HeroManager.first, HeroManager.last do
-                local sprite = HeroManager[val]
+            local sprite = pvpGameMaster:GetClientOwnPlayer()
                 --sprite._heroMoveDir = heroMoveDir --方向不变
                 sprite._heroMoveSpeed = 0 --速度变为0
                 if sprite:getStateType() ~= EnumStateType.IDLE then
                     sprite:idleMode()
                 end
-            end
         end
     end
 
@@ -567,12 +573,16 @@ function PVPBattleScene:UIcontainsPoint(position)
     
     local rectJoystick = uiLayer.JoystickFrame:getBoundingBox()
     local rectAttackBtn = uiLayer.AttackBtn:getBoundingBox()
-    local rectAttackRange = uiLayer.AttackRange:getBoundingBox() --新加的技能范围
+    --local rectAttackRange = uiLayer.AttackRange:getBoundingBox() --新加的技能范围
+	local rectAttackRange = {x=size.width/2,y=0,width=size.width/2,height=size.height}
+	local rectBackBtn = uiLayer.BackBtn:getBoundingBox()
 	
     if cc.rectContainsPoint(rectJoystick, position) then
         message = MessageDispatchCenter.MessageType.JOYSTICK
     elseif cc.rectContainsPoint(rectAttackBtn, position) then --到这了都是对的
         message = MessageDispatchCenter.MessageType.ATTACKBTN
+	elseif cc.rectContainsPoint(rectBackBtn, position) then
+		message = MessageDispatchCenter.MessageType.BACK
     elseif cc.rectContainsPoint(rectAttackRange, position) then --如果技能范围显示出来
 		if uiLayer.AttackRange:isVisible() then
 			message = MessageDispatchCenter.MessageType.ATTACKRANGE
