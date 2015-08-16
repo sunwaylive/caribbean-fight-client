@@ -73,7 +73,7 @@ function PVPMainScene:connectToServer()
     local server_ip = "112.74.199.45"
     local server_port = 8383
     client_socket = socket.tcp()
-    --client_socket:settimeout(5)
+    --client_socket:settimeout(0)
     
     --In case of error, the method returns nil followed by a string describing the error. In case of success, the method returns 1.
     if client_socket:connect(server_ip, server_port) == 1 then
@@ -116,12 +116,12 @@ function PVPMainScene:startGame()
     if client_socket ~= nil then
         sn, se = client_socket:send("STARTGAME\n")
         if se ~= nil then
-            cclog("ERROR: In startGame() in PVPMainScene.lua, I can't send start game request!" .. se)
+            cclog("ERROR: In startGame() in PVPMainScene.lua, I can't send! " .. se)
         end
         
         r, re = client_socket:receive("*l")
         if re ~= nil then
-            cclog("ERROR: In startGame() in PVPMainScene.lua, I can't receive start game request!" .. re)
+            cclog("ERROR: In startGame() in PVPMainScene.lua, I can't receive! " .. re)
             return
         end
         

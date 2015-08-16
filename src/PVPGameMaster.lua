@@ -82,6 +82,15 @@ function PVPGameMaster:logicUpdate()
     
 end
 
+function PVPGameMaster:GetClientOwnPlayer()
+    cclog("!!!!!本客户端的玩家索引号: " .. self._myIdx)
+    if HeroManager ~= nil and self._myIdx <= #(HeroManager) then
+        return HeroManager[self._myIdx]
+    else
+        cclog("Error: Can't get client Own Player!")
+    end
+end
+
 --这里要根据服务器下发的位置 放置玩家
 function PVPGameMaster:AddHeros(sg_msg) --startgame string
     cclog("in PVPGameMaster:AddHeros()")
@@ -101,7 +110,7 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
         
         cclog("清空原来的所有玩家，并生成 1v1 的两个玩家")
         List.removeAll(HeroManager)
-        self._myIdx = sg_tbl[3]
+        self._myIdx = tonumber(sg_tbl[3])
         
         --0号位置的玩家
         local mage0 = Mage:create()
@@ -127,7 +136,7 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
     
         cclog("清空原来的所有玩家，并生成 2v2 的两个玩家")
         List.removeAll(HeroManager)
-        self._myIdx = sg_tbl[3]
+        self._myIdx = tonumber(sg_tbl[3])
     
         --0号位置的玩家
         local mage0 = Mage:create()
@@ -166,30 +175,13 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
         List.pushlast(HeroManager, mage3)
     end
     
-    
-	--[[local knight = Knight:create()
-   	knight:setPosition(battleSiteX[1], 10)
-    currentLayer:addChild(knight)
-    knight:idleMode()
-    List.pushlast(HeroManager, knight)
-    --]]
-
-    --删除场景中的法师和射手，只留下战士，需要相应的删除左下角的方块头像
+    --删除场景中的战士和射手，只留下法师，需要相应的删除左下角的方块头像
     --local mage = Mage:create()
    	--mage:setPosition(battleSiteX[1], 100)--wei add.100
    	--currentLayer:addChild(mage)
    	--mage:idleMode()
     --mage:setVisible(false)--wei add
    	--List.pushlast(HeroManager, mage)
-    
-   	--[[
-    local archer = Archer:create()
-    archer:setPosition(battleSiteX[1], -80)--wei add. -80
-    currentLayer:addChild(archer)
-    archer:idleMode()
-    archer:setVisible(false)--wei add
-    List.pushlast(HeroManager, archer)
-    --]]
 end
 
 --添加道具

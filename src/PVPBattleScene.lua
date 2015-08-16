@@ -31,16 +31,13 @@ local function handleMessage(msg)
     
     local msg_token = mysplit(msg, '#')
     if msg_token == nil then return end
-    --for i, v in ipairs(msg_token) do
-    --cclog("value is: " .. v)
-    --end
 end
 
 --包括： 所有玩家的位置 和 朝向； 玩家目前的状态(攻击， walk)
 local function onReceiveData()
     if client_socket == nil then return end
     
-    back, err, partial = client_socket:receive("*l")
+    back, err, partial = client_socket:receive("*l") --
     if err ~= "closed" then
         if back then
             handleMessage(back) --核心处理消息的函数
@@ -184,7 +181,7 @@ local function gameController(dt)
     --设置时间间隔，每隔一定的时间接受从服务器过来的数据，更新其它玩家的状态;并向服务器发送自己的状态
     totalTime = totalTime + dt
     if totalTime > receiveDataFrq then
-        --onReceiveData()
+        onReceiveData() --这里会阻塞
         --onSendData()
         totalTime = totalTime - receiveDataFrq
     end
@@ -319,16 +316,18 @@ function PVPBattleScene:enableTouch()
             
             local heroMoveDir = cc.pNormalize(cc.p(touchPoint.x - joystickFrameCenter.x, touchPoint.y - joystickFrameCenter.y))
             local heroMoveSpeed = 250 --设置玩家的移动速度
-            for val = HeroManager.first, HeroManager.last do
-                local sprite = HeroManager[val]
-				if(sprite:getStateType()==EnumStateType.ATTACKING) then
-					break;
-				end
-                sprite._heroMoveDir = heroMoveDir
-                sprite._heroMoveSpeed = heroMoveSpeed
-                if sprite:getStateType() ~= EnumStateType.WALKING then
-                    sprite:walkMode()
-                end
+            --只控制主玩家
+            local sprite = pvpGameMaster:GetClientOwnPlayer()
+            if sprite == nil then return end
+            --很关键:这里控制了当角色在攻击状态下的时候，不改变玩家的攻击状态
+            if(sprite:getStateType()==EnumStateType.ATTACKING) then
+				return
+			end
+            
+            sprite._heroMoveDir = heroMoveDir
+            sprite._heroMoveSpeed = heroMoveSpeed
+            if sprite:getStateType() ~= EnumStateType.WALKING then
+               sprite:walkMode()
             end
         elseif self:UIcontainsPoint(touch:getLocation()) == "ATTACKBTN" then
             --玩家点击攻击按钮时,显示范围和箭头
@@ -352,16 +351,18 @@ function PVPBattleScene:enableTouch()
             
             local heroMoveDir = cc.pNormalize(cc.p(touchPoint.x - joystickFrameCenter.x, touchPoint.y - joystickFrameCenter.y))
             local heroMoveSpeed = 250 --设置玩家的移动速度
-            for val = HeroManager.first, HeroManager.last do
-                local sprite = HeroManager[val]
-				if(sprite:getStateType()==EnumStateType.ATTACKING) then
-					break;
-				end
-                sprite._heroMoveDir = heroMoveDir
-                sprite._heroMoveSpeed = heroMoveSpeed
-                if sprite:getStateType() ~= EnumStateType.WALKING then
-                    sprite:walkMode()
-                end
+            --只控制主玩家
+            local sprite = pvpGameMaster:GetClientOwnPlayer()
+            if sprite == nil then return end
+            --很关键:这里控制了当角色在攻击状态下的时候，不改变玩家的攻击状态
+            if(sprite:getStateType()==EnumStateType.ATTACKING) then
+                return
+            end
+            
+            sprite._heroMoveDir = heroMoveDir
+            sprite._heroMoveSpeed = heroMoveSpeed
+            if sprite:getStateType() ~= EnumStateType.WALKING then
+                sprite:walkMode()
             end
         elseif self:UIcontainsPoint(touch:getLocation()) == "ATTACKRANGE" then
             --让技能摇杆箭头随手指移动
@@ -395,8 +396,7 @@ function PVPBattleScene:enableTouch()
 
 		--松开手时，如果技能箭头可见，则说明应该释放技能
 		if uiLayer.AttackRange:isVisible() then
-			for val = HeroManager.first, HeroManager.last do
-                local sprite = HeroManager[val]
+                local sprite = pvpGameMaster:GetClientOwnPlayer()
 				--将角色转向调为箭头方向
 				local touchPoint = cc.p(touch:getLocation().x, touch:getLocation().y)
 				local heroMoveDir = cc.pNormalize(cc.p(touchPoint.x - uiLayer.AttackBtn:getPositionX(), touchPoint.y - uiLayer.AttackBtn:getPositionY()))
@@ -407,7 +407,6 @@ function PVPBattleScene:enableTouch()
                 if sprite:getStateType() ~= EnumStateType.ATTACKING then
                     sprite:setStateType(EnumStateType.ATTACKING)
                 end
-            end
 		end
 		--重置技能UI为不可见
 		uiLayer.AttackRange:setVisible(false)
@@ -559,6 +558,7 @@ function PVPBattleScene.create(sg_msg)
 	currentLayer:addChild(sprite2,1,5)
     
     pvpGameMaster = require("PVPGameMaster").create(sg_msg)
+    client_socket:settimeout(0) --设置socket为不等待
     
 	bloodbarLayer = require("BloodbarUI").create()
     bloodbarLayer:setGlobalZOrder(2000)--确保UI盖在最上面
