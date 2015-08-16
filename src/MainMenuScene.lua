@@ -294,6 +294,27 @@ function MainMenuScene:addButton(layer)
     effectSpritePVP:setPosition(self.size.width*0.5 + 100,self.size.height*0.15)
     layer:addChild(effectSpritePVP,5)
     --effectSprite:setEffect(effectNormalMapped)
+	
+	--step3: 退出按钮
+	local isTouchButtonClose = false
+    local button_callback_close = function(sender, eventType)
+        if isTouchButtonClose == false then
+            isTouchButtonClose = true
+            if eventType == ccui.TouchEventType.began then
+                ccexp.AudioEngine:play2d(BGM_RES.MAINMENUSTART, false, 1)
+                ccexp.AudioEngine:stop(AUDIO_ID.MAINMENUBGM)
+                -- 推出
+				cc.Director:getInstance():endToLua()
+
+            end
+        end
+    end
+
+    local buttonClose = ccui.Button:create("start.png","","",ccui.TextureResType.plistType)
+    buttonClose:setPosition(self.size.width - 100 ,self.size.height-70)
+    --用这种方式添加按钮响应函数
+    buttonClose:addTouchEventListener(button_callback_close)
+    layer:addChild(buttonClose,4)
 end
 
 
