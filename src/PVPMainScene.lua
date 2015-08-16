@@ -6,6 +6,7 @@ local label1
 local label2
 local str = "0"
 local num = 0
+
 local PVPMainScene  = class("PVPMainScene",function ()
                             return cc.Scene:create()
                             end)
@@ -19,7 +20,7 @@ end
 
 function PVPMainScene.create()
     local scene = PVPMainScene.new()
-    layer = scene:createLayer()
+    local layer = scene:createLayer()
     scene:addChild(layer)
     
     return scene
@@ -55,22 +56,24 @@ function PVPMainScene:createLayer()
 	self:addLabel(layer)
     --连接服务器
     self:connectToServer()
+    
     --创建UI元素
     self:addBackBtn(layer)
     self:addCreateRoomBtn(layer)
     self:addJoinRoomBtn(layer)
     self:addStartGameBtn(layer)
-	listener = cc.Director:getInstance():getScheduler():scheduleScriptFunc(tcpListener, 0, false)
-	scheduler = cc.Director:getInstance():getScheduler():scheduleScriptFunc(update, 0, false)
+    --TODO: 这边会导致界面阻塞
+	--listener = cc.Director:getInstance():getScheduler():scheduleScriptFunc(tcpListener, 0, false)
+	--scheduler = cc.Director:getInstance():getScheduler():scheduleScriptFunc(update, 0, false)
     return layer
 end
 
 --pvp establish tcp connect
 function PVPMainScene:connectToServer()
     local server_ip = "112.74.199.45"
-    local server_port = 2348
+    local server_port = 8383
     client_socket = socket.tcp()
-    client_socket:settimeout(5)
+    --client_socket:settimeout(5)
     
     --In case of error, the method returns nil followed by a string describing the error. In case of success, the method returns 1.
     if client_socket:connect(server_ip, server_port) == 1 then
@@ -83,7 +86,7 @@ end
 
 --pvp list room
 function PVPMainScene:listRoom()
-
+    
 end
 
 --PVP create room
@@ -228,6 +231,7 @@ function PVPMainScene:addStartGameBtn(layer)
     btnStartGame:addTouchEventListener(button_callback_startgame)
     layer:addChild(btnStartGame, 5)
 end
+
 --用于显示调试信息
 function PVPMainScene:addLabel(layer)
     self.label = cc.Label:createWithTTF("Hello World","chooseRole/actor_param.ttf", 20)

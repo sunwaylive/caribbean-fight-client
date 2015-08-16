@@ -34,8 +34,6 @@ local function handleMessage(msg)
     --for i, v in ipairs(msg_token) do
     --cclog("value is: " .. v)
     --end
-    
-    
 end
 
 --包括： 所有玩家的位置 和 朝向； 玩家目前的状态(攻击， walk)
@@ -186,8 +184,8 @@ local function gameController(dt)
     --设置时间间隔，每隔一定的时间接受从服务器过来的数据，更新其它玩家的状态;并向服务器发送自己的状态
     totalTime = totalTime + dt
     if totalTime > receiveDataFrq then
-        onReceiveData()
-        onSendData()
+        --onReceiveData()
+        --onSendData()
         totalTime = totalTime - receiveDataFrq
     end
     
