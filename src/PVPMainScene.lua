@@ -161,7 +161,7 @@ end
 --pvp establish tcp connect
 function PVPMainScene:connectToServer()
     local server_ip = "112.74.199.45"
-    local server_port =  8383--8383--2348
+    local server_port =  8484--8383--2348
     client_socket = socket.tcp()
     --client_socket:settimeout(5)
     

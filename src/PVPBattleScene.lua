@@ -102,6 +102,8 @@ local function onSendData()
        local pos_x = hero:getPositionX()
        local pos_y = hero:getPositionY()
        
+       --when two heros are two closed, curFacing will be nil, I don't know why
+       print("curFacing 类型: " .. type(hero._curFacing))
        if hero._curFacing == nil then
            curFacing = 0
         else
@@ -463,7 +465,7 @@ function PVPBattleScene:enableTouch()
 				local touchPoint = cc.p(touch:getLocation().x, touch:getLocation().y)
 				local heroMoveDir = cc.pNormalize(cc.p(touchPoint.x - uiLayer.AttackBtn:getPositionX(), touchPoint.y - uiLayer.AttackBtn:getPositionY()))
 				sprite._heroMoveDir = heroMoveDir
-				sprite._curFacing = heroMoveDir
+				--sprite._curFacing = heroMoveDir --_curFacing 是一个number， 不能用dir去赋值！
 				sprite._heroMoveSpeed = 0
 				--攻击
                 if sprite:getStateType() ~= EnumStateType.ATTACKING then

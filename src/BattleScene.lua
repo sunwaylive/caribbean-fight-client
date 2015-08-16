@@ -346,7 +346,7 @@ function BattleScene:enableTouch()
 					local touchPoint = cc.p(touch:getLocation().x, touch:getLocation().y)
 					local heroMoveDir = cc.pNormalize(cc.p(touchPoint.x - uiLayer.AttackBtn:getPositionX(), touchPoint.y - uiLayer.AttackBtn:getPositionY()))
 					sprite._heroMoveDir = heroMoveDir
-					sprite._curFacing = heroMoveDir
+					--sprite._curFacing = heroMoveDir --_curFacing 是一个number， 不能用dir去赋值！
 					sprite._heroMoveSpeed = 0
 					--攻击
 					uiLayer.label:setString("AttackBegin 2")
