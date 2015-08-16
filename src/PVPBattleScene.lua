@@ -52,19 +52,33 @@ end
 
 local function onSendData()
    if client_socket ~= nil then
-       msg = "StartGame\n"
+       --TODO:打包当前玩家的数据，发送给服务器，然后由服务器转发 pvpGameMaster
+       local head = "UPDATESTATUS"
+       local client_index = pvpGameMaster._myIdx
+       local hero = pvpGameMaster:GetClientOwnPlayer()
+       local pos_x = hero:getPositionX()
+       local pos_y = hero:getPositionY()
        
-       --r, e = client_socket:send(msg)
+       local facing = hero._heroMoveDir
+       --print("movedir.x: " .. facing.x)
+       --print("movedir.y: " .. facing.y)
+       local speed = hero._heroMoveSpeed
+       local hp = hero._hp
+       local state = hero:getStateType() --state 是number类型
+       
+       msg = table.concat({head, client_index, pos_x, pos_y, facing.x, facing.y, speed, hp, state}, "#")
+       msg = msg .. "\n"
+       print(msg)
+       
+       r, e = client_socket:send(msg)
        if r == nil then
            cclog("ERROR: I can't send data to Server: " .. e)
        else
-            --cclog("sent successfully!")
+            cclog("sent successfully!")
        end
    else
         cclog("Error: Tcp socket is dis-connect!")
-   end   
-   --TODO:打包当前玩家的数据，发送给服务器，然后由服务器转发
-   --client_socket:send()
+   end
 end
 
 
@@ -182,7 +196,7 @@ local function gameController(dt)
     totalTime = totalTime + dt
     if totalTime > receiveDataFrq then
         onReceiveData() --这里会阻塞
-        --onSendData()
+        onSendData()
         totalTime = totalTime - receiveDataFrq
     end
     

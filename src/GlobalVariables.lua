@@ -88,7 +88,8 @@ EnumStateType =
         "DEAD",--6
 		"HOOKING" --7 新状态，被钩中
     }
-EnumStateType = CreateEnumTable(EnumStateType) 
+EnumStateType = CreateEnumTable(EnumStateType)
+
 --common value is used to reset an actor
 ActorCommonValues =
 {
@@ -207,7 +208,7 @@ MageValues = {
     _mass           = 800,
     _shadowSize     = 70,
 
-    _hp             = 1100000,
+    _hp             = 110000,
     _maxhp          = 1100,
     _defense        = 12000,
     _attackFrequency = 0.5, --原始攻击频率: 2.67
