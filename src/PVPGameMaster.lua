@@ -96,6 +96,7 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
     cclog("in PVPGameMaster:AddHeros()")
     sg_tbl = mysplit(sg_msg, '#')
     
+    print(sg_msg)
     print(#(sg_tbl))
     
     if #(sg_tbl) >= 2 then

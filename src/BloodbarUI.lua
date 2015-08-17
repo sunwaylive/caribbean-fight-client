@@ -22,6 +22,8 @@ end
 
 function BloodbarLayer:init(client_idx)
 	--”¢–€µƒ—™Ãı
+    if HeroManager == nil then return end
+    
 	for val = HeroManager.first, HeroManager.last do
         local actor = HeroManager[val]
 		bloodbar = cc.ProgressTimer:create(cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png"))

@@ -220,13 +220,6 @@ function PVPMainScene:listRoom()
         --这个时候只会有一个创建房间的回包出现
         --TODO: 这里处理创建房间的回包
     end
-	--[[
-    self.label:setString("listRoom")
-	local r, e = client_socket:send("listRoom\n")
-	print(r,e)
-	if e~= nil then
-		label1:setString(e)
-	end--]]
 end
 
 --PVP create room
@@ -248,18 +241,6 @@ function PVPMainScene:createRoom()
         --这个时候只会有一个创建房间的回包出现
         --TODO: 这里处理创建房间的回包
     end
-    
-    --[[
-	self.label:setString("createRoom")
-    cclog("before send!")
-    local r, e = client_socket:send("createRoom 2\n") --第一个返回值是发送的字节数的意思, 第二个返回值是错误码，如果成功则返回nil
-    --cclog(r)
-	print(r,e)
-	if e~= nil then
-		label1:setString(e)
-	end
-	print("OK")
-     --]]
 end
 
 --PVP join room
@@ -292,14 +273,6 @@ function PVPMainScene:joinRoom(roomID)
 end
 
 function PVPMainScene:startGame()
-	-- self.label:setString("startGame")
-	-- local r, e = client_socket:send("startGame "..roomID.."\n")
-	-- print(r,e)
-	-- if e~= nil then
-		-- label1:setString(e)
-	-- end
-    --local scene = require("PVPBattleScene")
-    --cc.Director:getInstance():replaceScene(scene.create())
     if client_socket ~= nil then
         sn, se = client_socket:send("STARTGAME\n")
         if se ~= nil then
@@ -307,6 +280,22 @@ function PVPMainScene:startGame()
         end
         
         client_socket:settimeout(-1) --block infinitely
+        while 1 do
+            r, e = client_socket:receive("*l")
+            if e ~= nil then
+                cclog("ERROR: In startGame() in PVPMainScene.lua, I can't receive! " .. re)
+                return
+            end
+            
+            if string.sub(r, 1, 1) == "S" then
+                --这个时候只会有一个回包出现，就是响应开始游戏的回包
+                local scene = require("PVPBattleScene")
+                cc.Director:getInstance():replaceScene(scene.create(r))
+                break
+            end
+        end
+    end
+        --[[
         r, re = client_socket:receive("*l")
         if re ~= nil then
             cclog("ERROR: In startGame() in PVPMainScene.lua, I can't receive! " .. re)
@@ -316,8 +305,7 @@ function PVPMainScene:startGame()
         cclog("I have received msg from server: " .. r)
         --这个时候只会有一个回包出现，就是响应开始游戏的回包
         local scene = require("PVPBattleScene")
-        cc.Director:getInstance():replaceScene(scene.create(r))
-    end
+        cc.Director:getInstance():replaceScene(scene.create(r))--]]
 end
 
 --below is for create UI elements
