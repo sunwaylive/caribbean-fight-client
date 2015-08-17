@@ -273,7 +273,7 @@ function Actor:hookingUpdate(dt)
             self:dyingMode()   
 		end
 	end
-	print("Distance:", distance)
+    
 	if distance <= 100 or distance >= cc.pGetDistance(self.hookStartPos, selfPos) and distance <= 300 then
 		self:idleMode()
 	end

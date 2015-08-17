@@ -103,7 +103,6 @@ local function onSendData()
        local pos_y = hero:getPositionY()
        
        --when two heros are two closed, curFacing will be nil, I don't know why
-       print("curFacing 类型: " .. type(hero._curFacing))
        if hero._curFacing == nil then
            curFacing = 0
         else

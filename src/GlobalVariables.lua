@@ -208,9 +208,9 @@ MageValues = {
     _mass           = 800,
     _shadowSize     = 70,
 
-    _hp             = 110000,
+    _hp             = 1100,
     _maxhp          = 1100,
-    _defense        = 12000,
+    _defense        = 120,
     _attackFrequency = 0.5, --原始攻击频率: 2.67
     _recoverTime    = 0.8,
     _AIFrequency    = 1.33,
