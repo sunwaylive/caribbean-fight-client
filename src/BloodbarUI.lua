@@ -21,19 +21,21 @@ function BloodbarLayer:ctor()
 end
 
 function BloodbarLayer:init(client_idx)
-	--”¢–€µƒ—™Ãı
     if HeroManager == nil then return end
     
 	for val = HeroManager.first, HeroManager.last do
         local actor = HeroManager[val]
 		bloodbar = cc.ProgressTimer:create(cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png"))
-        --血条颜色跟阵营信息有关系
-        if actor._camp == HeroManager[client_idx]._camp then
-            bloodbar:setColor(cc.c3b(149,254,26))
+        --血条颜色跟阵营信息有关系, PVE是不穿client_idx进来的，所以是nil
+        if client_idx ~= nil then
+            if actor._camp == HeroManager[client_idx]._camp then
+                bloodbar:setColor(cc.c3b(149,254,26))
+                else
+                bloodbar:setColor(cc.c3b(255,0,0))
+            end
         else
-            bloodbar:setColor(cc.c3b(255,0,0))
+            bloodbar:setColor(cc.c3b(149,254,26))
         end
-        
 		bloodbar:setType(cc.PROGRESS_TIMER_TYPE_BAR)
 		bloodbar:setMidpoint(cc.vertex2F(0,0))
 		bloodbar:setBarChangeRate(cc.vertex2F(1,0))
