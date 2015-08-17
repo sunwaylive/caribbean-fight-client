@@ -139,7 +139,7 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
         List.removeAll(HeroManager)
         self._myIdx = tonumber(sg_tbl[3])
         
-        --0号位置的玩家
+        --1号位置的玩家
         local mage0 = Mage:create()
         mage0:setPosition(battleSiteX[1], 100)
         currentLayer:addChild(mage0)
@@ -148,7 +148,7 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
         mage0:setVisible(true)
         List.pushlast(HeroManager, mage0)
         
-        --1号位置的玩家
+        --2号位置的玩家
         local mage1 = Mage:create()
         mage1:setPosition(battleSiteX[1], 300)
         currentLayer:addChild(mage1)
@@ -157,7 +157,7 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
         mage1:setVisible(true)
         List.pushlast(HeroManager, mage1)
         
-        --2号位置的玩家
+        --3号位置的玩家
         local mage2 = Mage:create()
         mage2:setPosition(battleSiteX[1] + 500, 100)
         currentLayer:addChild(mage2)
@@ -166,7 +166,7 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
         mage2:setVisible(true)
         List.pushlast(HeroManager, mage2)
         
-        --3号位置的玩家
+        --4号位置的玩家
         local mage3 = Mage:create()
         mage3:setPosition(battleSiteX[1] + 500, 300)
         currentLayer:addChild(mage3)

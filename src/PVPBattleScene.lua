@@ -36,23 +36,23 @@ local function handleMessage(msg)
         if #(msg_token) < 10 then cclog("Error package from server!") end
         
         local client_index = tonumber(msg_token[2])
-        print(client_index)
+        --print(client_index)
         if client_index < 1 or client_index > #(HeroManager) then return end
         
         local hero = HeroManager[client_index]
-        print(tonumber(msg_token[3]))
-        print(tonumber(msg_token[4]))
+        --print(tonumber(msg_token[3]))
+        --print(tonumber(msg_token[4]))
         hero:setPosition(cc.p(tonumber(msg_token[3]), tonumber(msg_token[4])))
-        print(msg_token[5])
+        --print(msg_token[5])
         hero._curFacing = tonumber(msg_token[5])
-        print(msg_token[6])
-        print(msg_token[7])
+        --print(msg_token[6])
+        --print(msg_token[7])
         hero._heroMoveDir = cc.p(tonumber(msg_token[6]), tonumber(msg_token[7]))
-        print(msg_token[8])
+        --print(msg_token[8])
         hero._heroMoveSpeed = tonumber(msg_token[8])
-        print(msg_token[9])
+        --print(msg_token[9])
         hero._hp = tonumber(msg_token[9])
-        print(msg_token[10])
+        --print(msg_token[10])
         hero:setStateType(tonumber(msg_token[10]))
     end
 end
@@ -168,7 +168,7 @@ local function moveHero(dt)
         
         sprite._curFacing = cc.pToAngleSelf(sprite._heroMoveDir)
         sprite:setRotation(-RADIANS_TO_DEGREES(sprite._curFacing))
-        local curPos = sprite._myPos
+        local curPos = cc.p(sprite:getPositionX(), sprite:getPositionY())
         local newPos = cc.pAdd(curPos, cc.p(sprite._heroMoveDir.x * sprite._heroMoveSpeed * dt, sprite._heroMoveDir.y * sprite._heroMoveSpeed * dt))
         sprite:setPosition(newPos)
     end
@@ -450,7 +450,7 @@ function PVPBattleScene:enableTouch()
 			uiLayer.AttackArrow:setRotation(b)
 			bloodbarLayer.arrow:setRotation(b)
 			
-			uiLayer.label:setString("AttackBegin 1")
+			--uiLayer.label:setString("AttackBegin 1")
 		end
         
         --不改变相机的视角
