@@ -13,6 +13,8 @@ local roomMenu
 local str = "0"
 LINE_SPACE = 80
 local num = 0
+local totalTime = 0.0
+local receiveDataFrq = 0.5
 
 local PVPMainScene  = class("PVPMainScene",function ()
                             return cc.Scene:create()
@@ -78,6 +80,28 @@ local function tcpListener(dt)
 	end
 end
 
+local function onListRoom()
+    client_socket:settimeout(0.1) --block infinitely
+    back, err, partial = client_socket:receive("*l") --按行读取
+    if err ~= "closed" then
+        if back then
+            cclog("I have received msg: " .. back)
+            --TODO: 这里处理收到的房间信息，在界面上显示出来
+        end
+        else
+        cclog("TCP Connection is closed!")
+        client_socket = nil --if tcp is dis-connect
+    end
+end
+
+local function listRoomListener(dt)
+    totalTime = totalTime + dt
+    if totalTime > receiveDataFrq then
+        onListRoom()
+        totalTime = totalTime - receiveDataFrq
+    end
+end
+
 function PVPMainScene:createLayer()
     --create layer
     local layer = cc.Layer:create()
@@ -94,7 +118,7 @@ function PVPMainScene:createLayer()
 	List.pushlast(roomList,{roomID=1003,playerNum=3})
 	List.pushlast(roomList,{roomID=1004,playerNum=5})
 	self:addRoomLabel(layer, roomList)
-	--listener = cc.Director:getInstance():getScheduler():scheduleScriptFunc(tcpListener, 0, false)
+	listener = cc.Director:getInstance():getScheduler():scheduleScriptFunc(listRoomListener, 0, false)
     return layer
 end
 
@@ -166,7 +190,7 @@ function PVPMainScene:connectToServer()
     local server_ip = "112.74.199.45"
     local server_port =  8484 --8383--2348
     client_socket = socket.tcp()
-    --client_socket:settimeout(5)
+    client_socket:settimeout(0.3)
     
     --In case of error, the method returns nil followed by a string describing the error. In case of success, the method returns 1.
     if client_socket:connect(server_ip, server_port) == 1 then
@@ -185,6 +209,7 @@ function PVPMainScene:listRoom()
             cclog("SEND ERROR: In listRoom() in PVPMainScene.lua!" .. se)
         end
         
+        client_socket:settimeout(-1) --block infinitely
         r, re = client_socket:receive("*l")
         if re ~= nil then
             cclog("REVEIVE ERROR: In listRoom() in PVPMainScene.lua! " .. re)
@@ -212,6 +237,7 @@ function PVPMainScene:createRoom()
             cclog("SEND ERROR: In createRoom() in PVPMainScene.lua!" .. se)
         end
         
+        client_socket:settimeout(-1) --block infinitely
         r, re = client_socket:receive("*l")
         if re ~= nil then
             cclog("REVEIVE ERROR: In createRoom() in PVPMainScene.lua! " .. re)
@@ -244,6 +270,7 @@ function PVPMainScene:joinRoom(roomID)
             cclog("SEND ERROR: In joinRoom() in PVPMainScene.lua!" .. se)
         end
         
+        client_socket:settimeout(-1) --block infinitely
         r, re = client_socket:receive("*l")
         if re ~= nil then
             cclog("REVEIVE ERROR: In joinRoom() in PVPMainScene.lua! " .. re)
@@ -279,6 +306,7 @@ function PVPMainScene:startGame()
             cclog("ERROR: In startGame() in PVPMainScene.lua, I can't send! " .. se)
         end
         
+        client_socket:settimeout(-1) --block infinitely
         r, re = client_socket:receive("*l")
         if re ~= nil then
             cclog("ERROR: In startGame() in PVPMainScene.lua, I can't receive! " .. re)
