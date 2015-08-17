@@ -5,6 +5,7 @@ local fontPath = "chooseRole/actor_param.ttf"
 local socket = require("socket") --如果不行换这个试试 require('socket.core');
 
 client_socket = nil --本客户端和服务器通信的tcp链接
+
 local label1
 local label2
 local roomList = List.new()
@@ -46,9 +47,11 @@ local function tcpListener(dt)
 		local rContent = string.sub(r,i+1,-1)
 		label2:setString(rType)
 		if rType == "createRoom" then
-			if rContent == "OK" then
+			--if rContent == "OK" then
 			
-			end
+			--end
+            List.pushlast(roomList, {roomID=rContent,playerNum})
+            PVPMainScene:listRoom(roomList)
 		elseif rType == "listRoom" then
 			rooms = rContent
 			List.removeAll(roomList)
@@ -84,7 +87,7 @@ function PVPMainScene:createLayer()
     --创建UI元素
     self:addBackBtn(layer)
     self:addCreateRoomBtn(layer)
-    self:addJoinRoomBtn(layer)
+    --self:addJoinRoomBtn(layer) --现在直接点击房间就可以加入房间
     self:addStartGameBtn(layer)
     
 	List.pushlast(roomList,{roomID=1002,playerNum=2})
@@ -161,7 +164,7 @@ end
 --pvp establish tcp connect
 function PVPMainScene:connectToServer()
     local server_ip = "112.74.199.45"
-    local server_port =  8484--8383--2348
+    local server_port =  8484 --8383--2348
     client_socket = socket.tcp()
     --client_socket:settimeout(5)
     
@@ -175,18 +178,54 @@ function PVPMainScene:connectToServer()
 end
 
 --pvp list room
-function PVPMainScene:listRoom(roomList)
-	self.label:setString("listRoom")
+function PVPMainScene:listRoom()
+    if client_socket ~= nil then
+        sn, se = client_socket:send("listRoom\n")
+        if se ~= nil then
+            cclog("SEND ERROR: In listRoom() in PVPMainScene.lua!" .. se)
+        end
+        
+        r, re = client_socket:receive("*l")
+        if re ~= nil then
+            cclog("REVEIVE ERROR: In listRoom() in PVPMainScene.lua! " .. re)
+            return
+        end
+        
+        cclog("I have received msg from server: " .. r)
+        --这个时候只会有一个创建房间的回包出现
+        --TODO: 这里处理创建房间的回包
+    end
+	--[[
+    self.label:setString("listRoom")
 	local r, e = client_socket:send("listRoom\n")
 	print(r,e)
 	if e~= nil then
 		label1:setString(e)
-	end
+	end--]]
 end
 
 --PVP create room
 function PVPMainScene:createRoom()
+    if client_socket ~= nil then
+        sn, se = client_socket:send("createRoom 2\n")
+        if se ~= nil then
+            cclog("SEND ERROR: In createRoom() in PVPMainScene.lua!" .. se)
+        end
+        
+        r, re = client_socket:receive("*l")
+        if re ~= nil then
+            cclog("REVEIVE ERROR: In createRoom() in PVPMainScene.lua! " .. re)
+            return
+        end
+        
+        cclog("I have received msg from server: " .. r)
+        --这个时候只会有一个创建房间的回包出现
+        --TODO: 这里处理创建房间的回包
+    end
+    
+    --[[
 	self.label:setString("createRoom")
+    cclog("before send!")
     local r, e = client_socket:send("createRoom 2\n") --第一个返回值是发送的字节数的意思, 第二个返回值是错误码，如果成功则返回nil
     --cclog(r)
 	print(r,e)
@@ -194,16 +233,35 @@ function PVPMainScene:createRoom()
 		label1:setString(e)
 	end
 	print("OK")
+     --]]
 end
 
 --PVP join room
 function PVPMainScene:joinRoom(roomID)
-	self.label:setString("joinRoom")
+    if client_socket ~= nil then
+        sn, se = client_socket:send("joinRoom "..roomID.."\n")
+        if se ~= nil then
+            cclog("SEND ERROR: In joinRoom() in PVPMainScene.lua!" .. se)
+        end
+        
+        r, re = client_socket:receive("*l")
+        if re ~= nil then
+            cclog("REVEIVE ERROR: In joinRoom() in PVPMainScene.lua! " .. re)
+            return
+        end
+        
+        cclog("I have received msg from server: " .. r)
+        --这个时候只会有一个加入房间的回包出现
+        --TODO: 这里处理加入房间的回包
+    end
+    
+	--[[
+    self.label:setString("joinRoom")
 	local r, e = client_socket:send("joinRoom "..roomID.."\n")
 	print(r,e)
 	if e~= nil then
 		label1:setString(e)
-	end
+	end--]]
 end
 
 function PVPMainScene:startGame()
@@ -268,7 +326,7 @@ function PVPMainScene:addCreateRoomBtn(layer)
     local button_callback_createroom = function(sender, eventType)
         --确保这个按钮只被点击了一次
         if isTouchButtonCreateRoom == false then
-            --isTouchButtonCreateRoom = true
+            isTouchButtonCreateRoom = true
             if eventType == ccui.TouchEventType.began then
                 ccexp.AudioEngine:play2d(BGM_RES.MAINMENUSTART, false, 1)
                 ccexp.AudioEngine:stop(AUDIO_ID.MAINMENUBGM)
@@ -300,7 +358,7 @@ function PVPMainScene:addJoinRoomBtn(layer)
                 ccexp.AudioEngine:play2d(BGM_RES.MAINMENUSTART, false, 1)
                 ccexp.AudioEngine:stop(AUDIO_ID.MAINMENUBGM)
                 cclog("join room btn is clicked")
-                --self:joinRoom(roomID)--加入PVP房间
+                self:joinRoom(roomID)--加入PVP房间
             end
         end
     end

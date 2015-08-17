@@ -125,7 +125,7 @@ local function onSendData()
             --cclog("sent successfully!")
        end
    else
-        cclog("Error: Tcp socket is dis-connect!")
+        --cclog("Error: Tcp socket is dis-connect!")
    end
 end
 
