@@ -32,7 +32,7 @@ local function handleMessage(msg)
     local msg_token = mysplit(msg, '#')
     if msg_token == nil then return end
     
-    if msg_token[1] == "UPDATESTATUS" then
+    if msg_token[1] == "updateGame" then
         if #(msg_token) < 10 then cclog("Error package from server!") end
         
         local client_index = tonumber(msg_token[2])
@@ -96,7 +96,7 @@ end
 local function onSendData()
    if client_socket ~= nil then
        --打包当前玩家的数据，发送给服务器，然后由服务器转发
-       local head = "UPDATESTATUS"
+       local head = "updateGame"
        local client_index = pvpGameMaster._myIdx
        local hero = pvpGameMaster:GetClientOwnPlayer()
        local pos_x = hero:getPositionX()

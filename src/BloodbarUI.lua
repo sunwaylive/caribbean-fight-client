@@ -30,7 +30,7 @@ function BloodbarLayer:init(client_idx)
         if client_idx ~= nil then
             if actor._camp == HeroManager[client_idx]._camp then
                 bloodbar:setColor(cc.c3b(149,254,26))
-                else
+                else 
                 bloodbar:setColor(cc.c3b(255,0,0))
             end
         else
