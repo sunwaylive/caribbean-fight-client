@@ -93,7 +93,7 @@ end
 do
     Dragon._action = {
         idle = createAnimation(file,0,24,0.7),
-        knocked = createAnimation(filebg,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,30,37,0.7),
+        knocked = createAnimation(file,30,37,0.7),
         dead = createAnimation(file,42,80,1),
         attack1 = createAnimation(file,85,100,0.7),
         attack2 = createAnimation(file,100,115,0.7),
