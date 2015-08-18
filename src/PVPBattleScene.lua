@@ -326,12 +326,12 @@ end
 
 --更新圈和箭头的位置和方向
 function ArrowUpdate(dt)
-	for val = HeroManager.first, HeroManager.last do
-        local actor = HeroManager[val]
+
+        local actor = pvpGameMaster:GetClientOwnPlayer()
 		--可能会需要条件判断一下哪个角色是玩家控制的
 		bloodbarLayer.circle:setPosition(actor:getPosition())
 		bloodbarLayer.arrow:setPosition(actor:getPosition())
-    end
+
 end
 
 --类定义
