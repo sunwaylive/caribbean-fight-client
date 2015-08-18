@@ -104,6 +104,16 @@ local function createBackground()
     water:setGlobalZOrder(-10)
     --先隐藏河流
     water:setVisible(false)
+    
+    --[[
+    --test model
+    sp = cc.Sprite3D:create("minigame/test-weapon/miaolian.c3b") --("minigame/maoRedoUv.c3b")
+    --ret.sp:setCamera(camera)
+    sp:setPosition3D(cc.V3(-1800,200,510))
+    sp:setScale(3)
+    sp:setVisible(true)
+    sp:setGlobalZOrder(200)
+    currentLayer:addChild(sp)--]]
 end
 
 --创建相机
@@ -196,6 +206,8 @@ function initArrowCircle(layer)
 	layer.arrow:setGlobalZOrder(1)
 	layer.arrow:setVisible(false)
 	layer:addChild(layer.arrow)
+    
+    
 end
 --更新圈和箭头的位置和方向
 function ArrowUpdate(dt)

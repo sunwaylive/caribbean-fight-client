@@ -78,10 +78,12 @@ end
 function Mage:init3D()
     self:initShadow()
     self:initPuff()
-    self._sprite3d = cc.EffectSprite3D:create(file)
-    self._sprite3d:setScale(1.9)
+    --self._sprite3d = cc.EffectSprite3D:create(file)
+	self._sprite3d = cc.EffectSprite3D:create("minigame/model/penguinALL4.c3t")
+    self._sprite3d:setScale(1)
     self._sprite3d:addEffect(cc.V3(0,0,0),CelLine, -1)
-    self:addChild(self._sprite3d)
+    self._sprite3d:setPosition(cc.p(50,0))
+	self:addChild(self._sprite3d)
     self._sprite3d:setRotation3D({x = 90, y = 0, z = 0})        
     self._sprite3d:setRotation(-90)
     self:setDefaultEqt()
@@ -115,45 +117,45 @@ function Mage:setDefaultEqt()
 end
 
 function Mage:updateWeapon()
-    if self._useWeaponId == 0 then
-        local weapon = self._sprite3d:getMeshByName("fashi_wuqi01")
-        weapon:setVisible(true)
-        weapon = self._sprite3d:getMeshByName("fashi_wuqi2")
-        weapon:setVisible(false)
-    else
-        local weapon = self._sprite3d:getMeshByName("fashi_wuqi2")
-        weapon:setVisible(true)
-        weapon = self._sprite3d:getMeshByName("fashi_wuqi01")
-        weapon:setVisible(false)
-    end
+    -- if self._useWeaponId == 0 then
+        -- local weapon = self._sprite3d:getMeshByName("fashi_wuqi01")
+        -- weapon:setVisible(true)
+        -- weapon = self._sprite3d:getMeshByName("fashi_wuqi2")
+        -- weapon:setVisible(false)
+    -- else
+        -- local weapon = self._sprite3d:getMeshByName("fashi_wuqi2")
+        -- weapon:setVisible(true)
+        -- weapon = self._sprite3d:getMeshByName("fashi_wuqi01")
+        -- weapon:setVisible(false)
+    -- end
 end
 
 function Mage:updateHelmet()
-    if self._useHelmetId == 0 then
-        local helmet = self._sprite3d:getMeshByName("fashi_tou01")
-        helmet:setVisible(true)
-        helmet = self._sprite3d:getMeshByName("fashi_tou2")
-        helmet:setVisible(false)
-    else
-        local helmet = self._sprite3d:getMeshByName("fashi_tou2")
-        helmet:setVisible(true)
-        helmet = self._sprite3d:getMeshByName("fashi_tou01")
-        helmet:setVisible(false)
-    end
+    -- if self._useHelmetId == 0 then
+        -- local helmet = self._sprite3d:getMeshByName("fashi_tou01")
+        -- helmet:setVisible(true)
+        -- helmet = self._sprite3d:getMeshByName("fashi_tou2")
+        -- helmet:setVisible(false)
+    -- else
+        -- local helmet = self._sprite3d:getMeshByName("fashi_tou2")
+        -- helmet:setVisible(true)
+        -- helmet = self._sprite3d:getMeshByName("fashi_tou01")
+        -- helmet:setVisible(false)
+    -- end
 end
 
 function Mage:updateArmour()
-    if self._useArmourId == 0 then
-        local armour = self._sprite3d:getMeshByName("fashi_shenti01")
-        armour:setVisible(true)
-        armour = self._sprite3d:getMeshByName("fashi_shenti2")
-        armour:setVisible(false)
-    else
-        local armour = self._sprite3d:getMeshByName("fashi_shenti2")
-        armour:setVisible(true)
-        armour = self._sprite3d:getMeshByName("fashi_shenti01")
-        armour:setVisible(false)
-    end
+    -- if self._useArmourId == 0 then
+        -- local armour = self._sprite3d:getMeshByName("fashi_shenti01")
+        -- armour:setVisible(true)
+        -- armour = self._sprite3d:getMeshByName("fashi_shenti2")
+        -- armour:setVisible(false)
+    -- else
+        -- local armour = self._sprite3d:getMeshByName("fashi_shenti2")
+        -- armour:setVisible(true)
+        -- armour = self._sprite3d:getMeshByName("fashi_shenti01")
+        -- armour:setVisible(false)
+    -- end
 end
 
 --swicth weapon

@@ -25,7 +25,7 @@ function Actor:ctor()
     self._heroMoveSpeed = 0
     self._heroMoveDir = cc.p(0, 0)
 	self._camp = "A" --为每个角色添加阵营信息
-    
+    self._hookStyle = "friend"	--标识被钩中状态下，被谁的钩子钩中，用于再次被钩中时判断。
     
     if uiLayer~=nil then
         currentLayer:addChild(self._effectNode)
@@ -205,42 +205,57 @@ end
 
 --被钩中时
 function Actor:hook(collider)
+	--若角色在被敌方钩中状态下，再次被敌方钩中，则直接死亡。
+	if self:getStateType() == EnumStateType.HOOKING and  self._hookStyle == "enemy" then
+		if collider.owner._camp ~= self._camp then
+			self._hp = 0
+            self._isalive = false --角色死亡，进入dyingMode
+            self:dyingMode(getPosTable(collider),knock)  
+		end
+	end
+	--否则，进行新的钩子的动作。
     --首先被钩中的人要活着
     if self._isalive == true then 
         --TODO add sound effect
-                    
-        local damage = collider.damage
-        --calculate the real damage
-        local critical = false
-        local knock = collider.knock
-        
-        --计算伤害
-		-- 瞬间伤害部分
-        damage = damage + damage * math.random(-1,1) * 0.15        
-        damage = damage - self._defense
-        damage = math.floor(damage)
+        if collider.owner._camp == self._camp then
+			self._hookStyle = "friend"
+			self:hookMode(collider)
+            self:hurtSoundEffects()
+		else
+			self._hookStyle = "enemy"
+			local damage = collider.damage
+			--calculate the real damage
+			local critical = false
+			local knock = collider.knock
+			
+			--计算伤害
+			-- 瞬间伤害部分
+			damage = damage + damage * math.random(-1,1) * 0.15        
+			damage = damage - self._defense
+			damage = math.floor(damage)
 
-        if damage <= 0 then
-            damage = 1
-        end
-        self._hp = self._hp - damage
+			if damage <= 0 then
+				damage = 1
+			end
+			self._hp = self._hp - damage
 
-        if self._hp > 0 then
-            if collider.knock and damage ~= 1 then
-                self:hookMode(collider)
-                self:hurtSoundEffects()
-            else
-                self:hurtSoundEffects()
-            end
-        else
-            self._hp = 0
-            self._isalive = false --角色死亡，进入dyingMode
-            self:dyingMode(getPosTable(collider),knock)        
-        end
+			if self._hp > 0 then
+				if collider.knock and damage ~= 1 then
+					self:hookMode(collider)
+					self:hurtSoundEffects()
+				else
+					self:hurtSoundEffects()
+				end
+			else
+				self._hp = 0
+				self._isalive = false --角色死亡，进入dyingMode
+				self:dyingMode(getPosTable(collider),knock)        
+			end
         
-        --three param judge if crit
-        local blood = self._hpCounter:showBloodLossNum(damage,self,critical)
-        self:addEffect(blood)
+			--three param judge if crit
+			local blood = self._hpCounter:showBloodLossNum(damage,self,critical)
+			self:addEffect(blood)
+		end
         return damage        
     end
     return 0

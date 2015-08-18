@@ -15,6 +15,7 @@ LINE_SPACE = 80
 local num = 0
 local totalTime = 0.0
 local receiveDataFrq = 0.5
+local layer
 
 local PVPMainScene  = class("PVPMainScene",function ()
                             return cc.Scene:create()
@@ -25,13 +26,35 @@ function PVPMainScene:ctor()
     --get win size
     self.size = cc.Director:getInstance():getVisibleSize()
 	self.label = nil
+end--这个函数会收到很多的网络包，但是只处理listRoom的回包
+
+local function listRoomListener(dt)
+    if client_socket == nil then return end
+    
+    totalTime = totalTime + dt
+    if totalTime > receiveDataFrq then
+        client_socket:settimeout(0.1) --stop block infinitely
+        back, err, partial = client_socket:receive("*l") --按行读取
+        if err ~= "closed" then
+            if back then
+                --print(string.len(back))
+                cclog("listen Room Listener I have received msg: " .. back)
+                --TODO: 这里处理收到的房间信息，在界面上显示出来
+                showRoomList(back)
+            end
+            else
+            cclog("TCP Connection is closed!")
+            client_socket = nil --if tcp is dis-connect
+        end
+        totalTime = totalTime - receiveDataFrq
+    end
 end
 
 function PVPMainScene.create()
     local scene = PVPMainScene.new()
     layer = scene:createLayer()
     scene:addChild(layer)
-
+    listener = cc.Director:getInstance():getScheduler():scheduleScriptFunc(listRoomListener, 0, false)
     return scene
 end
 
@@ -47,45 +70,36 @@ local function showRoomList(r)
     
 	label2:setString(rType)
     if rType == "listRoom" then
+        print("content: " .. rContent)
 		rooms = rContent
+        print("rooms: " .. rooms)
+        
 		List.removeAll(roomList)
-        room_tbl = mysplit(rooms, "|") --先按照|分割出每个房间
+        room_tbl = newSplit(rooms, '|') --先按照|分割出每个房间
+        print(#room_tbl)
         if room_tbl == nil or #room_tbl <= 0 then return end
             
-        for i, r in ipairs(room_tbl) do
-            room_info_tbl = mysplit(r, " ") --然后对每一个房间，按照 " " 分割出房间号，房间最大人数，房间当前人数
+        for i, r in pairs(room_tbl) do
+            room_info_tbl = newSplit(r, ' ') --然后对每一个房间，按照 " " 分割出房间号，房间最大人数，房间当前人数
+            print("i: " .. i)
+            
             if room_info_tbl == nil or #room_info_tbl <= 0  or #room_info_tbl > 3 then return end
             
             t_roomID = room_info_tbl[1]
+            print(t_roomID)
+            
             t_roomMaxPlayerNum = room_info_tbl[2]
+            print(t_roomMaxPlayerNum)
+            
             t_roomCurPlayerNum = room_info_tbl[3]
+            print(t_roomCurPlayerNum)
+            
             List.pushlast(roomList, {roomID = t_roomID, maxPlayerNum = t_roomMaxPlayerNum, curPlayerNum = t_roomCurPlayerNum})
         end
-        PVPMainScene:addRoomLabel(PVPMainScene,roomList)
+        PVPMainScene:addRoomLabel(layer ,roomList)
     end
 end
 
---这个函数会收到很多的网络包，但是只处理listRoom的回包
-local function listRoomListener(dt)
-    if client_socket == nil then return end
-    
-    totalTime = totalTime + dt
-    if totalTime > receiveDataFrq then
-        client_socket:settimeout(0.1) --stop block infinitely
-        back, err, partial = client_socket:receive("*l") --按行读取
-        if err ~= "closed" then
-            if back then
-                cclog("I have received msg: " .. back)
-                --TODO: 这里处理收到的房间信息，在界面上显示出来
-                showRoomList(back)
-            end
-            else
-            cclog("TCP Connection is closed!")
-            client_socket = nil --if tcp is dis-connect
-        end
-        totalTime = totalTime - receiveDataFrq
-    end
-end
 
 function PVPMainScene:createLayer()
     --create layer
@@ -99,9 +113,8 @@ function PVPMainScene:createLayer()
     --self:addJoinRoomBtn(layer) --现在直接点击房间就可以加入房间
     self:addStartGameBtn(layer)
     
-	List.pushlast(roomList,{roomID=1002,maxPlayerNum = 2, curPlayerNum = 1})
-	self:addRoomLabel(layer, roomList)
-	listener = cc.Director:getInstance():getScheduler():scheduleScriptFunc(listRoomListener, 0, false)
+	--List.pushlast(roomList,{roomID=1002,maxPlayerNum = 2, curPlayerNum = 1})
+	--self:addRoomLabel(layer, roomList)
     return layer
 end
 
@@ -110,23 +123,29 @@ function PVPMainScene:addRoomLabel(layer, list)
         local Idx = tag - 10000
         local roomID = roomList[Idx].roomID        
         print(roomID)
+        self:joinRoom(roomID)
     end
 	
 	local index
+    local size = cc.Director:getInstance():getVisibleSize()
 	local menu = cc.Menu:create()
-	for index=list.first, list.last do
+    print("list size: " .. #list)
+	for index = list.first, list.last do
+        print("index " .. index)
 		-- label、menuItem、menu的坐标都能影响最终的菜单位置
 		local label = cc.Label:createWithTTF("RoomID: " .. list[index].roomID .. string.rep(" ",6) ..
                                              "PlayerNum: " .. list[index].curPlayerNum .. "/" .. list[index].maxPlayerNum, fontPath, 40)
-		label:setColor(cc.V3(255,0,0))
+		cclog("here")
+        label:setColor(cc.V3(255,0,0))
 		label:setAnchorPoint(cc.p(0.5,0.5))
 		local menuItem = cc.MenuItemLabel:create(label)
-		menuItem:setPosition(cc.p(self.size.width/2,self.size.height*0.7-index*LINE_SPACE))
+		--menuItem:setPosition(cc.p(self.size.width/2, self.size.height*0.7-index * LINE_SPACE))
+        menuItem:setPosition(cc.p(size.width/2, size.height*0.7-index * LINE_SPACE))
 		menuItem:registerScriptTapHandler(menuCallback)
 		menu:addChild(menuItem, index+10000, index+10000)
 	end
 	menu:setPosition(0,0)
-	menu:setContentSize(cc.size(self.size.width, List.getSize(list)*LINE_SPACE))
+	menu:setContentSize(cc.size(size.width, List.getSize(list)*LINE_SPACE))
 	layer:addChild(menu)
 	
 	-- handling touch events
@@ -164,14 +183,14 @@ function PVPMainScene:addRoomLabel(layer, list)
     local listener = cc.EventListenerTouchOneByOne:create()
     listener:registerScriptHandler(onTouchBegan,cc.Handler.EVENT_TOUCH_BEGAN )
     listener:registerScriptHandler(onTouchMoved,cc.Handler.EVENT_TOUCH_MOVED )
-    local eventDispatcher = self:getEventDispatcher()
-    eventDispatcher:addEventListenerWithSceneGraphPriority(listener, self)
+    local eventDispatcher = layer:getEventDispatcher()
+    eventDispatcher:addEventListenerWithSceneGraphPriority(listener, layer)
 end
 
 --pvp establish tcp connect
 function PVPMainScene:connectToServer()
     local server_ip = "112.74.199.45"
-    local server_port =  8484 --8383--2348
+    local server_port =  2348 --8383--2348
     client_socket = socket.tcp()
     client_socket:settimeout(0.3)
     
@@ -186,13 +205,14 @@ end
 
 --pvp list room,只负责向服务器发送协议
 function PVPMainScene:listRoom()
+    cclog("send listRoom request!")
+    
     if client_socket ~= nil then
         sn, se = client_socket:send("listRoom\n")
         if se ~= nil then
             cclog("SEND ERROR: In listRoom() in PVPMainScene.lua!" .. se)
         end
         
-        --[[
         client_socket:settimeout(-1) --block infinitely
         r, re = client_socket:receive("*l")
         if re ~= nil then
@@ -200,10 +220,10 @@ function PVPMainScene:listRoom()
             return
         end
         
-        cclog("I have received msg from server: " .. r)
+        cclog("Success, in listRoom(), I have received msg from server: " .. r)
+        showRoomList(r)
         --这个时候只会有一个创建房间的回包出现
         --TODO: 这里处理创建房间的回包
-        --]]
     end
 end
 
@@ -213,6 +233,8 @@ function PVPMainScene:createRoom()
         sn, se = client_socket:send("createRoom 2\n")
         if se ~= nil then
             cclog("SEND ERROR: In createRoom() in PVPMainScene.lua!" .. se)
+        else
+            cclog("Send createRoom Successfully!")
         end
         
         client_socket:settimeout(-1) --block infinitely
