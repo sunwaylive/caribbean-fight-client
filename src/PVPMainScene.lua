@@ -295,6 +295,8 @@ function PVPMainScene:startGame()
             
             if string.sub(r, 1, 1) == "s" then --如果是开始游戏
                 --这个时候只会有一个回包出现，就是响应开始游戏的回包
+				--在开始游戏前，把对刷新房间列表的监听停掉
+				cc.Director:getInstance():getScheduler():unscheduleScriptEntry(listener)
                 local scene = require("PVPBattleScene")
                 cc.Director:getInstance():replaceScene(scene.create(r))
                 break

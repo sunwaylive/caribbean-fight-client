@@ -54,6 +54,10 @@ local function handleMessage(msg)
         hero._hp = tonumber(msg_token[9])
         --print(msg_token[10])
         hero:setStateType(tonumber(msg_token[10]))
+		
+		if hero._hp <=0 then
+			hero._isalive = false
+		end
     end
 end
 
@@ -134,12 +138,24 @@ end
 local function moveCamera(dt)
     --cclog("moveCamera")
     if camera == nil then return end
-
+	local hero = pvpGameMaster:GetClientOwnPlayer()
+	
     local cameraPosition = getPosTable(camera)
     --获取英雄的平均位置
     local focusPoint = getFocusPointOfHeros() --在manager.lua中被定义
-    focusPoint = cc.p(pvpGameMaster:GetClientOwnPlayer():getPositionX(),pvpGameMaster:GetClientOwnPlayer():getPositionY())
-    --如果正在特写
+    focusPoint = cc.p(hero:getPositionX(),hero:getPositionY())
+	
+	if hero._isalive == false then
+		for val = HeroManager.first, HeroManager.last do
+			local sprite = HeroManager[val]
+			if sprite ~= nil and sprite._isalive == true then
+				focusPoint = cc.p(sprite:getPositionX(),sprite:getPositionY())
+				break
+			end
+		end
+	end
+	
+	--如果正在特写
     --实际上是在specialCamera.valid被置为true的几秒内，临时改变了 camera位置的朝向(lookAt)的计算方式。
     if specialCamera.valid == true then
         local position = cc.pLerp(cameraPosition, cc.p(specialCamera.position.x, (cameraOffset.y + focusPoint.y-size.height*3/4)*0.5), 5*dt)
@@ -253,9 +269,11 @@ local function gameController(dt)
     
     moveHero(dt) --监听角色控制的移动,这个必须要放到collisionDetect(dt)前面，来保证角色移动之后，能检测是否出界
     
-    collisionDetect(dt)--碰撞检测：由Manager.lua 来维护
-    BloodbarUpdate(dt)
-    ArrowUpdate(dt)
+	if pvpGameMaster:GetClientOwnPlayer()._isalive ~= false then
+		collisionDetect(dt)--碰撞检测：由Manager.lua 来维护
+	end
+	BloodbarUpdate(dt)
+	ArrowUpdate(dt)
     solveAttacks(dt)--伤害计算：由attackCommand来维护
     moveCamera(dt)--移动相机
     -- local count = 000000
@@ -277,17 +295,23 @@ local function initUILayer()
 end
 
 function BloodbarUpdate(dt)
+	print(HeroManager.first,HeroManager.last)
 	for val = HeroManager.first, HeroManager.last do
         local actor = HeroManager[val]
-		local percent = actor._hp/actor._maxhp*100
-        local progressTo = cc.ProgressTo:create(0.3,percent)
-		local progressToClone = cc.ProgressTo:create(1,percent)
-		bloodbarList[val]:setPercentage(percent)
-		bloodbarList[val]:stopAllActions()
-		bloodbarList[val]:setPosition3D(cc.V3(actor._myPos.x,actor._myPos.y,actor._heroHeight+10))
-		--bloodbarList[val]:runAction(progressTo)
-		-- bloodBarClone:setPercentage(percent)
-		-- bloodBarClone:runAction(progressToClone)
+		--如果角色死亡，隐藏角色和血条
+		if actor._isalive == false then
+			actor:setVisible(false)
+			bloodbarList[val]:setVisible(false)
+			print("角色死亡，血条隐藏",val,actor:getPositionX(),actor:getPositionY())
+		else
+			print("角色活着",val,actor:getPositionX(),actor:getPositionY())
+			local percent = actor._hp/actor._maxhp*100
+			local progressTo = cc.ProgressTo:create(0.3,percent)
+			local progressToClone = cc.ProgressTo:create(1,percent)
+			bloodbarList[val]:setPercentage(percent)
+			bloodbarList[val]:stopAllActions()
+			bloodbarList[val]:setPosition3D(cc.V3(actor._myPos.x,actor._myPos.y,actor._heroHeight+10))
+		end
     end
 	for val = MonsterList.first, MonsterList.last do
         local actor = MonsterList[val]
@@ -369,6 +393,11 @@ end
 --控制英雄行走
 function PVPBattleScene:enableTouch()
     local function onTouchBegin(touch,event)
+		local hero = pvpGameMaster:GetClientOwnPlayer()
+		if(hero._isalive == false) then
+			return
+		end
+		
         --根据摇杆，控制英雄行走方向
         if self:UIcontainsPoint(touch:getLocation()) == "JOYSTICK" then
             --让摇杆按钮的中心点随点击中心点移动
@@ -415,6 +444,10 @@ function PVPBattleScene:enableTouch()
     
     --玩家滑动改变相机的位置 self._weaponItem:setPosition(self._bag:convertToNodeSpace(touch:getLocation()))
     local function onTouchMoved(touch,event)
+		local hero = pvpGameMaster:GetClientOwnPlayer()
+		if(hero._isalive == false) then
+			return
+		end
         if self:UIcontainsPoint(touch:getLocation()) == "JOYSTICK" then
             uiLayer.JoystickBtn:setPosition(touch:getLocation())
             
@@ -464,6 +497,10 @@ function PVPBattleScene:enableTouch()
     end
     
     local function onTouchEnded(touch,event)
+		local hero = pvpGameMaster:GetClientOwnPlayer()
+		if(hero._isalive == false) then
+			return
+		end
         --松手之后，让英雄停止移动
         local location = touch:getLocation()
         local message = self:UIcontainsPoint(location)

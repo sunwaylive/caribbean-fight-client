@@ -111,7 +111,7 @@ function collisionDetect(dt)
             isOutOfBound(sprite)
             sprite._effectNode:setPosition(sprite._myPos)
         else
-            List.remove(HeroManager, val)
+            --List.remove(HeroManager, val)
         end
     end
 
