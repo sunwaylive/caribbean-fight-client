@@ -102,6 +102,23 @@ local function isOutOfBound(object)
     object:setPosition(currentPos)
 end
 
+local function isInWater(actor)
+    local currentPos = cc.p(actor:getPosition());
+	if actor:getStateType() == EnumStateType.HOOKING then
+		actor:setPosition(currentPos)
+		return
+	end
+    if currentPos.x > W.activearea.left and currentPos.x < W.activearea.right then
+		if currentPos.x < W.center then --偏左回左
+			currentPos.x = W.activearea.left
+		else
+			currentPos.x = W.activearea.right
+		end
+    end    
+	--河流无限长，对y轴坐标不进行判定
+    actor:setPosition(currentPos)
+end
+
 function collisionDetect(dt)
     --cclog("collisionDetect")
     for val = HeroManager.last, HeroManager.first, -1 do
@@ -109,6 +126,7 @@ function collisionDetect(dt)
         if sprite._isalive == true then
             collision(sprite)
             isOutOfBound(sprite)
+			isInWater(sprite)
             sprite._effectNode:setPosition(sprite._myPos)
         else
             --List.remove(HeroManager, val)

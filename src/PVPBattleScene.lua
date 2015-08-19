@@ -302,9 +302,9 @@ function BloodbarUpdate(dt)
 		if actor._isalive == false then
 			actor:setVisible(false)
 			bloodbarList[val]:setVisible(false)
-			print("角色死亡，血条隐藏",val,actor:getPositionX(),actor:getPositionY())
+			--print("角色死亡，血条隐藏",val,actor:getPositionX(),actor:getPositionY())
 		else
-			print("角色活着",val,actor:getPositionX(),actor:getPositionY())
+			--print("角色活着",val,actor:getPositionX(),actor:getPositionY())
 			local percent = actor._hp/actor._maxhp*100
 			local progressTo = cc.ProgressTo:create(0.3,percent)
 			local progressToClone = cc.ProgressTo:create(1,percent)
