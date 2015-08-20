@@ -50,6 +50,13 @@ G =
 	-- 中心点以-2000，0
     activearea = {left = -3000, right = -1000, bottom = -500, top = 500},
 }
+--W values,这个是场景里河流的边界
+W=
+{	
+	--中心 -2000，0
+	center = -2000,
+	activearea = {left = -2300, right = -1800, bottom = -10000, top = 10000},
+}
 
 --Audios
 BGM_RES = 

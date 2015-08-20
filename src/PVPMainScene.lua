@@ -310,9 +310,7 @@ function PVPMainScene:startGame()
             local scene = require("PVPBattleScene")
             cc.Director:getInstance():replaceScene(scene.create(r))
         end
-        --[[
-        while 1 do
-        end--]]
+        
     else
         cclog("Can't connect to the server! client socket nil!")
     end

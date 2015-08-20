@@ -161,7 +161,7 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
         
         --3号位置的玩家
         local mage2 = Mage:create()
-        mage2:setPosition(battleSiteX[1] + 500, 100)
+        mage2:setPosition(battleSiteX[1] + 1500, 100)
         currentLayer:addChild(mage2)
         mage2:idleMode()
         mage2._camp = string.sub(sg_tbl[6], 3, 3)--camp
@@ -170,7 +170,7 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
         
         --4号位置的玩家
         local mage3 = Mage:create()
-        mage3:setPosition(battleSiteX[1] + 500, 300)
+        mage3:setPosition(battleSiteX[1] + 1500, 300)
         currentLayer:addChild(mage3)
         mage3:idleMode()
         mage3._camp = string.sub(sg_tbl[7], 3, 3)--camp

@@ -274,21 +274,22 @@ function Actor:hookingUpdate(dt)
 	local nextPos = cc.pRotateByAngle(cc.pAdd({x=self.speed2*dt, y=0},selfPos),selfPos,self.hookDir)
 	--if (selfPos.x-self.hookStartPos.x)*(nextPos.x-self.hookStartPos.x)<=0 then
 	local distance = cc.pGetDistance(self.hookStartPos, nextPos)
-	if self.damageDistance - distance >= 200 then
-		self._hp = self._hp - 60
-		local critical = false
-        local blood = self._hpCounter:showBloodLossNum(60,self,critical)
-        self:addEffect(blood)
-		self.damageDistance = self.damageDistance - 200
-		if(self.damageDistance < 200) then
-			self.damageDistance = 0
+	if self._hookStyle == "enemy" then
+		if self.damageDistance - distance >= 200 then
+			self._hp = self._hp - 60
+			local critical = false
+			local blood = self._hpCounter:showBloodLossNum(60,self,critical)
+			self:addEffect(blood)
+			self.damageDistance = self.damageDistance - 200
+			if(self.damageDistance < 200) then
+				self.damageDistance = 0
+			end
+			if self._hp <=0 then
+				self._isalive = false --角色死亡，进入dyingMode
+				self:dyingMode()   
+			end
 		end
-		if self._hp <=0 then
-			self._isalive = false --角色死亡，进入dyingMode
-            self:dyingMode()   
-		end
-	end
-    
+    end
 	if distance <= 100 or distance >= cc.pGetDistance(self.hookStartPos, selfPos) and distance <= 300 then
 		self:idleMode()
 	end
@@ -373,9 +374,14 @@ function Actor:dyingMode(knockSource, knockAmount)
     
     if self._racetype == EnumRaceType.HERO then
         --回收对象
-        uiLayer:heroDead(self)
-        List.removeObj(HeroManager,self)
-        self:runAction(cc.Sequence:create(cc.DelayTime:create(3),cc.MoveBy:create(1.0,cc.V3(0,0,-50)),cc.RemoveSelf:create()))
+        --uiLayer:heroDead(self)
+		--不要删除英雄
+        --List.removeObj(HeroManager,self)
+		--移走并隐藏
+		self:setPosition(cc.p(10000,10000))
+		self:setVisible(false)
+		self._isalive = false
+        --self:runAction(cc.Sequence:create(cc.DelayTime:create(3),cc.MoveBy:create(1.0,cc.V3(0,0,-50))))--,cc.RemoveSelf:create()))
         
         self._angry = 0
         local anaryChange = {_name = self._name, _angry = self._angry, _angryMax = self._angryMax}
@@ -389,12 +395,12 @@ function Actor:dyingMode(knockSource, knockAmount)
         self:runAction(cc.Sequence:create(cc.DelayTime:create(3),cc.MoveBy:create(1.0,cc.V3(0,0,-50)),cc.CallFunc:create(recycle)))
     end
     
-    if knockAmount then
-        local p = self._myPos
-        local angle = cc.pToAngleSelf(cc.pSub(p, knockSource))
-        local newPos = cc.pRotateByAngle(cc.pAdd({x=knockAmount,y=0}, p),p,angle)
-        self:runAction(cc.EaseCubicActionOut:create(cc.MoveTo:create(self._action.knocked:getDuration()*3,newPos)))
-    end
+    -- if knockAmount then
+        -- local p = self._myPos
+        -- local angle = cc.pToAngleSelf(cc.pSub(p, knockSource))
+        -- local newPos = cc.pRotateByAngle(cc.pAdd({x=knockAmount,y=0}, p),p,angle)
+        -- self:runAction(cc.EaseCubicActionOut:create(cc.MoveTo:create(self._action.knocked:getDuration()*3,newPos)))
+    -- end
     self._AIEnabled = false
 end
 
@@ -407,10 +413,14 @@ function Actor:dyingMode()
     
     if self._racetype == EnumRaceType.HERO then
         --回收对象
-        uiLayer:heroDead(self)
-        List.removeObj(HeroManager,self)
-        self:runAction(cc.Sequence:create(cc.DelayTime:create(3),cc.MoveBy:create(1.0,cc.V3(0,0,-50)),cc.RemoveSelf:create()))
-        
+        --uiLayer:heroDead(self)--对英雄头像做处理，这里不需要
+		--不要删除英雄
+        --List.removeObj(HeroManager,self)
+        --self:runAction(cc.Sequence:create(cc.DelayTime:create(3),cc.MoveBy:create(1.0,cc.V3(0,0,-50))))--,cc.RemoveSelf:create()))
+        --移走并隐藏
+		self:setPosition(cc.p(10000,10000))
+		self:setVisible(false)
+		self._isalive = false		
         self._angry = 0
         local anaryChange = {_name = self._name, _angry = self._angry, _angryMax = self._angryMax}
         MessageDispatchCenter:dispatchMessage(MessageDispatchCenter.MessageType.ANGRY_CHANGE, anaryChange)          
