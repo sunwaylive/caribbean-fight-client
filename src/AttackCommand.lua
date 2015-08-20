@@ -658,7 +658,7 @@ function HookAttack.create(pos,facing,attackInfo, target, owner)
     ret.owner = owner
     
     --ret.sp = cc.BillBoard:create("FX/FX.png", RECTS.iceBolt, 0)
-	ret.sp = cc.Sprite3D:create("minigame/test-weapon/miaolian.c3b") --("minigame/maoRedoUv.c3b")
+	ret.sp = cc.Sprite3D:create("minigame/maoRedoUv.c3b") --("minigame/test-weapon/miaolian.c3b")
     --ret.sp:setCamera(camera)
     ret.sp:setPosition3D(cc.V3(0,0,50))
     ret.sp:setScale(7,42)

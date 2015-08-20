@@ -82,12 +82,12 @@ function PVPGameMaster:logicUpdate()
     
 end
 
-function PVPGameMaster:GetClientOwnPlayer()
-    --cclog("!!!!!本客户端的玩家索引号: " .. self._myIdx)
-    if HeroManager ~= nil and self._myIdx <= #(HeroManager) then
+function PVPGameMaster:GetClientOwnPlayer()    
+    if HeroManager ~= nil and self._myIdx >= 0 and self._myIdx <= #(HeroManager) then
         return HeroManager[self._myIdx]
     else
         cclog("Error: Can't get client Own Player!")
+        return nil
     end
 end
 
@@ -99,12 +99,12 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
     print(sg_msg)
     print(#(sg_tbl))
     
-    if #(sg_tbl) >= 2 then
-        players_one_side = sg_tbl[2]
-        cclog("单边玩家的数量: " .. players_one_side)
+    if #(sg_tbl) >= 2 then --确保回包种至少有2个元素，能拿到房间最大数量
+        max_players_num = sg_tbl[2]
+        cclog("当前玩家的最大数量: " .. max_players_num)
     end
     
-    if players_one_side == "1" then --如果是1v1，则后面应该跟本客户端的index和两个玩家的信息
+    if max_players_num == "2" then --房间总人数 如果是1v1，则后面应该跟本客户端的index和两个玩家的信息
         print("in 1v1: " .. #(sg_tbl))
         if #(sg_tbl) < 5 then return end
         
@@ -112,6 +112,7 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
         cclog("清空原来的所有玩家，并生成 1v1 的两个玩家")
         List.removeAll(HeroManager)
         self._myIdx = tonumber(sg_tbl[3])
+        print("我的角色索引是: " .. self._myIdx)
         
         --0号位置的玩家
         local mage0 = Mage:create()
@@ -130,7 +131,8 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
         mage1._camp = string.sub(sg_tbl[5], 3, 3)--camp
         mage1:setVisible(true)
         List.pushlast(HeroManager, mage1)
-    elseif players_one_side == "2" then --如果是2v2，则后面应该跟本客户端的index和4个玩家的信息
+        
+    elseif max_players_num == "4" then --如果是2v2，则后面应该跟本客户端的index和4个玩家的信息
         print("in 2v2: " .. #(sg_tbl))
         if #(sg_tbl) < 7 then return end
     

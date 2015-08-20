@@ -8,9 +8,11 @@ client_socket = nil --本客户端和服务器通信的tcp链接
 
 local label1
 local label2
+
 local roomList = List.new()
 local roomMenu
 local str = "0"
+
 LINE_SPACE = 80
 local num = 0
 local totalTime = 0.0
@@ -28,57 +30,29 @@ function PVPMainScene:ctor()
 	self.label = nil
 end--这个函数会收到很多的网络包，但是只处理listRoom的回包
 
-local function listRoomListener(dt)
-    if client_socket == nil then return end
-    
-    totalTime = totalTime + dt
-    if totalTime > receiveDataFrq then
-        client_socket:settimeout(0.1) --stop block infinitely
-        back, err, partial = client_socket:receive("*l") --按行读取
-        if err ~= "closed" then
-            if back then
-                --print(string.len(back))
-                cclog("listen Room Listener I have received msg: " .. back)
-                --TODO: 这里处理收到的房间信息，在界面上显示出来
-                showRoomList(back)
-            end
-            else
-            cclog("TCP Connection is closed!")
-            client_socket = nil --if tcp is dis-connect
-        end
-        totalTime = totalTime - receiveDataFrq
-    end
-end
-
-function PVPMainScene.create()
-    local scene = PVPMainScene.new()
-    layer = scene:createLayer()
-    scene:addChild(layer)
-    listener = cc.Director:getInstance():getScheduler():scheduleScriptFunc(listRoomListener, 0, false)
-    return scene
-end
 
 local function showRoomList(r)
-	if r==nil then return end
+    if r == nil then return end
     
-    label1:setString(r)
     local i = string.find(r,'@')
-	if i == nil then return end
+    if i == nil then return end
     
-	local rType = string.sub(r,1,i-1)
-	local rContent = string.sub(r,i+1,-1)
+    local rType = string.sub(r,1,i-1)
+    local rContent = string.sub(r,i+1,-1)
     
-	label2:setString(rType)
+    --label1:setString(r)
+    --label2:setString(rType)
     if rType == "listRoom" then
+        
         print("content: " .. rContent)
-		rooms = rContent
+        rooms = rContent
         print("rooms: " .. rooms)
         
-		List.removeAll(roomList)
+        List.removeAll(roomList)
         room_tbl = newSplit(rooms, '|') --先按照|分割出每个房间
         print(#room_tbl)
         if room_tbl == nil or #room_tbl <= 0 then return end
-            
+        
         for i, r in pairs(room_tbl) do
             room_info_tbl = newSplit(r, ' ') --然后对每一个房间，按照 " " 分割出房间号，房间最大人数，房间当前人数
             print("i: " .. i)
@@ -99,6 +73,43 @@ local function showRoomList(r)
         PVPMainScene:addRoomLabel(layer ,roomList)
     end
 end
+
+local function listRoomListener(dt)
+    if client_socket == nil then return end
+    
+    totalTime = totalTime + dt
+    if totalTime > receiveDataFrq then
+        client_socket:settimeout(0.1) --stop block infinitely
+        back, err, partial = client_socket:receive("*l") --按行读取
+        if err ~= "closed" then
+            if back then
+                --print(string.len(back))
+                cclog("listen Room Listener I have received msg: " .. back)
+                --TODO: 这里处理收到的房间信息，在界面上显示出来
+                --如果不幸收到了 开始游戏的协议包
+                if string.sub(back, 1, 1) == 's' then
+                    local scene = require("PVPBattleScene")
+                    cc.Director:getInstance():replaceScene(scene.create(back))
+                else
+                    showRoomList(back)
+                end
+            end
+            else
+            cclog("TCP Connection is closed!")
+            client_socket = nil --if tcp is dis-connect
+        end
+        totalTime = totalTime - receiveDataFrq
+    end
+end
+
+function PVPMainScene.create()
+    local scene = PVPMainScene.new()
+    layer = scene:createLayer()
+    scene:addChild(layer)
+    listRoomListenerID = cc.Director:getInstance():getScheduler():scheduleScriptFunc(listRoomListener, 0, false)
+    return scene
+end
+
 
 
 function PVPMainScene:createLayer()
@@ -129,13 +140,11 @@ function PVPMainScene:addRoomLabel(layer, list)
 	local index
     local size = cc.Director:getInstance():getVisibleSize()
 	local menu = cc.Menu:create()
-    print("list size: " .. #list)
 	for index = list.first, list.last do
-        print("index " .. index)
+        --print("index " .. index)
 		-- label、menuItem、menu的坐标都能影响最终的菜单位置
 		local label = cc.Label:createWithTTF("RoomID: " .. list[index].roomID .. string.rep(" ",6) ..
                                              "PlayerNum: " .. list[index].curPlayerNum .. "/" .. list[index].maxPlayerNum, fontPath, 40)
-		cclog("here")
         label:setColor(cc.V3(255,0,0))
 		label:setAnchorPoint(cc.p(0.5,0.5))
 		local menuItem = cc.MenuItemLabel:create(label)
@@ -216,7 +225,7 @@ function PVPMainScene:listRoom()
         client_socket:settimeout(-1) --block infinitely
         r, re = client_socket:receive("*l")
         if re ~= nil then
-            cclog("REVEIVE ERROR: In listRoom() in PVPMainScene.lua! " .. re)
+            cclog("RECEIVE ERROR: In listRoom() in PVPMainScene.lua! " .. re)
             return
         end
         
@@ -230,7 +239,7 @@ end
 --PVP create room
 function PVPMainScene:createRoom()
     if client_socket ~= nil then
-        sn, se = client_socket:send("createRoom 2\n")
+        sn, se = client_socket:send("createRoom 2\n") --房间总人数
         if se ~= nil then
             cclog("SEND ERROR: In createRoom() in PVPMainScene.lua!" .. se)
         else
@@ -266,7 +275,7 @@ function PVPMainScene:joinRoom(roomID)
         end
         
         cclog("Success! In joinRoom(), I have received msg from server: " .. r)
-        self:listRoom()
+        --self:listRoom() --TODO:加入房间之后，服务器需要向所有客户端广播房间的信息
     end
     
 	--[[
@@ -280,26 +289,30 @@ end
 
 function PVPMainScene:startGame()
     if client_socket ~= nil then
+        --这里取消监听listRoom消息
+        cc.Director:getInstance():getScheduler():unscheduleScriptEntry(listRoomListenerID)
+        
         sn, se = client_socket:send("startGame\n")
         if se ~= nil then
             cclog("ERROR: In startGame() in PVPMainScene.lua, I can't send! " .. se)
         end
         
         client_socket:settimeout(-1) --block infinitely
-        while 1 do
-            r, e = client_socket:receive("*l")
-            if e ~= nil then
-                cclog("ERROR: In startGame() in PVPMainScene.lua, I can't receive! " .. re)
-                return
-            end
-            
-            if string.sub(r, 1, 1) == "s" then --如果是开始游戏
-                --这个时候只会有一个回包出现，就是响应开始游戏的回包
-                local scene = require("PVPBattleScene")
-                cc.Director:getInstance():replaceScene(scene.create(r))
-                break
-            end
+        r, e = client_socket:receive("*l")
+        if e ~= nil then
+            cclog("ERROR: In startGame() in PVPMainScene.lua, I can't receive! " .. e)
+            return
         end
+        
+        print("in start game , I have received: " .. r)
+        if string.sub(r, 1, 1) == "s" then --如果是开始游戏
+            --这个时候只会有一个回包出现，就是响应开始游戏的回包
+            local scene = require("PVPBattleScene")
+            cc.Director:getInstance():replaceScene(scene.create(r))
+        end
+        --[[
+        while 1 do
+        end--]]
     else
         cclog("Can't connect to the server! client socket nil!")
     end
