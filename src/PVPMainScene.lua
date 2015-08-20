@@ -4,7 +4,8 @@ local fontPath = "chooseRole/actor_param.ttf"
 --导入socket库
 local socket = require("socket") --如果不行换这个试试 require('socket.core');
 
-client_socket = nil --本客户端和服务器通信的tcp链接
+client_socket = nil --房间管理的socket， 本客户端和服务器通信的tcp链接
+state_socket = nil --状态同步的socket
 
 local label1
 local label2
@@ -205,10 +206,22 @@ function PVPMainScene:connectToServer()
     
     --In case of error, the method returns nil followed by a string describing the error. In case of success, the method returns 1.
     if client_socket:connect(server_ip, server_port) == 1 then
-        cclog('socket connect!')
+        cclog('Success! room management socket connect!')
 		self.label:setString("Yooooo!!")
 	else
+        cclog('Fail! room management socket connect!')
 		self.label:setString("Nooooo!!")
+    end
+    
+    --设置状态同步的服务器
+    local state_server_port = 8484
+    state_socket = socket:tcp()
+    state_socket:settimeout(0.3)
+    
+    if state_socket:connect(server_ip, state_server_port) == 1 then
+        cclog('Success! state socket connect!')
+    else
+        cclog('Fail! state socket connect!')
     end
 end
 
@@ -287,18 +300,19 @@ function PVPMainScene:joinRoom(roomID)
 	end--]]
 end
 
+--开始游戏的时候，向状态同步的服务器发送请求
 function PVPMainScene:startGame()
-    if client_socket ~= nil then
+    if state_socket ~= nil then
         --这里取消监听listRoom消息
         cc.Director:getInstance():getScheduler():unscheduleScriptEntry(listRoomListenerID)
         
-        sn, se = client_socket:send("startGame\n")
+        sn, se = state_socket:send("startGame\n")
         if se ~= nil then
             cclog("ERROR: In startGame() in PVPMainScene.lua, I can't send! " .. se)
         end
         
-        client_socket:settimeout(-1) --block infinitely
-        r, e = client_socket:receive("*l")
+        state_socket:settimeout(-1) --block infinitely
+        r, e = state_socket:receive("*l")
         if e ~= nil then
             cclog("ERROR: In startGame() in PVPMainScene.lua, I can't receive! " .. e)
             return

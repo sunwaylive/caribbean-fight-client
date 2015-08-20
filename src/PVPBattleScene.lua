@@ -22,22 +22,7 @@ local cameraOffsetMin = {x=-300, y=-400}
 local cameraOffsetMax = {x=300, y=400}
 
 local totalTime = 0.0
-local receiveDataFrq = 0.2
-
-function connectToStateServer()
-    local server_ip = "112.74.199.45"
-    local server_port =  8484 --8383--2348
-    client_socket_state = socket.tcp()
-    client_socket_state:settimeout(0.3)
-    
-    --In case of error, the method returns nil followed by a string describing the error. In case of success, the method returns 1.
-    if client_socket_state:connect(server_ip, server_port) == 1 then
-        cclog('socket connect!')
-    else
-        cclog('socket connect failure!')
-    end
-end
-
+local receiveDataFrq = 0.05
 
 --TODO:对接受到的数据，分类处理
 local function handleMessage(msg)
@@ -77,7 +62,7 @@ end
 
 --包括： 所有玩家的位置 和 朝向； 玩家目前的状态(攻击， walk)
 local function onReceiveData()
-    if client_socket_state == nil then return end
+    if state_socket == nil then return end
     --[[
     recvt, sendt, status = socket.select({client_socket_state}, nil, 1)
     cclog("111111")
@@ -98,7 +83,7 @@ local function onReceiveData()
     end
     --]]
     
-    back, err, partial = client_socket_state:receive("*l") --按行读取
+    back, err, partial = state_socket:receive("*l") --按行读取
     if err ~= "closed" then
         if back then
             cclog("I have received msg: " .. back)
@@ -106,13 +91,13 @@ local function onReceiveData()
         end
     else
         cclog("TCP Connection is closed!")
-        client_socket_state = nil --if tcp is dis-connect
+        state_socket = nil --if tcp is dis-connect
         return
     end
 end
 
 local function onSendData()
-   if client_socket_state ~= nil then
+   if state_socket ~= nil then
        --打包当前玩家的数据，发送给服务器，然后由服务器转发
        local head = "updateGame"
        local client_index = pvpGameMaster._myIdx
@@ -136,7 +121,7 @@ local function onSendData()
        msg = table.concat({head, client_index, pos_x, pos_y, curFacing, move_dir.x, move_dir.y, speed, hp, state}, "#")
        msg = msg .. "\n"
        
-       r, e = client_socket_state:send(msg)
+       r, e = state_socket:send(msg)
        if r == nil then
            cclog("ERROR: I can't send data to Server: " .. e)
        else
@@ -668,9 +653,6 @@ function PVPBattleScene.create(sg_msg)
 	--initBloodbarLayer()
     
     pvpGameMaster = require("PVPGameMaster").create(sg_msg)
-    
-    connectToStateServer()
-    client_socket_state:settimeout(0.1) --设置socket为不等待
     
 	bloodbarLayer = require("BloodbarUI").create()
     bloodbarLayer:setGlobalZOrder(2000)--确保UI盖在最上面
