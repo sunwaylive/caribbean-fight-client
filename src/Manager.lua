@@ -137,7 +137,8 @@ function collisionDetect(dt)
         local sprite = MonsterManager[val]
         if sprite._isalive == true then
             collision(sprite)
-            isOutOfBound(sprite)          
+            isOutOfBound(sprite)
+			isInWater(sprite)
         else
             List.remove(MonsterManager, val)
         end

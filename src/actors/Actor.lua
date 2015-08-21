@@ -230,8 +230,8 @@ function Actor:hook(collider)
 			
 			--计算伤害
 			-- 瞬间伤害部分
-			damage = damage + damage * math.random(-1,1) * 0.15        
-			damage = damage - self._defense
+			--damage = damage + damage * math.random(-1,1) * 0.15        
+			--damage = damage - self._defense
 			damage = math.floor(damage)
 
 			if damage <= 0 then
@@ -274,7 +274,7 @@ function Actor:hookingUpdate(dt)
 	local nextPos = cc.pRotateByAngle(cc.pAdd({x=self.speed2*dt, y=0},selfPos),selfPos,self.hookDir)
 	--if (selfPos.x-self.hookStartPos.x)*(nextPos.x-self.hookStartPos.x)<=0 then
 	local distance = cc.pGetDistance(self.hookStartPos, nextPos)
-	if self._hookStyle == "enemy" then
+	if self._hookStyle == "enemy" or self._racetype == EnumRaceType.MONSTER then
 		if self.damageDistance - distance >= 200 then
 			self._hp = self._hp - 60
 			local critical = false
