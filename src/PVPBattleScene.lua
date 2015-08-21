@@ -36,8 +36,9 @@ local function handleMessage(msg)
         
         local client_index = tonumber(msg_token[2])
         --print(client_index)
-        if client_index < 1 or client_index > #(HeroManager) then return end
-        
+        --if client_index < 1 or client_index > #(HeroManager) then return end
+        if client_index < 0 or client_index >= List.getSize(HeroManager) then return end
+		
         local hero = HeroManager[client_index]
         --print(tonumber(msg_token[3]))
         --print(tonumber(msg_token[4]))
