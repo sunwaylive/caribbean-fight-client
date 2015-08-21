@@ -1,5 +1,6 @@
 require "ParticleManager"
 require "Slime"
+require "Knight"
 
 local LoadingScene = class("loadingScene",
 function ()
@@ -44,7 +45,28 @@ function LoadingScene:init()
     -- Holder for background
     local node3d = cc.Sprite3D:create()
 
-    local background = cc.Sprite:create("loadingscene/bg.jpg")
+    --有可能会有好几种loading scene出现
+    --[[
+    local background1 = cc.Sprite:create("loadingscene/bg-1.jpg")
+    local background2 = cc.Sprite:create("loadingscene/bg-2.png")
+    local background3 = cc.Sprite:create("loadingscene/bg-3.png")
+    local background4 = cc.Sprite:create("loadingscene/bg-4.png")
+    
+    math.randomseed(os.date("%d%H%M%S"))
+    local idx = math.random(1, 4)
+    print("idx: " .. idx)
+    if idx == 1 then
+        background = background1
+    elseif idx == 2 then
+        background = background2
+    elseif idx == 3 then
+        background = background3
+    elseif idx == 4 then
+        background = background4
+    end
+     --]]
+    
+    local background = cc.Sprite:create("loadingscene/bg.png")
     background:setPosition(self.size.width/2,self.size.height/2)
     background:setPositionZ(-250)
     background:setScale(1.5)
@@ -57,7 +79,7 @@ function LoadingScene:init()
     --add loadingbar
     local loadingbar = ccui.LoadingBar:create("loadingscene/sliderProgress.png")
     loadingbar:setDirection(ccui.LoadingBarDirection.LEFT)
-    loadingbar:setPosition(self.size.width/2,self.size.height*0.2)
+    loadingbar:setPosition(self.size.width/2, self.size.height * 0.03) --self.size.height
     loadingbar:setScale(3,2)
     loadingbar:setColor(cc.c3b(0,0,0))
     loadingbar:setOpacity(70)
@@ -91,6 +113,7 @@ function LoadingScene:init()
         
         --replace scene
         if(self._num == -1) then
+            
             cc.Director:getInstance():getScheduler():unscheduleScriptEntry(self.scheduleID)
             local scene = require("MainMenuScene")
             cc.Director:getInstance():replaceScene(scene:create())
@@ -105,10 +128,11 @@ function LoadingScene:addLoadingText(layer)
     local ttfconfig = {outlineSize=5,fontSize=55,fontFilePath="chooseRole/actor_param.ttf"}
     local loading = {}
     
-    for i,v in pairs({"C","o","c","o","s"," ","D", "e", "m", "o"}) do
+    for i,v in pairs({"T","o"," ","b","e"," ","o", "r", " ", "n", "o", "t", " ", "t", "o", " ", "b", "e"}) do
         loading[i] = cc.Label:createWithTTF(ttfconfig,v)
         loading[i]:enableOutline(cc.c4b(104,151,161,255))
-        loading[i]:setPosition(self.size.width*0.13+self.size.width*0.08*i,self.size.height*0.6)
+        loading[i]:setPosition(self.size.width*0.08+self.size.width*0.047*i,self.size.height*0.6)
+        loading[i]:setVisible(false)
         layer:addChild(loading[i])
     end
     self._loading = loading
@@ -116,7 +140,11 @@ end
 
 function LoadingScene:slimeAction(layer)
     local slime = Slime.create()
+    --用企鹅代替slime
+    --local slime = cc.Sprite:create("loadingscene/penguin.png")
     slime:setAIEnabled(false)
+    slime:setVisible(false)
+    
     self._slimeOriginX = self.size.width*0.2
     self._slimeOriginY = self.size.height*0.3
     slime:setPosition(self._slimeOriginX,self._slimeOriginY)
@@ -127,8 +155,9 @@ function LoadingScene:slimeAction(layer)
     local dur = 0.6
     local bsc = 27
 
+    --slime:runAction(cc.RepeatForever:create(
     slime._sprite3d:runAction(cc.RepeatForever:create(
-        cc.Spawn:create(
+      cc.Spawn:create(
             cc.Sequence:create(
                 cc.DelayTime:create(dur/8),
                 cc.JumpBy3D:create(dur*7/8, cc.V3(0,0,0),30,1)

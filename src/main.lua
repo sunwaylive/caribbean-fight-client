@@ -29,7 +29,7 @@ local function main()
     -- initialize director
     local director = cc.Director:getInstance()
 
-    --turn on display FPS,不现实左下角的状态显示    director:setDisplayStats(false)
+    --turn on display FPS,不显示左下角的状态显示    director:setDisplayStats(false)
 
 
     --set FPS. the default value is 1.0/60 if you don't call this
@@ -60,13 +60,13 @@ local function main()
         
     --create scene 
     local scene = require("LoadingScene")
-    local gameScene = scene.create()
+    local loadingScene = scene.create()
     -- gameScene:playBgMusic()
     
     if cc.Director:getInstance():getRunningScene() then
-        cc.Director:getInstance():replaceScene(gameScene)
+        cc.Director:getInstance():replaceScene(loadingScene)
     else
-        cc.Director:getInstance():runWithScene(gameScene)
+        cc.Director:getInstance():runWithScene(loadingScene)
     end
 
 end

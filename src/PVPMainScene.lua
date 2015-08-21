@@ -6,6 +6,7 @@ local socket = require("socket") --如果不行换这个试试 require('socket.c
 
 client_socket = nil --房间管理的socket， 本客户端和服务器通信的tcp链接
 state_socket = nil --状态同步的socket
+room_id = 123456 --加入房间之后的room id
 
 local label1
 local label2
@@ -122,7 +123,7 @@ function PVPMainScene:createLayer()
     --创建UI元素
     self:addBackBtn(layer)
     self:addCreateRoomBtn(layer)
-    --self:addJoinRoomBtn(layer) --现在直接点击房间就可以加入房间
+    self:addJoinRoomBtn(layer) --现在直接点击房间就可以加入房间
     self:addStartGameBtn(layer)
     
 	--List.pushlast(roomList,{roomID=1002,maxPlayerNum = 2, curPlayerNum = 1})
@@ -136,6 +137,7 @@ function PVPMainScene:addRoomLabel(layer, list)
         local roomID = roomList[Idx].roomID        
         print(roomID)
         self:joinRoom(roomID)
+        room_id = RoomID
     end
 	
 	local index
@@ -200,6 +202,7 @@ end
 --pvp establish tcp connect
 function PVPMainScene:connectToServer()
     local server_ip = "112.74.199.45"
+    --[[
     local server_port =  2348 --8383--2348
     client_socket = socket.tcp()
     client_socket:settimeout(0.3)
@@ -209,19 +212,20 @@ function PVPMainScene:connectToServer()
         cclog('Success! room management socket connect!')
 		self.label:setString("Yooooo!!")
 	else
-        cclog('Fail! room management socket connect!')
+        cclog('Fail! room management socket!')
 		self.label:setString("Nooooo!!")
     end
+     --]]
     
     --设置状态同步的服务器
-    local state_server_port = 8484
+    local state_server_port = 4455
     state_socket = socket:tcp()
-    state_socket:settimeout(0.3)
+    state_socket:settimeout(0.05)
     
     if state_socket:connect(server_ip, state_server_port) == 1 then
         cclog('Success! state socket connect!')
     else
-        cclog('Fail! state socket connect!')
+        cclog('Fail! state socket!')
     end
 end
 
@@ -299,6 +303,34 @@ function PVPMainScene:joinRoom(roomID)
 		label1:setString(e)
 	end--]]
 end
+
+--test
+function PVPMainScene:joinRoomTest(roomID)
+    if state_socket ~= nil then
+        sn, se = state_socket:send("joinRoom "..roomID.."\n")
+        if se ~= nil then
+            cclog("SEND ERROR: In joinRoom() in PVPMainScene.lua!" .. se)
+        end
+        
+        state_socket:settimeout(-1) --block infinitely
+        r, re = state_socket:receive("*l")
+        if re ~= nil then
+            cclog("REVEIVE ERROR: In joinRoom() in PVPMainScene.lua! " .. re)
+            return
+        end
+        
+        cclog("Success! In joinRoom(), I have received msg from server: " .. r)
+        --self:listRoom() --TODO:加入房间之后，服务器需要向所有客户端广播房间的信息
+        
+        --为了测试
+        if string.sub(r, 1, 1) == "s" then --如果是开始游戏
+            --这个时候只会有一个回包出现，就是响应开始游戏的回包
+            local scene = require("PVPBattleScene")
+            cc.Director:getInstance():replaceScene(scene.create(r))
+        end
+    end
+end
+
 
 --开始游戏的时候，向状态同步的服务器发送请求
 function PVPMainScene:startGame()
@@ -407,7 +439,8 @@ function PVPMainScene:addJoinRoomBtn(layer)
                 ccexp.AudioEngine:play2d(BGM_RES.MAINMENUSTART, false, 1)
                 ccexp.AudioEngine:stop(AUDIO_ID.MAINMENUBGM)
                 cclog("join room btn is clicked")
-                self:joinRoom(roomID)--加入PVP房间
+                --self:joinRoom(roomID)--加入PVP房间
+                self:joinRoomTest(room_id)
             end
         end
     end

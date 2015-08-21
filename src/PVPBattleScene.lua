@@ -31,7 +31,7 @@ local function handleMessage(msg)
     local msg_token = mysplit(msg, '#')
     if msg_token == nil then return end
     
-    if msg_token[1] == "updateGame" then
+    if string.sub(msg_token[1], 1, 1) == 'u' then --加入 roomid, update room
         if #(msg_token) < 10 then cclog("Error package from server!") end
         
         local client_index = tonumber(msg_token[2])
@@ -86,7 +86,7 @@ local function onReceiveData()
     back, err, partial = state_socket:receive("*l") --按行读取
     if err ~= "closed" then
         if back then
-            cclog("I have received msg: " .. back)
+            cclog("In onReceiveData(), I have received msg: " .. back)
             handleMessage(back) --核心处理消息的函数
         end
     else
@@ -100,6 +100,11 @@ local function onSendData()
    if state_socket ~= nil then
        --打包当前玩家的数据，发送给服务器，然后由服务器转发
        local head = "updateGame"
+       --柏伟修改协议, 加入房间号
+       print("房间号: " .. room_id)
+       head = head .. " " .. room_id .. " "
+       print("head: " .. head)
+       
        local client_index = pvpGameMaster._myIdx
        local hero = pvpGameMaster:GetClientOwnPlayer()
        local pos_x = hero:getPositionX()
@@ -294,7 +299,6 @@ local function initUILayer()
 end
 
 function BloodbarUpdate(dt)
-	print(HeroManager.first,HeroManager.last)
 	for val = HeroManager.first, HeroManager.last do
         local actor = HeroManager[val]
 		--如果角色死亡，隐藏角色和血条

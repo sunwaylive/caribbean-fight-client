@@ -14,6 +14,7 @@ RECTS = {
     thunderBall = cc.SpriteFrameCache:getInstance():getSpriteFrame("thunderball.png"):getRect(),
 	--hook = cc.SpriteFrameCache:getInstance():getSpriteFrame("minigame/mao.c3b"):getRect(),
 }
+
 --这里存放了所有battleUI中用到的图片资源
 cc.SpriteFrameCache:getInstance():addSpriteFrames("battlefieldUI/battleFieldUI.plist")
 cc.SpriteFrameCache:getInstance():addSpriteFrames("battlefieldUI/JoystickAttackBtn.plist")

@@ -37,7 +37,7 @@ function MainMenuScene:createLayer()
     self:addCloud(mainLayer)
     
     --add logo
-    self:addLogo(mainLayer)
+    --self:addLogo(mainLayer)
     
     --add pointlight
     self:addPointLight(mainLayer)
@@ -48,7 +48,7 @@ function MainMenuScene:createLayer()
     --when replease scene unschedule schedule
     local function onExit(event)
         if "exit" == event then
-            cc.Director:getInstance():getScheduler():unscheduleScriptEntry(self.logoSchedule)
+            --cc.Director:getInstance():getScheduler():unscheduleScriptEntry(self.logoSchedule)
             cc.Director:getInstance():getScheduler():unscheduleScriptEntry(self.scheduleCloudMove)
         end
     end
@@ -57,6 +57,7 @@ function MainMenuScene:createLayer()
     return mainLayer
 end
 
+--现在不加这个了
 function MainMenuScene:addLogo(layer)
     --add logo
     local logo = cc.EffectSprite:create("mainmenuscene/logo.png")
@@ -157,10 +158,12 @@ function MainMenuScene:addPointLight(layer)
     self._lightSprite:setPositionZ(100)
 
     -- effectNormalMap
+    --[[
     local effectNormalMapped = cc.EffectNormalMapped:create("mainmenuscene/logo_normal.png");
     effectNormalMapped:setPointLight(self._pointLight)
     effectNormalMapped:setKBump(50)
     self._logo:setEffect(effectNormalMapped)
+     --]]
     
     --action
     local function getBezierAction()
@@ -249,13 +252,16 @@ function MainMenuScene:addButton(layer)
         end
     end
 
-    local buttonPVE = ccui.Button:create("start.png","","",ccui.TextureResType.plistType)
-    buttonPVE:setPosition(self.size.width*0.5 - 100,self.size.height*0.15)
+    --local buttonPVE = ccui.Button:create("pve_start.png","","",ccui.TextureResType.plistType)
+    local buttonPVE = ccui.Button:create("mainmenuscene/pve_start_2.png")
+    buttonPVE:setPosition(self.size.width*0.5 - 200,self.size.height*0.15 - 5)
+    buttonPVE:setScale(0.6)
     --用这种方式添加按钮响应函数
     buttonPVE:addTouchEventListener(button_callback_pve)
     layer:addChild(buttonPVE,4)
 
     --法相贴图实现凹凸效果
+    --[[
     local effectNormalMapped = cc.EffectNormalMapped:create("mainmenuscene/start_normal.png")
     effectNormalMapped:setPointLight(self._pointLight)
     effectNormalMapped:setKBump(100)
@@ -264,7 +270,8 @@ function MainMenuScene:addButton(layer)
     effectSprite:setPosition(self.size.width*0.5 - 100,self.size.height*0.15)
     layer:addChild(effectSprite,5)
     effectSprite:setEffect(effectNormalMapped)
-
+    --]]
+     
     --step2: 设置PVP start的按钮
     local isTouchButtonPVP = false
     local button_callback_pvp = function(sender, eventType)
@@ -279,8 +286,10 @@ function MainMenuScene:addButton(layer)
         end
     end
 
-    local buttonPVP = ccui.Button:create("start.png","","",ccui.TextureResType.plistType)
-    buttonPVP:setPosition(self.size.width*0.5 + 100 ,self.size.height*0.15)
+    --local buttonPVP = ccui.Button:create("pvp_start.png","","",ccui.TextureResType.plistType)
+    local buttonPVP = ccui.Button:create("mainmenuscene/pvp_start_2.png")
+    buttonPVP:setScale(0.6)
+    buttonPVP:setPosition(self.size.width*0.5 + 200 ,self.size.height*0.15 - 5)
     --用这种方式添加按钮响应函数
     buttonPVP:addTouchEventListener(button_callback_pvp)
     layer:addChild(buttonPVP,4)
@@ -290,9 +299,9 @@ function MainMenuScene:addButton(layer)
     --effectNormalMappedPVP:setPointLight(self._pointLight)
     --effectNormalMappedPVP:setKBump(100)
 
-    local effectSpritePVP = cc.EffectSprite:create("mainmenuscene/start.png")
-    effectSpritePVP:setPosition(self.size.width*0.5 + 100,self.size.height*0.15)
-    layer:addChild(effectSpritePVP,5)
+    --local effectSpritePVP = cc.EffectSprite:create("mainmenuscene/start.png")
+    --effectSpritePVP:setPosition(self.size.width*0.5 + 100,self.size.height*0.15)
+    --layer:addChild(effectSpritePVP,5)
     --effectSprite:setEffect(effectNormalMapped)
 	
 	--step3: 退出按钮
@@ -310,8 +319,10 @@ function MainMenuScene:addButton(layer)
         end
     end
 
-    local buttonClose = ccui.Button:create("start.png","","",ccui.TextureResType.plistType)
+    --local buttonClose = ccui.Button:create("close.png","","",ccui.TextureResType.plistType)
+    local buttonClose = ccui.Button:create("mainmenuscene/close.png")
     buttonClose:setPosition(self.size.width - 100 ,self.size.height-70)
+    buttonClose:setScale(0.4)
     --用这种方式添加按钮响应函数
     buttonClose:addTouchEventListener(button_callback_close)
     layer:addChild(buttonClose,4)
@@ -360,7 +371,7 @@ end
 --bg
 function MainMenuScene:addBg(layer)
     --background
-    local bg_back = cc.Sprite:create("mainmenuscene/bg.jpg")
+    local bg_back = cc.Sprite:create("mainmenuscene/bg.png")
     bg_back:setPosition(self.size.width/2,self.size.height/2)
     layer:addChild(bg_back,1)
 end
