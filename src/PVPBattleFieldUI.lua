@@ -16,7 +16,7 @@ function PVPBattlefieldUI:ctor()
     self:timeInit()
     self:joystickInit()
     self:attackBtnInit()
---    self:showVictoryUI()
+    --self:showGameResultUI()
     
     ccexp.AudioEngine:stopAll()
     AUDIO_ID.BATTLEFIELDBGM = ccexp.AudioEngine:play2d(BGM_RES.BATTLEFIELDBGM, true,0.6)
@@ -413,7 +413,8 @@ function PVPBattlefieldUI:timeInit()
     self._tmSchedule = cc.Director:getInstance():getScheduler():scheduleScriptFunc(tmUpdate,1,false)
 end
 
-function PVPBattlefieldUI:showVictoryUI()
+function PVPBattlefieldUI:showGameResultUI(is_win, is_lose)
+    if is_win == is_lose then return end --something went wrong
     --disable AI
 
     --color layer
@@ -422,7 +423,14 @@ function PVPBattlefieldUI:showVictoryUI()
     layer:setPosition3D(cc.V3(G.winSize.width*0.5,G.winSize.height*0.5,0))
     
     --add victory
-    local victory = cc.Sprite:createWithSpriteFrameName("victory.png")
+    --根据胜利活着失败创建对应的精灵
+    if is_win then
+        victory = cc.Sprite:create("battlefieldUI/win.png")
+    elseif is_lose then
+        victory = cc.Sprite:create("battlefieldUI/lose.png")
+    end
+    
+    --local victory = cc.Sprite:createWithSpriteFrameName("victory.png")
     victory:setPosition3D(cc.V3(G.winSize.width*0.5,G.winSize.height*0.5,3))
     victory:setScale(0.1)
     victory:setGlobalZOrder(UIZorder)
@@ -444,7 +452,7 @@ function PVPBattlefieldUI:showVictoryUI()
         --stop sound
         ccexp.AudioEngine:stop(AUDIO_ID.BATTLEFIELDBGM)
         --replace scene
-        cc.Director:getInstance():replaceScene(require("ChooseRoleScene"):create())
+        cc.Director:getInstance():replaceScene(require("PVPMainScene"):create())
     end
     local listener = cc.EventListenerTouchOneByOne:create()
     listener:registerScriptHandler(onTouchBegan,cc.Handler.EVENT_TOUCH_BEGAN )

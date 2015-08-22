@@ -120,7 +120,9 @@ function PVPMainScene:createLayer()
     --显示调试信息
 	--self:addLabel(layer)
     --连接服务器
-    self:connectToServer()
+    if client_socket == nil then
+        self:connectToServer()
+    end
     --创建UI元素
     self:addBg(layer)
     self:addBackBtn(layer)
@@ -135,6 +137,8 @@ function PVPMainScene:createLayer()
 end
 
 function PVPMainScene:addRoomLabel(layer, list)
+    if layer == nil then return end
+    
 	local function menuCallback(tag)
         local Idx = tag - 10000
         local roomID = roomList[Idx].roomID        
@@ -223,7 +227,7 @@ function PVPMainScene:connectToServer()
      --]]
     
     --设置状态同步的服务器
-    local state_server_port = 4456
+    local state_server_port = 4455
     client_socket = socket:tcp()
     client_socket:settimeout(0.05)
         
@@ -232,6 +236,9 @@ function PVPMainScene:connectToServer()
     else
         cclog('Fail! state socket!')
     end
+    
+    --每次一进入，就向服务器查询房间的信息
+    self:listRoom()
 end
 
 --pvp list room,只负责向服务器发送协议

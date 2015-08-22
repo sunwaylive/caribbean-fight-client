@@ -17,7 +17,7 @@ function BattlefieldUI:ctor()
     self:joystickInit()
     self:attackBtnInit()
 	self:backBtnInit()
---    self:showVictoryUI()
+    --self:showVictoryUI()
     
     ccexp.AudioEngine:stopAll()
     AUDIO_ID.BATTLEFIELDBGM = ccexp.AudioEngine:play2d(BGM_RES.BATTLEFIELDBGM, true,0.6)
@@ -442,6 +442,8 @@ function BattlefieldUI:showVictoryUI()
     
     --add victory
     local victory = cc.Sprite:createWithSpriteFrameName("victory.png")
+    --local victory = cc.Sprite:create("battlefieldUI/win.png")
+    
     victory:setPosition3D(cc.V3(G.winSize.width*0.5,G.winSize.height*0.5,3))
     victory:setScale(0.1)
     victory:setGlobalZOrder(UIZorder)
@@ -464,6 +466,56 @@ function BattlefieldUI:showVictoryUI()
         ccexp.AudioEngine:stop(AUDIO_ID.BATTLEFIELDBGM)
         --replace scene
         cc.Director:getInstance():replaceScene(require("ChooseRoleScene"):create())
+    end
+    local listener = cc.EventListenerTouchOneByOne:create()
+    listener:registerScriptHandler(onTouchBegan,cc.Handler.EVENT_TOUCH_BEGAN )
+    listener:registerScriptHandler(onTouchEnded,cc.Handler.EVENT_TOUCH_ENDED )
+    local eventDispatcher = layer:getEventDispatcher()
+    eventDispatcher:addEventListenerWithSceneGraphPriority(listener,layer)
+    
+    self:addChild(layer)
+end
+
+function BattlefieldUI:showGameResultUI(is_win, is_lose)
+    if is_win == is_lose then return end --something went wrong
+    --disable AI
+    
+    --color layer
+    local layer = cc.LayerColor:create(cc.c4b(10,10,10,150))
+    layer:ignoreAnchorPointForPosition(false)
+    layer:setPosition3D(cc.V3(G.winSize.width*0.5,G.winSize.height*0.5,0))
+    
+    --add victory
+    --根据胜利活着失败创建对应的精灵
+    if is_win then
+        victory = cc.Sprite:create("battlefieldUI/win.png")
+        elseif is_lose then
+        victory = cc.Sprite:create("battlefieldUI/lose.png")
+    end
+    
+    --local victory = cc.Sprite:createWithSpriteFrameName("victory.png")
+    victory:setPosition3D(cc.V3(G.winSize.width*0.5,G.winSize.height*0.5,3))
+    victory:setScale(0.1)
+    victory:setGlobalZOrder(UIZorder)
+    layer:addChild(victory,1)
+    
+    --victory runaction
+    local action = cc.EaseElasticOut:create(cc.ScaleTo:create(1.5,1))
+    victory:runAction(action)
+    
+    --touch event
+    local function onTouchBegan(touch, event)
+        return true
+    end
+    
+    local function onTouchEnded(touch,event)
+        --stop schedule
+        cc.Director:getInstance():getScheduler():unscheduleScriptEntry(self._tmSchedule)
+        cc.Director:getInstance():getScheduler():unscheduleScriptEntry(gameControllerScheduleID)
+        --stop sound
+        ccexp.AudioEngine:stop(AUDIO_ID.BATTLEFIELDBGM)
+        --replace scene
+        cc.Director:getInstance():replaceScene(require("PVPMainScene"):create())
     end
     local listener = cc.EventListenerTouchOneByOne:create()
     listener:registerScriptHandler(onTouchBegan,cc.Handler.EVENT_TOUCH_BEGAN )

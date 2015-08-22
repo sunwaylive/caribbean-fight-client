@@ -23,6 +23,7 @@ local frontDistanceWithHeroX = 600
 local backwardDistanceWithHeroX = 800
 local distanceWithHeroX = 150
 local distanceWithHeroY = 150
+local is_game_over = false
 
 local PVPGameMaster = class("PVPGameMaster")
 
@@ -78,8 +79,18 @@ function PVPGameMaster:update(dt)
 end
 
 --帧循环，主要负责控制英雄前进和小怪的刷新,每一阶段刷新出新的怪物
-function PVPGameMaster:logicUpdate()    
+function PVPGameMaster:logicUpdate()
+    --检测游戏是否结束
+    local t_iswin, t_islose = self:CheckWinOrLose()
+    if t_iswin == t_islose then
+        cclog("t_iswin == t_islose, error in logicUpdate()")
+        return
+    end --如果同时赢活着同时输，则发生错误了，直接返回
     
+    if not is_game_over and (t_iswin or t_islose) then
+        is_game_over = true
+        self:showGameResultUI(t_iswin, t_islose)
+    end
 end
 
 function PVPGameMaster:GetClientOwnPlayer()    
@@ -89,6 +100,38 @@ function PVPGameMaster:GetClientOwnPlayer()
         cclog("Error: Can't get client Own Player!")
         return nil
     end
+end
+
+function PVPGameMaster:CheckWinOrLose()
+    local client_hero = self:GetClientOwnPlayer()
+    if client_hero == nil then return end
+    
+    --可能既没有赢，也没有输
+    local is_win = true
+    local is_lose = true
+    cclog("In Checkwinorlose(), hero list size: " .. List.getSize(HeroManager))
+    for idx = HeroManager.last, HeroManager.first, -1 do
+        --check distance first
+        local hero = HeroManager[idx]
+        if hero ~= nil then
+            if hero._camp ~= client_hero._camp then --敌对玩家
+                if hero._hp > 0 then --只要有敌对玩家活着，则没有赢
+                    is_win = false
+                end
+            end
+            
+            if hero._camp == client_hero._camp then
+                if hero._hp > 0 then --只要己方有活着的，则没有输
+                    is_lose = false
+                end
+            end
+        end
+    end
+    cclog("In CheckWinOrLose(): ")
+    if is_win then cclog("is_win is true") end
+    if is_lose then cclog("is_lose is true") end
+    
+    return is_win, is_lose
 end
 
 --这里要根据服务器下发的位置 放置玩家
@@ -125,7 +168,7 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
         
         --1号位置的玩家
         local mage1 = Mage:create()
-        mage1:setPosition(battleSiteX[1], 300)
+        mage1:setPosition(battleSiteX[1] + 800, 500)
         currentLayer:addChild(mage1)
         mage1:idleMode()
         mage1._camp = string.sub(sg_tbl[5], 3, 3)--camp
@@ -152,7 +195,7 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
         
         --2号位置的玩家
         local mage1 = Mage:create()
-        mage1:setPosition(battleSiteX[1], 300)
+        mage1:setPosition(battleSiteX[1], 500)
         currentLayer:addChild(mage1)
         mage1:idleMode()
         mage1._camp = string.sub(sg_tbl[5], 3, 3)--camp
@@ -170,7 +213,7 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
         
         --4号位置的玩家
         local mage3 = Mage:create()
-        mage3:setPosition(battleSiteX[1] + 1500, 300)
+        mage3:setPosition(battleSiteX[1] + 1500, 500)
         currentLayer:addChild(mage3)
         mage3:idleMode()
         mage3._camp = string.sub(sg_tbl[7], 3, 3)--camp
@@ -217,8 +260,8 @@ function PVPGameMaster:showProp()
     --当道具划过之后，如果中途没有被勾勾住，则需要隐藏掉
 end
 
---function PVPGameMaster:showVictoryUI()
-    --uiLayer:showVictoryUI()
---end
+function PVPGameMaster:showGameResultUI(is_win, is_lose)
+    uiLayer:showGameResultUI(is_win, is_lose)
+end
 
 return PVPGameMaster
