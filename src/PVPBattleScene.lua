@@ -62,7 +62,7 @@ end
 
 --包括： 所有玩家的位置 和 朝向； 玩家目前的状态(攻击， walk)
 local function onReceiveData()
-    if state_socket == nil then return end
+    if client_socket == nil then return end
     --[[
     recvt, sendt, status = socket.select({client_socket_state}, nil, 1)
     cclog("111111")
@@ -83,7 +83,7 @@ local function onReceiveData()
     end
     --]]
     
-    back, err, partial = state_socket:receive("*l") --按行读取
+    back, err, partial = client_socket:receive("*l") --按行读取
     if err ~= "closed" then
         if back then
             cclog("In onReceiveData(), I have received msg: " .. back)
@@ -91,18 +91,18 @@ local function onReceiveData()
         end
     else
         cclog("TCP Connection is closed!")
-        state_socket = nil --if tcp is dis-connect
+        client_socket = nil --if tcp is dis-connect
         return
     end
 end
 
 local function onSendData()
-   if state_socket ~= nil then
+   if client_socket ~= nil then
        --打包当前玩家的数据，发送给服务器，然后由服务器转发
        local head = "updateGame"
        --柏伟修改协议, 加入房间号
-       print("房间号: " .. room_id)
-       head = head .. " " .. room_id .. " "
+       print("房间号: " .. m_room_id)
+       head = head .. " " .. m_room_id .. " "
        print("head: " .. head)
        
        local client_index = pvpGameMaster._myIdx
@@ -126,7 +126,7 @@ local function onSendData()
        msg = table.concat({head, client_index, pos_x, pos_y, curFacing, move_dir.x, move_dir.y, speed, hp, state}, "#")
        msg = msg .. "\n"
        
-       r, e = state_socket:send(msg)
+       r, e = client_socket:send(msg)
        if r == nil then
            cclog("ERROR: I can't send data to Server: " .. e)
        else

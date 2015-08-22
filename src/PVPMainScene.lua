@@ -5,8 +5,7 @@ local fontPath = "chooseRole/actor_param.ttf"
 local socket = require("socket") --如果不行换这个试试 require('socket.core');
 
 client_socket = nil --房间管理的socket， 本客户端和服务器通信的tcp链接
-state_socket = nil --状态同步的socket
-room_id = 123456 --加入房间之后的room id
+m_room_id = nil --加入房间之后的room id
 
 local label1
 local label2
@@ -131,7 +130,7 @@ function PVPMainScene:createLayer()
     self:addStartGameBtn(layer)
     
 	--List.pushlast(roomList,{roomID=1002,maxPlayerNum = 2, curPlayerNum = 1})
-	--self:addRoomLabel(layer, roomList)
+	self:addRoomLabel(layer, roomList)
     return layer
 end
 
@@ -139,16 +138,18 @@ function PVPMainScene:addRoomLabel(layer, list)
 	local function menuCallback(tag)
         local Idx = tag - 10000
         local roomID = roomList[Idx].roomID        
-        print(roomID)
+        print("roomID: " .. roomID)
+        
+        m_room_id = roomID
         self:joinRoom(roomID)
-        room_id = RoomID
+        cclog("after menu call back: " .. m_room_id)
     end
 	
 	local index
     local size = cc.Director:getInstance():getVisibleSize()
 	local menu = cc.Menu:create()
+    
 	for index = list.first, list.last do
-        --print("index " .. index)
 		-- label、menuItem、menu的坐标都能影响最终的菜单位置
 		local label = cc.Label:createWithTTF("RoomID: " .. list[index].roomID .. string.rep(" ",6) ..
                                              "PlayerNum: " .. list[index].curPlayerNum .. "/" .. list[index].maxPlayerNum, fontPath, 40)
@@ -162,7 +163,7 @@ function PVPMainScene:addRoomLabel(layer, list)
 	end
 	menu:setPosition(0,0)
 	menu:setContentSize(cc.size(size.width, List.getSize(list)*LINE_SPACE))
-	layer:addChild(menu)
+	layer:addChild(menu, 4)
 	
 	-- handling touch events
     local function onTouchBegan(touch, event)
@@ -222,11 +223,11 @@ function PVPMainScene:connectToServer()
      --]]
     
     --设置状态同步的服务器
-    local state_server_port = 4455
-    state_socket = socket:tcp()
-    state_socket:settimeout(0.05)
-    
-    if state_socket:connect(server_ip, state_server_port) == 1 then
+    local state_server_port = 4456
+    client_socket = socket:tcp()
+    client_socket:settimeout(0.05)
+        
+    if client_socket:connect(server_ip, state_server_port) == 1 then
         cclog('Success! state socket connect!')
     else
         cclog('Fail! state socket!')
@@ -258,9 +259,9 @@ function PVPMainScene:listRoom()
 end
 
 --PVP create room
-function PVPMainScene:createRoom()
+function PVPMainScene:createRoom(max_people)
     if client_socket ~= nil then
-        sn, se = client_socket:send("createRoom 2\n") --房间总人数
+        sn, se = client_socket:send("createRoom" .. " " .. max_people .. "\n") --房间总人数
         if se ~= nil then
             cclog("SEND ERROR: In createRoom() in PVPMainScene.lua!" .. se)
         else
@@ -274,6 +275,13 @@ function PVPMainScene:createRoom()
             return
         end
         
+        --设置创建房间的人的m_room_id
+        local i = string.find(r,'@')
+        if i == nil then return end
+        
+        local t_roomID = string.sub(r,i+1,-1)
+        m_room_id = tonumber(t_roomID)
+        
         cclog("Sucess! In createRoom(), I have received msg from server: " .. r)
         --这个时候只会有一个创建房间的回包出现
         self:listRoom() --如果创建房间成功，则向服务器发送 listRoom的请求
@@ -282,10 +290,17 @@ end
 
 --PVP join room
 function PVPMainScene:joinRoom(roomID)
+    if roomID == nil then
+        cclog("ERROR: in joinRoom(), nil roomID!")
+        return
+    end
+    
     if client_socket ~= nil then
-        sn, se = client_socket:send("joinRoom "..roomID.."\n")
+        sn, se = client_socket:send("joinRoom " .. roomID .. "\n")
         if se ~= nil then
             cclog("SEND ERROR: In joinRoom() in PVPMainScene.lua!" .. se)
+        else
+            cclog("Success: join Room!")
         end
         
         client_socket:settimeout(-1) --block infinitely
@@ -310,14 +325,14 @@ end
 
 --test
 function PVPMainScene:joinRoomTest(roomID)
-    if state_socket ~= nil then
-        sn, se = state_socket:send("joinRoom "..roomID.."\n")
+    if client_socket ~= nil then
+        sn, se = client_socket:send("joinRoom "..roomID.."\n")
         if se ~= nil then
             cclog("SEND ERROR: In joinRoom() in PVPMainScene.lua!" .. se)
         end
         
-        state_socket:settimeout(-1) --block infinitely
-        r, re = state_socket:receive("*l")
+        client_socket:settimeout(-1) --block infinitely
+        r, re = client_socket:receive("*l")
         if re ~= nil then
             cclog("REVEIVE ERROR: In joinRoom() in PVPMainScene.lua! " .. re)
             return
@@ -338,17 +353,24 @@ end
 
 --开始游戏的时候，向状态同步的服务器发送请求
 function PVPMainScene:startGame()
-    if state_socket ~= nil then
+    if client_socket ~= nil then
         --这里取消监听listRoom消息
         cc.Director:getInstance():getScheduler():unscheduleScriptEntry(listRoomListenerID)
         
-        sn, se = state_socket:send("startGame\n")
-        if se ~= nil then
-            cclog("ERROR: In startGame() in PVPMainScene.lua, I can't send! " .. se)
+        if m_room_id == nil then
+            cclog("请选择一个房间加入!")
+            return
         end
         
-        state_socket:settimeout(-1) --block infinitely
-        r, e = state_socket:receive("*l")
+        sn, se = client_socket:send("startGame " .. m_room_id .. "\n")
+        if se ~= nil then
+            cclog("ERROR: In startGame() in PVPMainScene.lua, I can't send! " .. se)
+        else
+            cclog("Send start game!")
+        end
+        
+        client_socket:settimeout(-1) --block infinitely
+        r, e = client_socket:receive("*l")
         if e ~= nil then
             cclog("ERROR: In startGame() in PVPMainScene.lua, I can't receive! " .. e)
             return
@@ -412,7 +434,7 @@ function PVPMainScene:addCreate1v1Btn(layer)
                 ccexp.AudioEngine:play2d(BGM_RES.MAINMENUSTART, false, 1)
                 ccexp.AudioEngine:stop(AUDIO_ID.MAINMENUBGM)
                 cclog("create 1v1 room btn is clicked")
-                self:createRoom()--创建PVP房间
+                self:createRoom(2)--创建PVP房间
             end
         end
     end
@@ -437,7 +459,7 @@ function PVPMainScene:addCreate2v2Btn(layer)
             ccexp.AudioEngine:play2d(BGM_RES.MAINMENUSTART, false, 1)
             ccexp.AudioEngine:stop(AUDIO_ID.MAINMENUBGM)
             cclog("create 2v2 room btn is clicked")
-            self:createRoom()--创建PVP房间
+            self:createRoom(4)--创建PVP房间
         end
     end
     end
@@ -460,7 +482,7 @@ function PVPMainScene:addStartGameBtn(layer)
                 ccexp.AudioEngine:play2d(BGM_RES.MAINMENUSTART, false, 1)
                 ccexp.AudioEngine:stop(AUDIO_ID.MAINMENUBGM)
                 cclog("start game btn is clicked")
-                self:startGame()
+                self:startGame(m_room_id)
             end
         end
     end
@@ -484,8 +506,8 @@ function PVPMainScene:addJoinRoomBtn(layer)
             ccexp.AudioEngine:play2d(BGM_RES.MAINMENUSTART, false, 1)
             ccexp.AudioEngine:stop(AUDIO_ID.MAINMENUBGM)
             cclog("join room btn is clicked")
-            --self:joinRoom(roomID)--加入PVP房间
-            self:joinRoomTest(room_id)
+            self:joinRoom(m_room_id)--加入PVP房间
+            --self:joinRoomTest(m_room_id)
         end
     end
 end

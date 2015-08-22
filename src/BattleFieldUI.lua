@@ -24,9 +24,10 @@ function BattlefieldUI:ctor()
 end
 
 function BattlefieldUI:backBtnInit()
-	self.BackBtn = cc.Sprite:createWithSpriteFrameName("attackBtn.png")
-    self.BackBtn:setPosition3D(cc.V3(1070 / 1136 * G.winSize.width , 70 / 640 * G.winSize.height + 480, 2))
-    self.BackBtn:setScale(2.0, 2.0)
+	--self.BackBtn = cc.Sprite:createWithSpriteFrameName("attackBtn.png")
+    self.BackBtn = cc.Sprite:create("mainmenuscene/close.png")
+    self.BackBtn:setScale(0.4)
+    self.BackBtn:setPosition(cc.V3(1070 / 1136 * G.winSize.width , 70 / 640 * G.winSize.height + 500))
     self:addChild(self.BackBtn, 1)
 end
 
@@ -501,9 +502,9 @@ end
 
 --添加攻击按钮
 function BattlefieldUI:attackBtnInit()
-    self.AttackBtn = cc.Sprite:createWithSpriteFrameName("attackBtn.png")
-    self.AttackBtn:setPosition3D(cc.V3(1070 / 1136 * G.winSize.width - 100, 70 / 640 * G.winSize.height + 100, 2))
-    self.AttackBtn:setScale(2.0, 2.0)
+    self.AttackBtn = cc.Sprite:create("battlefieldUI/attack.png")
+    self.AttackBtn:setPosition(cc.V3(1070 / 1136 * G.winSize.width - 100, 70 / 640 * G.winSize.height + 100))
+    self.AttackBtn:setScale(0.6)
     self:addChild(self.AttackBtn, 1)
 	
 	--点击攻击按钮后显示的UI,
