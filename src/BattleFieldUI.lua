@@ -545,14 +545,17 @@ function BattlefieldUI:joystickInit()
     self.JoystickFrame = cc.Sprite:createWithSpriteFrameName("edition handhold-outsaid.png")
     self.JoystickFrame:setPosition(cc.p(250 / 1136 * G.winSize.width - 100, 70 / 640 * G.winSize.height + 100))
     self.JoystickFrame:setScale(0.5, 0.5)
+    self.JoystickFrame:setOpacity(50)
     self.JoystickFrame:setGlobalZOrder(UIZorder - 1)
     self:addChild(self.JoystickFrame, 1)
     
     self.JoystickBtn = cc.Sprite:createWithSpriteFrameName("editon-handhold-mid.png")
     self.JoystickBtn:setPosition(self.JoystickFrame:getPosition())
     self.JoystickBtn:setScale(0.5, 0.5)
+    self.JoystickBtn:setOpacity(50)
     self.JoystickBtn:setGlobalZOrder(UIZorder - 1)
     self:addChild(self.JoystickBtn, 2)
+    cclog("Opacity!")
 end
 
 --添加攻击按钮
@@ -560,12 +563,10 @@ function BattlefieldUI:attackBtnInit()
     self.AttackBtn = cc.Sprite:create("battlefieldUI/attack.png")
     self.AttackBtn:setPosition(cc.V3(1070 / 1136 * G.winSize.width - 100, 70 / 640 * G.winSize.height + 100))
     self.AttackBtn:setScale(0.6)
+    --self.AttackBtn:setOpacity(50)
     self.AttackBtn:setGlobalZOrder(UIZorder - 1)
     self:addChild(self.AttackBtn, 1)
 	
-	--点击攻击按钮后显示的UI,
-    --TODO:位置应该跟着英雄走
-
 	--外面的圈
 	self.AttackRange = cc.Sprite:createWithSpriteFrameName("circle.png")
 	--self.AttackRange:setPosition3D(cc.V3(1070 / 1136 * G.winSize.width, 70 / 640 * G.winSize.height, 2))

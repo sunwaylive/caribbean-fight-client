@@ -12,7 +12,7 @@ circle = nil
 arrow = nil
 t = nil
 isGameStart = false
-
+m_end_game_send_cnt = 0
 
 local specialCamera = {valid = false, position = cc.p(0,0)}
 local size = cc.Director:getInstance():getWinSize()
@@ -24,7 +24,7 @@ local cameraOffsetMax = {x=300, y=400}
 local totalTime = 0.0
 local receiveDataFrq = 0.05
 
---TODO:对接受到的数据，分类处理
+--对接受到的数据，分类处理
 local function handleMessage(msg)
     if msg == nil then return end
     
@@ -35,24 +35,14 @@ local function handleMessage(msg)
         if #(msg_token) < 10 then cclog("Error package from server!") end
         
         local client_index = tonumber(msg_token[2])
-        --print(client_index)
-        --if client_index < 1 or client_index > #(HeroManager) then return end
         if client_index < 0 or client_index >= List.getSize(HeroManager) then return end
 		
         local hero = HeroManager[client_index]
-        --print(tonumber(msg_token[3]))
-        --print(tonumber(msg_token[4]))
         hero:setPosition(cc.p(tonumber(msg_token[3]), tonumber(msg_token[4])))
-        --print(msg_token[5])
         hero._curFacing = tonumber(msg_token[5])
-        --print(msg_token[6])
-        --print(msg_token[7])
         hero._heroMoveDir = cc.p(tonumber(msg_token[6]), tonumber(msg_token[7]))
-        --print(msg_token[8])
         hero._heroMoveSpeed = tonumber(msg_token[8])
-        --print(msg_token[9])
         hero._hp = tonumber(msg_token[9])
-        --print(msg_token[10])
         hero:setStateType(tonumber(msg_token[10]))
 		
 		if hero._hp <=0 then
@@ -64,25 +54,8 @@ end
 --包括： 所有玩家的位置 和 朝向； 玩家目前的状态(攻击， walk)
 local function onReceiveData()
     if client_socket == nil then return end
-    --[[
-    recvt, sendt, status = socket.select({client_socket_state}, nil, 1)
-    cclog("111111")
-    print(recvt)
-    while #recvt > 0 do
-        cclog("222222")
-        local response, receive_status = client_socket_state:receive("*l")
-        if receive_status ~= "closed" then
-            cclog("333333")
-            print(response)
-            if response then
-                print(response)
-                recvt, sendt, status = socket.select({client_socket_state}, nil, 1)
-            end
-        else
-            break
-        end
-    end
-    --]]
+    
+    if pvpGameMaster._is_game_over then return end --如果游戏已经结束，则不接受任何数据
     
     back, err, partial = client_socket:receive("*l") --按行读取
     if err ~= "closed" then
@@ -99,6 +72,18 @@ end
 
 local function onSendData()
    if client_socket ~= nil then
+       if pvpGameMaster._is_game_over and m_end_game_send_cnt < 1 then --如果游戏已经结束， 则发送且只发送一次endGame
+           cclog("游戏结束")
+           r, e = client_socket:send("endGame " .. m_room_id)
+           if r == nil then
+               cclog("ERROR: I can't send endGame to Server: " .. e)
+            else
+                m_end_game_send_cnt = m_end_game_send_cnt + 1
+               cclog("sent endGame successfully! " .. msg)
+           end
+           return --游戏结束了，则不发送任何数据
+       end
+       
        --打包当前玩家的数据，发送给服务器，然后由服务器转发
        local head = "updateGame"
        --柏伟修改协议, 加入房间号
@@ -137,7 +122,6 @@ local function onSendData()
         --cclog("Error: Tcp socket is dis-connect!")
    end
 end
-
 
 --移动相机
 local function moveCamera(dt)

@@ -312,9 +312,8 @@ function MainMenuScene:addButton(layer)
             if eventType == ccui.TouchEventType.began then
                 ccexp.AudioEngine:play2d(BGM_RES.MAINMENUSTART, false, 1)
                 ccexp.AudioEngine:stop(AUDIO_ID.MAINMENUBGM)
-                -- 推出
-				cc.Director:getInstance():endToLua()
-
+                -- 退出
+                cc.Director:getInstance():endToLua()
             end
         end
     end

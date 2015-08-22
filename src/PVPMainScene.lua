@@ -29,9 +29,9 @@ function PVPMainScene:ctor()
     --get win size
     self.size = cc.Director:getInstance():getVisibleSize()
 	self.label = nil
-end--这个函数会收到很多的网络包，但是只处理listRoom的回包
+end
 
-
+--这个函数会收到很多的网络包
 local function showRoomList(r)
     if r == nil then return end
     
@@ -117,12 +117,6 @@ function PVPMainScene:createLayer()
     --create layer
     local layer = cc.Layer:create()
     
-    --显示调试信息
-	--self:addLabel(layer)
-    --连接服务器
-    if client_socket == nil then
-        self:connectToServer()
-    end
     --创建UI元素
     self:addBg(layer)
     self:addBackBtn(layer)
@@ -130,6 +124,16 @@ function PVPMainScene:createLayer()
     self:addCreate2v2Btn(layer)
     self:addJoinRoomBtn(layer) --现在直接点击房间就可以加入房间
     self:addStartGameBtn(layer)
+    
+    --显示调试信息
+    --self:addLabel(layer)
+    --连接服务器
+    if client_socket == nil then
+        self:connectToServer()
+    end
+    
+    --每次一进入，就向服务器查询房间的信息
+    if client_socket ~= nil then self:listRoom() end
     
 	--List.pushlast(roomList,{roomID=1002,maxPlayerNum = 2, curPlayerNum = 1})
 	self:addRoomLabel(layer, roomList)
@@ -235,10 +239,8 @@ function PVPMainScene:connectToServer()
         cclog('Success! state socket connect!')
     else
         cclog('Fail! state socket!')
+        return
     end
-    
-    --每次一进入，就向服务器查询房间的信息
-    self:listRoom()
 end
 
 --pvp list room,只负责向服务器发送协议
@@ -318,16 +320,7 @@ function PVPMainScene:joinRoom(roomID)
         end
         
         cclog("Success! In joinRoom(), I have received msg from server: " .. r)
-        --self:listRoom() --TODO:加入房间之后，服务器需要向所有客户端广播房间的信息
     end
-    
-	--[[
-    self.label:setString("joinRoom")
-	local r, e = client_socket:send("joinRoom "..roomID.."\n")
-	print(r,e)
-	if e~= nil then
-		label1:setString(e)
-	end--]]
 end
 
 --test
@@ -346,7 +339,6 @@ function PVPMainScene:joinRoomTest(roomID)
         end
         
         cclog("Success! In joinRoom(), I have received msg from server: " .. r)
-        --self:listRoom() --TODO:加入房间之后，服务器需要向所有客户端广播房间的信息
         
         --为了测试
         if string.sub(r, 1, 1) == "s" then --如果是开始游戏

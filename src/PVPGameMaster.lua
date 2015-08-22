@@ -23,7 +23,6 @@ local frontDistanceWithHeroX = 600
 local backwardDistanceWithHeroX = 800
 local distanceWithHeroX = 150
 local distanceWithHeroY = 150
-local is_game_over = false
 
 local PVPGameMaster = class("PVPGameMaster")
 
@@ -37,6 +36,7 @@ function PVPGameMaster:ctor()
     self._propFrq = 20.0 --每5秒钟刷新一个道具
     
     self._myIdx = 0 --默认自己为0号位置上的玩家
+    self._is_game_over = false
 end
 
 function PVPGameMaster.create(sg_tbl)
@@ -88,7 +88,7 @@ function PVPGameMaster:logicUpdate()
     end --如果同时赢活着同时输，则发生错误了，直接返回
     
     if not is_game_over and (t_iswin or t_islose) then
-        is_game_over = true
+        self._is_game_over = true
         self:showGameResultUI(t_iswin, t_islose)
     end
 end
@@ -260,6 +260,7 @@ function PVPGameMaster:showProp()
     --当道具划过之后，如果中途没有被勾勾住，则需要隐藏掉
 end
 
+--这里需要向服务器发送endGame的协议
 function PVPGameMaster:showGameResultUI(is_win, is_lose)
     uiLayer:showGameResultUI(is_win, is_lose)
 end
