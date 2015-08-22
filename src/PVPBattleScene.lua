@@ -228,7 +228,7 @@ local function createBackground()
     spriteBg:setRotation3D(cc.V3(90,0,0)) --添加了地图的旋转
     spriteBg:setGlobalZOrder(-100)
 
-	local spriteBoat = cc.Sprite3D:create("minigame/background/boatNewright.c3t")
+	local spriteBoat = cc.Sprite3D:create("minigame/background/boatNewRight.c3t")
 
     currentLayer:addChild(spriteBoat)
     spriteBoat:setScale(15) 
@@ -236,7 +236,7 @@ local function createBackground()
     spriteBoat:setRotation3D(cc.V3(90,0,0)) --添加了地图的旋转
     spriteBoat:setGlobalZOrder(-50)
 	
-	local spriteBoat = cc.Sprite3D:create("minigame/background/boatNewright.c3t")
+	local spriteBoat = cc.Sprite3D:create("minigame/background/boatNewRight.c3t")
 
     currentLayer:addChild(spriteBoat)
     spriteBoat:setScale(15) 
