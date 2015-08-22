@@ -11,10 +11,10 @@ local label1
 local label2
 
 local roomList = List.new()
-local roomMenu
+local menu = nil
 local str = "0"
 
-LINE_SPACE = 80
+LINE_SPACE = 60
 local num = 0
 local totalTime = 0.0
 local receiveDataFrq = 0.5
@@ -155,7 +155,10 @@ function PVPMainScene:addRoomLabel(layer, list)
 	
 	local index
     local size = cc.Director:getInstance():getVisibleSize()
-	local menu = cc.Menu:create()
+	if menu ~= nil then
+		menu:removeFromParent()
+	end
+	menu = cc.Menu:create()
     
 	for index = list.first, list.last do
 		-- label、menuItem、menu的坐标都能影响最终的菜单位置
@@ -165,7 +168,7 @@ function PVPMainScene:addRoomLabel(layer, list)
 		label:setAnchorPoint(cc.p(0.5,0.5))
 		local menuItem = cc.MenuItemLabel:create(label)
 		--menuItem:setPosition(cc.p(self.size.width/2, self.size.height*0.7-index * LINE_SPACE))
-        menuItem:setPosition(cc.p(size.width/2, size.height*0.7-index * LINE_SPACE))
+        menuItem:setPosition(cc.p(size.width/2, size.height*0.4-index * LINE_SPACE))
 		menuItem:registerScriptTapHandler(menuCallback)
 		menu:addChild(menuItem, index+10000, index+10000)
 	end
@@ -191,12 +194,12 @@ function PVPMainScene:addRoomLabel(layer, list)
             return
         end
 		
-		if (List.getSize(roomList) + 1) * LINE_SPACE - winSize.height < 0 then
+		if (List.getSize(roomList) + 1) * LINE_SPACE - winSize.height * 0.4 < 0 then
 			return
 		end
 
-        if nextPosy > ((List.getSize(roomList) + 1) * LINE_SPACE - winSize.height) then
-            menu:setPosition(0, ((List.getSize(roomList) + 1) * LINE_SPACE - winSize.height))
+        if nextPosy > ((List.getSize(roomList) + 1) * LINE_SPACE - winSize.height * 0.4) then
+            menu:setPosition(0, ((List.getSize(roomList) + 1) * LINE_SPACE - winSize.height * 0.4))
             return
         end
 
@@ -488,7 +491,7 @@ function PVPMainScene:addStartGameBtn(layer)
 
     local btnStartGame = ccui.Button:create("pvpmainscene/start_game.png")
     btnStartGame:setScale(0.7) -- 因为这个按钮和创建1v1/2v2按钮的分辨率不一致
-    btnStartGame:setPosition(self.size.width * 0.5, self.size.height * 0.35)
+    btnStartGame:setPosition(self.size.width * 0.85, self.size.height * 0.9)
     btnStartGame:addTouchEventListener(button_callback_startgame)
     layer:addChild(btnStartGame, 5)
 end
