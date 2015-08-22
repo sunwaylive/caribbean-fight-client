@@ -49,14 +49,14 @@ G =
     winSize = cc.Director:getInstance():getWinSize(),
     bloodPercentDropSpeed = 2,
 	-- 中心点以-2000，0
-    activearea = {left = -3000, right = -1000, bottom = -500, top = 500},
+    activearea = {left = -3000, right = -800, bottom = -800, top = 500},
 }
 --W values,这个是场景里河流的边界
 W=
 {	
 	--中心 -2000，0
 	center = -2000,
-	activearea = {left = -2300, right = -1800, bottom = -10000, top = 10000},
+	activearea = {left = -2250, right = -1550, bottom = -10000, top = 10000},
 }
 
 --Audios
@@ -219,7 +219,7 @@ MageValues = {
     _hp             = 1100,
     _maxhp          = 1100,
     _defense        = 120,
-    _attackFrequency = 0.5, --原始攻击频率: 2.67
+    _attackFrequency = 0.05, --原始攻击频率: 2.67
     _recoverTime    = 0.8,
     _AIFrequency    = 1.33,
     _attackRange    = 400,
@@ -234,8 +234,8 @@ MageValues = {
         damage   = 280,
         mask     = EnumRaceType.HERO,
         duration = 10,	--改为10s，原值为2
-        speed    = 800,
-		speed2	 = -1200, --钩子返回的速度
+        speed    = 1200,
+		speed2	 = -1600, --钩子返回的速度
         criticalChance = 0.05,
 		attackLength	 = 1000 --新增的钩子长度属性
     }, 
