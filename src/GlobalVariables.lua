@@ -313,7 +313,7 @@ DragonValues = {
     _AIFrequency    = 1.337,
     _attackRange    = 350,
     
-    _speed          = 300,
+    _speed          = 40,
     _turnSpeed      = DEGREES_TO_RADIANS(180),
     _acceleration   = 250,
     _decceleration  = 750*1.7,
@@ -346,7 +346,7 @@ SlimeValues = {
     _AITimer        = 2.0,
     _attackRange    = 50,
     
-    _speed          = 150,
+    _speed          = 40,
     _turnSpeed      = DEGREES_TO_RADIANS(270),
     _acceleration   = 9999,
     _decceleration  = 9999,
@@ -378,7 +378,7 @@ PigletValues = {
     _AIFrequency    = 2.3,
     _attackRange    = 120,
 
-    _speed          = 350,
+    _speed          = 40,
     _turnSpeed      = DEGREES_TO_RADIANS(270),
 
     _normalAttack   = {
@@ -400,8 +400,8 @@ RatValues = {
     _mass           = 990,
     _shadowSize     = 90,
 
-    _hp             = 2800,
-    _maxhp          = 2800,
+    _hp             = 280,
+    _maxhp          = 280,
     _defense        = 200,
     _attackFrequency = 3.0,
     _recoverTime    = 0.4,
@@ -409,7 +409,7 @@ RatValues = {
     _AITimer        = 5.0,
     _attackRange    = 150,
 
-    _speed          = 400,
+    _speed          = 40,
     _turnSpeed      = DEGREES_TO_RADIANS(180),
     _acceleration   = 200,
     _decceleration  = 750*1.7,

@@ -677,9 +677,10 @@ end
 --该函数在每一帧调用，因为需要频繁调整角色的朝向。
 function Actor:movementUpdate(dt)
     --对于勾肥大战，需要关闭所有怪物的自动行走
-    if true then
-        return true
-    end
+    --在PVE中，需要怪物的AI
+    --if false then
+    --  return true
+    --end
 
     --关闭英雄的AI
     if self._racetype == EnumRaceType.HERO then

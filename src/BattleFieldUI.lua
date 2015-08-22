@@ -17,7 +17,7 @@ function BattlefieldUI:ctor()
     self:joystickInit()
     self:attackBtnInit()
 	self:backBtnInit()
-    self:showVictoryUI()
+    --self:showVictoryUI()
     
     ccexp.AudioEngine:stopAll()
     AUDIO_ID.BATTLEFIELDBGM = ccexp.AudioEngine:play2d(BGM_RES.BATTLEFIELDBGM, true,0.6)
