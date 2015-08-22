@@ -4,6 +4,10 @@ require "Helper"
 require "AttackCommand"
 
 local file = "model/mage/mage.c3b"
+local attackFile = "minigame/animation/animePREattacket_AN.c3t"
+local walkFile = "minigame/animation/animePRErun_AN.c3t"
+local idleFile = "minigame/animation/animePREbreath_AN.c3t"
+local heroFile = "minigame/model/penguinALL4.c3t"
 
 Mage = class("Mage", function()
     return require "Actor".create()
@@ -79,7 +83,7 @@ function Mage:init3D()
     self:initShadow()
     self:initPuff()
     --self._sprite3d = cc.EffectSprite3D:create(file)
-	self._sprite3d = cc.EffectSprite3D:create("minigame/model/penguinALL4.c3t")
+	self._sprite3d = cc.EffectSprite3D:create(heroFile)
     self._sprite3d:setScale(1)
     self._sprite3d:addEffect(cc.V3(0,0,0),CelLine, -1)
     self._sprite3d:setPosition(cc.p(50,0))
@@ -94,8 +98,11 @@ end
 do
     Mage._action = {
         idle = createAnimation(file,206,229,0.7),
+        --idle = createAnimation(heroFile,34,64,100),
         walk = createAnimation(file,99,119,0.7),
+		--walk = createAnimation(heroFile,1,30,100),
         attack1 = createAnimation(file,12,30,1.5),
+		--attack1 = createAnimation(heroFile,68,88,100),
         attack2 = createAnimation(file,31,49,1.5),
         specialattack1 = createAnimation(file,56,74,1),
         specialattack2 = createAnimation(file,75,92,1),

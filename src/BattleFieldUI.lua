@@ -28,6 +28,7 @@ function BattlefieldUI:backBtnInit()
     self.BackBtn = cc.Sprite:create("mainmenuscene/close.png")
     self.BackBtn:setScale(0.4)
     self.BackBtn:setPosition(cc.V3(1070 / 1136 * G.winSize.width , 70 / 640 * G.winSize.height + 500))
+    self.BackBtn:setGlobalZOrder(5000)
     self:addChild(self.BackBtn, 1)
 end
 
@@ -544,11 +545,13 @@ function BattlefieldUI:joystickInit()
     self.JoystickFrame = cc.Sprite:createWithSpriteFrameName("edition handhold-outsaid.png")
     self.JoystickFrame:setPosition(cc.p(250 / 1136 * G.winSize.width - 100, 70 / 640 * G.winSize.height + 100))
     self.JoystickFrame:setScale(0.5, 0.5)
+    self.JoystickFrame:setGlobalZOrder(5000)
     self:addChild(self.JoystickFrame, 1)
     
     self.JoystickBtn = cc.Sprite:createWithSpriteFrameName("editon-handhold-mid.png")
     self.JoystickBtn:setPosition(self.JoystickFrame:getPosition())
     self.JoystickBtn:setScale(0.5, 0.5)
+    self.JoystickBtn:setGlobalZOrder(5000)
     self:addChild(self.JoystickBtn, 2)
 end
 
@@ -557,6 +560,7 @@ function BattlefieldUI:attackBtnInit()
     self.AttackBtn = cc.Sprite:create("battlefieldUI/attack.png")
     self.AttackBtn:setPosition(cc.V3(1070 / 1136 * G.winSize.width - 100, 70 / 640 * G.winSize.height + 100))
     self.AttackBtn:setScale(0.6)
+    self.AttackBtn:setGlobalZOrder(5000)
     self:addChild(self.AttackBtn, 1)
 	
 	--点击攻击按钮后显示的UI,
@@ -567,6 +571,7 @@ function BattlefieldUI:attackBtnInit()
 	--self.AttackRange:setPosition3D(cc.V3(1070 / 1136 * G.winSize.width, 70 / 640 * G.winSize.height, 2))
     self.AttackRange:setPosition3D(self.AttackBtn:getPosition3D())
 	self.AttackRange:setScale(1.0, 1.0)
+	self.AttackRange:setGlobalZOrder(5000)
 	self:addChild(self.AttackRange, 1)
 	self.AttackRange:setVisible(false)
 	--箭头
@@ -574,6 +579,7 @@ function BattlefieldUI:attackBtnInit()
 	self.AttackArrow:setAnchorPoint(0,0.5)
     self.AttackArrow:setPosition3D(self.AttackBtn:getPosition3D())
     self.AttackArrow:setScale(0.3, 0.3)
+    self.AttackArrow:setGlobalZOrder(5000)
 	self:addChild(self.AttackArrow, 1)
 	self.AttackArrow:setVisible(false)
 end

@@ -220,14 +220,30 @@ end
 --设置主场景中的地图和背景
 local function createBackground()
     --local spriteBg = cc.Sprite3D:create("model/scene/changing.c3b")
-    local spriteBg = cc.Sprite3D:create("minigame/map5.c3t")
+    local spriteBg = cc.Sprite3D:create("minigame/background/sea1.c3t")
 
     currentLayer:addChild(spriteBg)
-    spriteBg:setScale(2000) --要放很大，不然看不见
-    spriteBg:setPosition3D(cc.V3(-2000,0,0))
+    spriteBg:setScale(20000) --要放很大，不然看不见
+    spriteBg:setPosition3D(cc.V3(-2000,0,-100))
     spriteBg:setRotation3D(cc.V3(90,0,0)) --添加了地图的旋转
-    spriteBg:setGlobalZOrder(-10)
+    spriteBg:setGlobalZOrder(-100)
 
+	local spriteBoat = cc.Sprite3D:create("minigame/background/boatNewright.c3t")
+
+    currentLayer:addChild(spriteBoat)
+    spriteBoat:setScale(15) 
+    spriteBoat:setPosition3D(cc.V3(-3500,0,-250))
+    spriteBoat:setRotation3D(cc.V3(90,0,0)) --添加了地图的旋转
+    spriteBoat:setGlobalZOrder(-50)
+	
+	local spriteBoat = cc.Sprite3D:create("minigame/background/boatNewright.c3t")
+
+    currentLayer:addChild(spriteBoat)
+    spriteBoat:setScale(15) 
+    spriteBoat:setPosition3D(cc.V3(-2000,0,-250))
+    spriteBoat:setRotation3D(cc.V3(90,0,0)) --添加了地图的旋转
+    spriteBoat:setGlobalZOrder(-50)
+	
     --cc.Water:create 水的实现：在Water.cpp中。
     local water = cc.Water:create("shader3D/water.png", "shader3D/wave1.jpg", "shader3D/18.jpg", {width=5500, height=400}, 0.77, 0.3797, 1.2)
     currentLayer:addChild(water)
@@ -296,7 +312,7 @@ local function initUILayer()
     uiLayer:setPositionZ(-1 * cc.Director:getInstance():getZEye()/4)--getZEye获取到近平面的距离
     uiLayer:setScale(0.25)--设置UI的大小
     uiLayer:ignoreAnchorPointForPosition(false)
-    uiLayer:setGlobalZOrder(3000)--确保UI盖在最上面
+    uiLayer:setGlobalZOrder(5000)--确保UI盖在最上面
 end
 
 function BloodbarUpdate(dt)
@@ -339,7 +355,7 @@ function initArrowCircle(layer)
 	layer.circle = cc.Sprite:createWithSpriteFrameName("circle.png")
     layer.circle:setScale(6.2)
 	layer.circle:setOpacity(255*0.7)
-	layer.circle:setGlobalZOrder(1)
+	layer.circle:setGlobalZOrder(100)
 	layer.circle:setVisible(false)
 	layer:addChild(layer.circle)
 	
@@ -347,7 +363,7 @@ function initArrowCircle(layer)
     layer.arrow:setScale(1.8)
 	layer.arrow:setOpacity(255*0.7)
 	layer.arrow:setAnchorPoint(0.05,0.5)
-	layer.arrow:setGlobalZOrder(1)
+	layer.arrow:setGlobalZOrder(5000)
 	layer.arrow:setVisible(false)
 	layer:addChild(layer.arrow)
 end
@@ -660,7 +676,7 @@ function PVPBattleScene.create(sg_msg)
     pvpGameMaster = require("PVPGameMaster").create(sg_msg)
     
 	bloodbarLayer = require("BloodbarUI").create()
-    bloodbarLayer:setGlobalZOrder(2000)--确保UI盖在最上面
+    bloodbarLayer:setGlobalZOrder(3000)--确保UI盖在最上面
 	bloodbarLayer:init(pvpGameMaster._myIdx)
 	scene:addChild(bloodbarLayer) 
 	
