@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>BC6A3346-1AB9-4AEB-88D2-AAB4AB74DBFD</string>
 	<key>IDESourceControlProjectName</key>
-	<string>FantasyWarrior3D</string>
+	<string>project</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>FA48884EE00C77C7D5274EEBD116CE6D1C095EB2</key>
 		<string>https://github.com/sunwaylive/MiniGame.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>frameworks/runtime-src/proj.ios_mac/FantasyWarrior3D.xcodeproj</string>
+	<string>frameworks/runtime-src/proj.ios_mac/FantasyWarrior3D.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>FA48884EE00C77C7D5274EEBD116CE6D1C095EB2</key>

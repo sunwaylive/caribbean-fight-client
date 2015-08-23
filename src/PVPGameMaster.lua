@@ -95,6 +95,7 @@ end
 
 function PVPGameMaster:GetClientOwnPlayer()    
     if HeroManager ~= nil and self._myIdx >= 0 and self._myIdx <= #(HeroManager) then
+        cclog("self._myIdx: " .. self._myIdx)
         return HeroManager[self._myIdx]
     else
         cclog("Error: Can't get client Own Player!")
@@ -220,6 +221,8 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
         mage3:setVisible(true)
         List.pushlast(HeroManager, mage3)
         print("4 在生成的时候， HeroManager 大小： " .. #HeroManager) --输出为3，因为自定义的List，下标从0开始，而#从下标为1的位置开始
+    else
+        cclog("in PVPGameMaste\r:AddHeros(), Wrong player number!")
     end
     
     --删除场景中的战士和射手，只留下法师，需要相应的删除左下角的方块头像

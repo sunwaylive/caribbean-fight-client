@@ -22,7 +22,7 @@ local cameraOffsetMin = {x=-300, y=-400}
 local cameraOffsetMax = {x=300, y=400}
 
 local totalTime = 0.0
-local receiveDataFrq = 0.025
+local receiveDataFrq = 0.00
 
 --对接受到的数据，分类处理
 local function handleMessage(msg)
@@ -38,6 +38,7 @@ local function handleMessage(msg)
         if client_index < 0 or client_index >= List.getSize(HeroManager) then return end
 		
         local hero = HeroManager[client_index]
+        if hero == nil then return end
         hero:setPosition(cc.p(tonumber(msg_token[3]), tonumber(msg_token[4])))
         hero._curFacing = tonumber(msg_token[5])
         hero._heroMoveDir = cc.p(tonumber(msg_token[6]), tonumber(msg_token[7]))
@@ -92,7 +93,9 @@ local function onSendData()
        print("head: " .. head)
        
        local client_index = pvpGameMaster._myIdx
+       cclog("client_index: " .. client_index)
        local hero = pvpGameMaster:GetClientOwnPlayer()
+       if hero == nil then return end
        local pos_x = hero:getPositionX()
        local pos_y = hero:getPositionY()
        

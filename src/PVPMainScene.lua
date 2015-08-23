@@ -17,7 +17,7 @@ local str = "0"
 LINE_SPACE = 60
 local num = 0
 local totalTime = 0.0
-local receiveDataFrq = 0.5
+local receiveDataFrq = 0.0
 local layer
 
 local PVPMainScene  = class("PVPMainScene",function ()
@@ -121,7 +121,7 @@ function PVPMainScene:createLayer()
     self:addBackBtn(layer)
     self:addCreate1v1Btn(layer)
     self:addCreate2v2Btn(layer)
-    --self:addJoinRoomBtn(layer) --现在直接点击房间就可以加入房间
+    self:addListRoomBtn(layer) --点击查询房间
     self:addStartGameBtn(layer)
     
     --显示调试信息
@@ -144,7 +144,10 @@ function PVPMainScene:addRoomLabel(layer, list)
     
 	local function menuCallback(tag)
         --如果已经在房间中了，则不能再加入其它房间
-        if m_room_id ~= nil then return end
+        if m_room_id ~= nil then
+            cclog("你已经创建房间或者已经在房间中了，无法再加入新的房间！")
+            return
+        end
         
         local Idx = tag - 10000
         local roomID = roomList[Idx].roomID        
@@ -477,7 +480,7 @@ function PVPMainScene:addCreate2v2Btn(layer)
 
 local btnCreateRoom = ccui.Button:create("pvpmainscene/create2v2.png")
 --btnCreateRoom:setPosition(100 + btnCreateRoom:getContentSize().width + 100, self.size.height * 0.85)
-btnCreateRoom:setPosition(self.size.width * 0.5, self.size.height * 0.55)
+btnCreateRoom:setPosition(self.size.width * 0.5, self.size.height * 0.6)
 btnCreateRoom:setScale(0.6)
 --用这种方式添加按钮响应函数
 btnCreateRoom:addTouchEventListener(button_callback_createroom)
@@ -506,29 +509,26 @@ function PVPMainScene:addStartGameBtn(layer)
 end
 
 
-function PVPMainScene:addJoinRoomBtn(layer)
-    --step1: 添加 加入房间的按钮
+function PVPMainScene:addListRoomBtn(layer)
     local isTouchButtonJoinRoom = false
-    local button_callback_joinroom = function(sender, eventType)
-    --确保这个按钮只被点击了一次
+    local button_callback_listroom = function(sender, eventType)
     if isTouchButtonJoinRoom == false then
-        isTouchButtonJoinRoom = true
+        --isTouchButtonJoinRoom = true --可以点击多次
         if eventType == ccui.TouchEventType.began then
             ccexp.AudioEngine:play2d(BGM_RES.MAINMENUSTART, false, 1)
             ccexp.AudioEngine:stop(AUDIO_ID.MAINMENUBGM)
-            cclog("join room btn is clicked")
-            self:joinRoom(m_room_id)--加入PVP房间
-            --self:joinRoomTest(m_room_id)
+            cclog("list room btn is clicked")
+            self:listRoom()
         end
     end
 end
 
-local btnJoinRoom = ccui.Button:create("pvpmainscene/start_game.png")
-btnJoinRoom:setPosition(self.size.width * 0.5, self.size.height * 0.15)
-btnJoinRoom:setScale(0.7)
+local btnListRoom = ccui.Button:create("pvpmainscene/list.png")
+btnListRoom:setPosition(self.size.width * 0.5, self.size.height * 0.9)
+btnListRoom:setScale(0.6)
 --用这种方式添加按钮响应函数
-btnJoinRoom:addTouchEventListener(button_callback_joinroom)
-layer:addChild(btnJoinRoom,4)
+btnListRoom:addTouchEventListener(button_callback_listroom)
+layer:addChild(btnListRoom,4)
 end
 
 
