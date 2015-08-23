@@ -257,6 +257,7 @@ function PVPMainScene:listRoom()
         sn, se = client_socket:send("listRoom\n")
         if se ~= nil then
             cclog("SEND ERROR: In listRoom() in PVPMainScene.lua!" .. se)
+            return
         end
         
         client_socket:settimeout(-1) --block infinitely
@@ -279,6 +280,7 @@ function PVPMainScene:createRoom(max_people)
         sn, se = client_socket:send("createRoom" .. " " .. max_people .. "\n") --房间总人数
         if se ~= nil then
             cclog("SEND ERROR: In createRoom() in PVPMainScene.lua!" .. se)
+            return
         else
             cclog("Send createRoom Successfully!")
         end
@@ -314,6 +316,7 @@ function PVPMainScene:joinRoom(roomID)
         sn, se = client_socket:send("joinRoom " .. roomID .. "\n")
         if se ~= nil then
             cclog("SEND ERROR: In joinRoom() in PVPMainScene.lua!" .. se)
+            return
         else
             cclog("Success: join Room!")
         end
@@ -335,6 +338,7 @@ function PVPMainScene:joinRoomTest(roomID)
         sn, se = client_socket:send("joinRoom "..roomID.."\n")
         if se ~= nil then
             cclog("SEND ERROR: In joinRoom() in PVPMainScene.lua!" .. se)
+            return
         end
         
         client_socket:settimeout(-1) --block infinitely
@@ -370,6 +374,7 @@ function PVPMainScene:startGame()
         sn, se = client_socket:send("startGame " .. m_room_id .. "\n")
         if se ~= nil then
             cclog("ERROR: In startGame() in PVPMainScene.lua, I can't send! " .. se)
+            return
         else
             cclog("Send start game!")
         end
@@ -424,6 +429,7 @@ function PVPMainScene:addBackBtn(layer)
     local btnBack = ccui.Button:create("pvpmainscene/back.png")
     btnBack:setPosition(0 + 120 ,self.size.height * 0.9)
     --用这种方式添加按钮响应函数
+    btnBack:setScale(0.5)
     btnBack:addTouchEventListener(btn_callback_back)
     layer:addChild(btnBack,4)
 end
@@ -493,7 +499,7 @@ function PVPMainScene:addStartGameBtn(layer)
     end
 
     local btnStartGame = ccui.Button:create("pvpmainscene/start.png")
-    btnStartGame:setScale(0.7) -- 因为这个按钮和创建1v1/2v2按钮的分辨率不一致
+    btnStartGame:setScale(0.5) -- 因为这个按钮和创建1v1/2v2按钮的分辨率不一致
     btnStartGame:setPosition(self.size.width * 0.85, self.size.height * 0.9)
     btnStartGame:addTouchEventListener(button_callback_startgame)
     layer:addChild(btnStartGame, 5)
