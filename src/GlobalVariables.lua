@@ -5,7 +5,7 @@ Monster Actors Values：
 
 ---hurtEffect
 cc.SpriteFrameCache:getInstance():addSpriteFrames("FX/FX.plist")
-cc.SpriteFrameCache:getInstance():addSpriteFrames("minigame/UI.plist")
+--cc.SpriteFrameCache:getInstance():addSpriteFrames("minigame/UI.plist")
 
 RECTS = {
     iceBolt = cc.SpriteFrameCache:getInstance():getSpriteFrame("icebolt.png"):getRect(),
@@ -18,6 +18,8 @@ RECTS = {
 --这里存放了所有battleUI中用到的图片资源
 cc.SpriteFrameCache:getInstance():addSpriteFrames("battlefieldUI/battleFieldUI.plist")
 cc.SpriteFrameCache:getInstance():addSpriteFrames("battlefieldUI/JoystickAttackBtn.plist")
+cc.SpriteFrameCache:getInstance():addSpriteFrames("minigame/attackarrowcircle.plist")
+cc.SpriteFrameCache:getInstance():addSpriteFrames("battlefieldUI/winlose.plist")
 
 animationCache = cc.AnimationCache:getInstance()
 local hurtAnimation = cc.Animation:create()

@@ -331,9 +331,9 @@ end
 -- cloud action
 function MainMenuScene:addCloud(layer)
     --cloud
-    local cloud0 = cc.Sprite:createWithSpriteFrameName("cloud1.png")
-    local cloud1 = cc.Sprite:createWithSpriteFrameName("cloud1.png")
-    local cloud3 = cc.Sprite:createWithSpriteFrameName("cloud2.png")
+    local cloud0 = cc.Sprite:create("mainmenuscene/cloud1.png")--cc.Sprite:createWithSpriteFrameName("cloud1.png")
+    local cloud1 = cc.Sprite:create("mainmenuscene/cloud1.png")--cc.Sprite:createWithSpriteFrameName("cloud1.png")
+    local cloud3 = cc.Sprite:create("mainmenuscene/cloud2.png")--cc.Sprite:createWithSpriteFrameName("cloud2.png")
     
     --setScale
     local scale = 2

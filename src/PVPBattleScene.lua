@@ -22,7 +22,7 @@ local cameraOffsetMin = {x=-300, y=-400}
 local cameraOffsetMax = {x=300, y=400}
 
 local totalTime = 0.0
-local receiveDataFrq = 0.05
+local receiveDataFrq = 0.025
 
 --对接受到的数据，分类处理
 local function handleMessage(msg)
@@ -336,14 +336,14 @@ end
 --初始化箭头和圈
 function initArrowCircle(layer)
 	--角色脚下的圈和箭头，放在这儿实现可以解决双摇杆操纵箭头方向的问题。
-	layer.circle = cc.Sprite:createWithSpriteFrameName("circle.png")
+    layer.circle = cc.Sprite:createWithSpriteFrameName("circle.png")
     layer.circle:setScale(6.2)
 	layer.circle:setOpacity(255*0.7)
 	layer.circle:setGlobalZOrder(100)
 	layer.circle:setVisible(false)
 	layer:addChild(layer.circle)
 	
-	layer.arrow = cc.Sprite:createWithSpriteFrameName("arrow.png")
+    layer.arrow = cc.Sprite:createWithSpriteFrameName("arrow.png")
     layer.arrow:setScale(1.8)
 	layer.arrow:setOpacity(255*0.7)
 	layer.arrow:setAnchorPoint(0.05,0.5)

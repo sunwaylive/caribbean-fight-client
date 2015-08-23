@@ -490,7 +490,7 @@ function BattlefieldUI:showGameResultUI(is_win, is_lose)
     --根据胜利活着失败创建对应的精灵
     if is_win then
         victory = cc.Sprite:create("battlefieldUI/win.png")
-        elseif is_lose then
+    elseif is_lose then
         victory = cc.Sprite:create("battlefieldUI/lose.png")
     end
     
@@ -542,14 +542,14 @@ self:addChild(self.KnightPngFrame,1)
 
 --添加摇杆
 function BattlefieldUI:joystickInit()
-    self.JoystickFrame = cc.Sprite:createWithSpriteFrameName("edition handhold-outsaid.png")
+    self.JoystickFrame = cc.Sprite:createWithSpriteFrameName("left_hand_outside.png")
     self.JoystickFrame:setPosition(cc.p(250 / 1136 * G.winSize.width - 100, 70 / 640 * G.winSize.height + 100))
     self.JoystickFrame:setScale(0.5, 0.5)
     self.JoystickFrame:setOpacity(50)
     self.JoystickFrame:setGlobalZOrder(UIZorder - 1)
     self:addChild(self.JoystickFrame, 1)
     
-    self.JoystickBtn = cc.Sprite:createWithSpriteFrameName("editon-handhold-mid.png")
+    self.JoystickBtn = cc.Sprite:createWithSpriteFrameName("left_hand_inside.png")
     self.JoystickBtn:setPosition(self.JoystickFrame:getPosition())
     self.JoystickBtn:setScale(0.5, 0.5)
     self.JoystickBtn:setOpacity(50)
@@ -560,7 +560,7 @@ end
 
 --添加攻击按钮
 function BattlefieldUI:attackBtnInit()
-    self.AttackBtn = cc.Sprite:create("battlefieldUI/attack.png")
+    self.AttackBtn = cc.Sprite:createWithSpriteFrameName("attack.png")
     self.AttackBtn:setPosition(cc.V3(1070 / 1136 * G.winSize.width - 100, 70 / 640 * G.winSize.height + 100))
     self.AttackBtn:setScale(0.6)
     --self.AttackBtn:setOpacity(50)
@@ -568,18 +568,19 @@ function BattlefieldUI:attackBtnInit()
     self:addChild(self.AttackBtn, 1)
 	
 	--外面的圈
-	self.AttackRange = cc.Sprite:createWithSpriteFrameName("circle.png")
+	self.AttackRange = cc.Sprite:createWithSpriteFrameName("circle.png")--cc.Sprite:createWithSpriteFrameName("circle.png")
 	--self.AttackRange:setPosition3D(cc.V3(1070 / 1136 * G.winSize.width, 70 / 640 * G.winSize.height, 2))
     self.AttackRange:setPosition3D(self.AttackBtn:getPosition3D())
 	self.AttackRange:setScale(1.0, 1.0)
 	self.AttackRange:setGlobalZOrder(UIZorder - 1)
 	self:addChild(self.AttackRange, 1)
 	self.AttackRange:setVisible(false)
+    
 	--箭头
-	self.AttackArrow = cc.Sprite:createWithSpriteFrameName("arrow.png")
+	self.AttackArrow = cc.Sprite:createWithSpriteFrameName("arrow.png")--cc.Sprite:createWithSpriteFrameName("arrow.png")
 	self.AttackArrow:setAnchorPoint(0,0.5)
     self.AttackArrow:setPosition3D(self.AttackBtn:getPosition3D())
-    self.AttackArrow:setScale(0.3, 0.3)
+    self.AttackArrow:setScale(0.4, 0.4)
     self.AttackArrow:setGlobalZOrder(UIZorder - 1)
 	self:addChild(self.AttackArrow, 1)
 	self.AttackArrow:setVisible(false)

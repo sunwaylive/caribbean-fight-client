@@ -83,11 +83,11 @@ function PVPGameMaster:logicUpdate()
     --检测游戏是否结束
     local t_iswin, t_islose = self:CheckWinOrLose()
     if t_iswin == t_islose then
-        cclog("t_iswin == t_islose, error in logicUpdate()")
+        --cclog("t_iswin == t_islose, error in logicUpdate()")
         return
     end --如果同时赢活着同时输，则发生错误了，直接返回
     
-    if not is_game_over and (t_iswin or t_islose) then
+    if not self._is_game_over and (t_iswin or t_islose) then
         self._is_game_over = true
         self:showGameResultUI(t_iswin, t_islose)
     end

@@ -112,7 +112,6 @@ function PVPMainScene.create()
 end
 
 
-
 function PVPMainScene:createLayer()
     --create layer
     local layer = cc.Layer:create()
@@ -122,7 +121,7 @@ function PVPMainScene:createLayer()
     self:addBackBtn(layer)
     self:addCreate1v1Btn(layer)
     self:addCreate2v2Btn(layer)
-    self:addJoinRoomBtn(layer) --现在直接点击房间就可以加入房间
+    --self:addJoinRoomBtn(layer) --现在直接点击房间就可以加入房间
     self:addStartGameBtn(layer)
     
     --显示调试信息
@@ -136,7 +135,7 @@ function PVPMainScene:createLayer()
     if client_socket ~= nil then self:listRoom() end
     
 	--List.pushlast(roomList,{roomID=1002,maxPlayerNum = 2, curPlayerNum = 1})
-	self:addRoomLabel(layer, roomList)
+	--self:addRoomLabel(layer, roomList)
     return layer
 end
 
@@ -144,6 +143,9 @@ function PVPMainScene:addRoomLabel(layer, list)
     if layer == nil then return end
     
 	local function menuCallback(tag)
+        --如果已经在房间中了，则不能再加入其它房间
+        if m_room_id ~= nil then return end
+        
         local Idx = tag - 10000
         local roomID = roomList[Idx].roomID        
         print("roomID: " .. roomID)
@@ -157,6 +159,7 @@ function PVPMainScene:addRoomLabel(layer, list)
     local size = cc.Director:getInstance():getVisibleSize()
 	if menu ~= nil then
 		menu:removeFromParent()
+        menu = nil
 	end
 	menu = cc.Menu:create()
     
@@ -489,7 +492,7 @@ function PVPMainScene:addStartGameBtn(layer)
         end
     end
 
-    local btnStartGame = ccui.Button:create("pvpmainscene/start_game.png")
+    local btnStartGame = ccui.Button:create("pvpmainscene/start.png")
     btnStartGame:setScale(0.7) -- 因为这个按钮和创建1v1/2v2按钮的分辨率不一致
     btnStartGame:setPosition(self.size.width * 0.85, self.size.height * 0.9)
     btnStartGame:addTouchEventListener(button_callback_startgame)

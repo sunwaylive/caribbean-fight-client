@@ -220,12 +220,11 @@ function initArrowCircle(layer)
     layer.arrow:setScale(1.8)
 	layer.arrow:setOpacity(255*0.7)
 	layer.arrow:setAnchorPoint(0.05,0.5)
-	layer.arrow:setGlobalZOrder(5000)
+	layer.arrow:setGlobalZOrder(UIZorder - 1)
 	layer.arrow:setVisible(false)
 	layer:addChild(layer.arrow)
-    
-    
 end
+
 --更新圈和箭头的位置和方向
 function ArrowUpdate(dt)
 	for val = HeroManager.first, HeroManager.last do
