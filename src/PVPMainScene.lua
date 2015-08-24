@@ -161,7 +161,7 @@ function PVPMainScene:addRoomLabel(layer, list)
 	local index
     local size = cc.Director:getInstance():getVisibleSize()
 	if menu ~= nil then
-		menu:removeFromParent()
+		menu:removeAllChildren() --清空所有的menuitem
         menu = nil
 	end
 	menu = cc.Menu:create()
