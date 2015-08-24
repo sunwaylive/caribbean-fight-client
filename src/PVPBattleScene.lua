@@ -219,7 +219,7 @@ local function createBackground()
 
     currentLayer:addChild(spriteBoat)
     spriteBoat:setScale(15) 
-    spriteBoat:setPosition3D(cc.V3(-3500,0,-250))
+    spriteBoat:setPosition3D(cc.V3(-3500,0,-220))
     spriteBoat:setRotation3D(cc.V3(90,0,0)) --添加了地图的旋转
     spriteBoat:setGlobalZOrder(-50)
 	
@@ -227,7 +227,7 @@ local function createBackground()
 
     currentLayer:addChild(spriteBoat)
     spriteBoat:setScale(15) 
-    spriteBoat:setPosition3D(cc.V3(-2000,0,-250))
+    spriteBoat:setPosition3D(cc.V3(-2000,0,-220))
     spriteBoat:setRotation3D(cc.V3(90,0,0)) --添加了地图的旋转
     spriteBoat:setGlobalZOrder(-50)
 	

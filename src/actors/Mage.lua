@@ -7,7 +7,8 @@ local file = "model/mage/mage.c3b"
 local attackFile = "minigame/animation/animePREattacket_AN.c3t"
 local walkFile = "minigame/animation/animePRErun_AN.c3t"
 local idleFile = "minigame/animation/animePREbreath_AN.c3t"
-local heroFile = "minigame/model/penguinALL4.c3t"
+local heroFile = "minigame/model/penguin_xiugai.c3t"
+local weaponFile = "minigame/Gou.c3b"
 
 Mage = class("Mage", function()
     return require "Actor".create()
@@ -90,6 +91,13 @@ function Mage:init3D()
 	self:addChild(self._sprite3d)
     self._sprite3d:setRotation3D({x = 90, y = 0, z = 0})        
     self._sprite3d:setRotation(-90)
+	-- local attachNode = self._sprite3d:getAttachNode("Left_Hand")
+	-- local weapon = cc.Sprite3D:create(weaponFile)
+	-- -- weapon:setScale(7,42)
+	-- weapon:setPosition3D(cc.V3(0,0,0))
+	-- -- weapon:setAnchorPoint(cc.V3(0.1,0.5,0.9))
+	-- --weapon:setRotation3D(0)
+	-- attachNode:addChild(weapon)
     self:setDefaultEqt()
 end
 
@@ -97,12 +105,12 @@ end
 -- init Mage animations=============================
 do
     Mage._action = {
-        idle = createAnimation(file,206,229,0.7),
-        --idle = createAnimation(heroFile,34,64,100),
-        walk = createAnimation(file,99,119,0.7),
-		--walk = createAnimation(heroFile,1,30,100),
-        attack1 = createAnimation(file,12,30,1.5),
-		--attack1 = createAnimation(heroFile,68,88,100),
+        --idle = createAnimation(file,206,229,0.7),
+        idle = createAnimation(heroFile,34,64,1),
+        --walk = createAnimation(file,99,119,0.7),
+		walk = createAnimation(heroFile,1,30,1),
+        --attack1 = createAnimation(file,12,30,1.5),
+		attack1 = createAnimation(heroFile,68,88,1),
         attack2 = createAnimation(file,31,49,1.5),
         specialattack1 = createAnimation(file,56,74,1),
         specialattack2 = createAnimation(file,75,92,1),
