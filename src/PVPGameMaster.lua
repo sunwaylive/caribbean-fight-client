@@ -116,13 +116,13 @@ function PVPGameMaster:CheckWinOrLose()
         local hero = HeroManager[idx]
         if hero ~= nil then
             if hero._camp ~= client_hero._camp then --敌对玩家
-                if hero._hp > 0 then --只要有敌对玩家活着，则没有赢
+                if hero._hp > 2 then --只要有敌对玩家活着，则没有赢
                     is_win = false
                 end
             end
             
             if hero._camp == client_hero._camp then
-                if hero._hp > 0 then --只要己方有活着的，则没有输
+                if hero._hp > 2 then --只要己方有活着的，则没有输
                     is_lose = false
                 end
             end

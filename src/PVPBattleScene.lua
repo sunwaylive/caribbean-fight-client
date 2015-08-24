@@ -73,7 +73,8 @@ end
 
 local function onSendData()
    if client_socket ~= nil then
-       if pvpGameMaster._is_game_over and m_end_game_send_cnt < 1 then --如果游戏已经结束， 则发送且只发送一次endGame
+       --如果游戏已经结束， 则发送且只发送一次endGame
+       if pvpGameMaster._is_game_over and m_end_game_send_cnt < 1 then
            cclog("游戏结束")
            r, e = client_socket:send("endGame " .. m_room_id)
            if r == nil then
@@ -84,6 +85,9 @@ local function onSendData()
            end
            return --游戏结束了，则不发送任何数据
        end
+       
+       --发送数据的时候进行判断
+       
        
        --打包当前玩家的数据，发送给服务器，然后由服务器转发
        local head = "updateGame"
