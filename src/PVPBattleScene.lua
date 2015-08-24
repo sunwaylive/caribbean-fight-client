@@ -86,8 +86,15 @@ local function onSendData()
            return --游戏结束了，则不发送任何数据
        end
        
-       --发送数据的时候进行判断
-       
+       local client_index = pvpGameMaster._myIdx
+       cclog("client_index: " .. client_index)
+       local hero = pvpGameMaster:GetClientOwnPlayer()
+       --发送数据的时候进行有选择的进行判断
+       --如果当前状态是攻击状态，并且不是从其他状态改变过来的话，说明之前英雄就已经是攻击状态了，则不发送包
+       if hero:getStateType() == EnumStateType.ATTACKING and not hero.m_is_state_changed_to_attack then
+           cclog("跳过同一个攻击动作中的 重复包！！")
+           return
+       end
        
        --打包当前玩家的数据，发送给服务器，然后由服务器转发
        local head = "updateGame"
@@ -96,9 +103,6 @@ local function onSendData()
        head = head .. " " .. m_room_id .. " "
        print("head: " .. head)
        
-       local client_index = pvpGameMaster._myIdx
-       cclog("client_index: " .. client_index)
-       local hero = pvpGameMaster:GetClientOwnPlayer()
        if hero == nil then return end
        local pos_x = hero:getPositionX()
        local pos_y = hero:getPositionY()
@@ -124,6 +128,11 @@ local function onSendData()
            cclog("ERROR: I can't send data to Server: " .. e)
        else
            cclog("sent successfully! " .. msg)
+           --如果英雄是第一个进入攻击状态，在上面发送完一个包之后，立刻修改状态为false，以防止子啊同一个攻击动作中重复发送包
+           if hero:getStateType() == EnumStateType.ATTACKING and hero.m_is_state_changed_to_attack then
+               hero.m_is_state_changed_to_attack = false
+               return
+           end
        end
    else
         --cclog("Error: Tcp socket is dis-connect!")
@@ -171,7 +180,7 @@ local function moveCamera(dt)
     end
 end
 
---不需要在这里接受服务器端的数据，这里只负责更具玩家的朝向计算下一个位置
+--不需要在这里接受服务器端的数据，这里只负责根据玩家的朝向计算下一个位置
 local function moveHero(dt)
     --首先更新角色的朝向
     
@@ -526,6 +535,7 @@ function PVPBattleScene:enableTouch()
 				sprite._heroMoveSpeed = 0
 				--攻击
                 if sprite:getStateType() ~= EnumStateType.ATTACKING then
+                    sprite.m_is_state_changed_to_attack = true --孙威添加，从非攻击状态到攻击状态
                     sprite:setStateType(EnumStateType.ATTACKING)
                 end
 			end

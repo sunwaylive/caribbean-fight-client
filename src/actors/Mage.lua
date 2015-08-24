@@ -7,7 +7,7 @@ local file = "model/mage/mage.c3b"
 local attackFile = "minigame/animation/animePREattacket_AN.c3t"
 local walkFile = "minigame/animation/animePRErun_AN.c3t"
 local idleFile = "minigame/animation/animePREbreath_AN.c3t"
-local heroFile = "minigame/model/penguin_xiugai.c3t"
+local heroFile = "minigame/model/penguin_xiugai.c3t" --"minigame/model/penguin_weapon_disappear.c3b"
 local weaponFile = "minigame/Gou.c3b"
 
 Mage = class("Mage", function()
@@ -109,6 +109,7 @@ do
         idle = createAnimation(heroFile,34,64,1),
         --walk = createAnimation(file,99,119,0.7),
 		walk = createAnimation(heroFile,1,30,1),
+        
         --attack1 = createAnimation(file,12,30,1.5),
 		attack1 = createAnimation(heroFile,68,88,1),
         attack2 = createAnimation(file,31,49,1.5),

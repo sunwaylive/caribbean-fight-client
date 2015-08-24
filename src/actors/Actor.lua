@@ -26,6 +26,7 @@ function Actor:ctor()
     self._heroMoveDir = cc.p(0, 0)
 	self._camp = "A" --为每个角色添加阵营信息
     self._hookStyle = "friend"	--标识被钩中状态下，被谁的钩子钩中，用于再次被钩中时判断。
+    self.m_is_state_changed_to_attack = false
     
     if uiLayer~=nil then
         currentLayer:addChild(self._effectNode)
@@ -609,6 +610,7 @@ function Actor:attackUpdate(dt)
 			print("IDLE")
             self:playAnimation("idle", true)
             self._cooldown = false
+            self.m_is_state_changed_to_attack = false
         end
     
         local random_special = math.random() --根据概率，选择是否需要special attack
@@ -617,7 +619,7 @@ function Actor:attackUpdate(dt)
             local function createCol()
                 self:normalAttack()
             end
-            --攻击动画播放的快慢，在每个角色自己的lua文件中被初始化
+            --攻击动画播放的快慢，在每个角色自己的lua文件中被初始化，动画播放完，则英雄状态改变到idle状态
             local attackAction = cc.Sequence:create(self._action.attack1:clone(),cc.CallFunc:create(createCol),self._action.attack2:clone(),cc.CallFunc:create(playIdle))			
             self._sprite3d:stopAction(self._curAnimation3d)
             self._sprite3d:runAction(attackAction)
