@@ -489,9 +489,9 @@ function BattlefieldUI:showGameResultUI(is_win, is_lose)
     --add victory
     --根据胜利活着失败创建对应的精灵
     if is_win then
-        victory = cc.Sprite:create("battlefieldUI/win.png")
+        victory = cc.Sprite:createWithSpriteFrameName("win.png")--cc.Sprite:create("battlefieldUI/win.png")
     elseif is_lose then
-        victory = cc.Sprite:create("battlefieldUI/lose.png")
+        victory = cc.Sprite:createWithSpriteFrameName("lose.png")--cc.Sprite:create("battlefieldUI/lose.png")
     end
     
     --local victory = cc.Sprite:createWithSpriteFrameName("victory.png")
@@ -545,14 +545,14 @@ function BattlefieldUI:joystickInit()
     self.JoystickFrame = cc.Sprite:createWithSpriteFrameName("left_hand_outside.png")
     self.JoystickFrame:setPosition(cc.p(250 / 1136 * G.winSize.width - 100, 70 / 640 * G.winSize.height + 100))
     self.JoystickFrame:setScale(0.5, 0.5)
-    self.JoystickFrame:setOpacity(50)
+    self.JoystickFrame:setOpacity(250)
     self.JoystickFrame:setGlobalZOrder(UIZorder - 1)
     self:addChild(self.JoystickFrame, 1)
     
     self.JoystickBtn = cc.Sprite:createWithSpriteFrameName("left_hand_inside.png")
     self.JoystickBtn:setPosition(self.JoystickFrame:getPosition())
     self.JoystickBtn:setScale(0.5, 0.5)
-    self.JoystickBtn:setOpacity(50)
+    self.JoystickBtn:setOpacity(250)
     self.JoystickBtn:setGlobalZOrder(UIZorder - 1)
     self:addChild(self.JoystickBtn, 2)
     cclog("Opacity!")

@@ -17,7 +17,7 @@ local str = "0"
 LINE_SPACE = 60
 local num = 0
 local totalTime = 0.0
-local receiveDataFrq = 0.0
+local receiveDataFrq = 0.005
 local layer
 
 local PVPMainScene  = class("PVPMainScene",function ()
@@ -242,6 +242,7 @@ function PVPMainScene:connectToServer()
     --设置状态同步的服务器
     local state_server_port = 4455
     client_socket = socket:tcp()
+    client_socket:setoption('tcp-nodelay', true)
     client_socket:settimeout(0.05)
         
     if client_socket:connect(server_ip, state_server_port) == 1 then
