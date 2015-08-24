@@ -242,10 +242,10 @@ function PVPMainScene:connectToServer()
     --设置状态同步的服务器
     local state_server_port = 4455
     client_socket = socket:tcp()
-    client_socket:setoption('tcp-nodelay', true)
     client_socket:settimeout(0.05)
         
     if client_socket:connect(server_ip, state_server_port) == 1 then
+        client_socket:setoption('tcp-nodelay', true)
         cclog('Success! state socket connect!')
     else
         cclog('Fail! state socket!')

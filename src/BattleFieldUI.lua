@@ -516,7 +516,8 @@ function BattlefieldUI:showGameResultUI(is_win, is_lose)
         --stop sound
         ccexp.AudioEngine:stop(AUDIO_ID.BATTLEFIELDBGM)
         --replace scene
-        cc.Director:getInstance():replaceScene(require("PVPMainScene"):create())
+        cc.Director:getInstance():endToLua()
+        --cc.Director:getInstance():replaceScene(require("PVPMainScene"):create())
     end
     local listener = cc.EventListenerTouchOneByOne:create()
     listener:registerScriptHandler(onTouchBegan,cc.Handler.EVENT_TOUCH_BEGAN )
