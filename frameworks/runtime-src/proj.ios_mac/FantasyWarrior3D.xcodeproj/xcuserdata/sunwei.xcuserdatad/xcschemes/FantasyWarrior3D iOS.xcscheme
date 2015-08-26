@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F293B3C715EB7BE500256477"
-               BuildableName = "FantasyWarrior3D iOS.app"
+               BuildableName = "Caribbean Fight.app"
                BlueprintName = "FantasyWarrior3D iOS"
                ReferencedContainer = "container:FantasyWarrior3D.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F293B3C715EB7BE500256477"
-            BuildableName = "FantasyWarrior3D iOS.app"
+            BuildableName = "Caribbean Fight.app"
             BlueprintName = "FantasyWarrior3D iOS"
             ReferencedContainer = "container:FantasyWarrior3D.xcodeproj">
          </BuildableReference>
@@ -44,7 +44,7 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
@@ -53,7 +53,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F293B3C715EB7BE500256477"
-            BuildableName = "FantasyWarrior3D iOS.app"
+            BuildableName = "Caribbean Fight.app"
             BlueprintName = "FantasyWarrior3D iOS"
             ReferencedContainer = "container:FantasyWarrior3D.xcodeproj">
          </BuildableReference>
@@ -72,7 +72,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F293B3C715EB7BE500256477"
-            BuildableName = "FantasyWarrior3D iOS.app"
+            BuildableName = "Caribbean Fight.app"
             BlueprintName = "FantasyWarrior3D iOS"
             ReferencedContainer = "container:FantasyWarrior3D.xcodeproj">
          </BuildableReference>

@@ -32,7 +32,7 @@ local function handleMessage(msg)
     if msg_token == nil then return end
     
     if string.sub(msg_token[1], 1, 1) == 'u' then --加入 roomid, update room
-        if #(msg_token) < 10 then cclog("Error package from server!") end
+        if #(msg_token) < 10 then cclog("Error package from server!") return end
         
         local client_index = tonumber(msg_token[2])
         if client_index < 0 or client_index >= List.getSize(HeroManager) then return end
@@ -58,6 +58,7 @@ local function onReceiveData()
     
     if pvpGameMaster._is_game_over then return end --如果游戏已经结束，则不接受任何数据
     
+    --如果设置超时时间，则接受到的包可能不完整
     back, err, partial = client_socket:receive("*l") --按行读取
     if err ~= "closed" then
         if back then
@@ -183,7 +184,6 @@ end
 --不需要在这里接受服务器端的数据，这里只负责根据玩家的朝向计算下一个位置
 local function moveHero(dt)
     --首先更新角色的朝向
-    
     for val = HeroManager.last, HeroManager.first , -1 do
         local sprite = HeroManager[val]
         
@@ -192,6 +192,7 @@ local function moveHero(dt)
         local curPos = cc.p(sprite:getPositionX(), sprite:getPositionY())
         local newPos = cc.pAdd(curPos, cc.p(sprite._heroMoveDir.x * sprite._heroMoveSpeed * dt, sprite._heroMoveDir.y * sprite._heroMoveSpeed * dt))
         sprite:setPosition(newPos)
+        --sprite:setPosition(curPos) --不让客户端计算，直接使用从服务器来的位置数据
     end
     return true
 end

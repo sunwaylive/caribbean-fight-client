@@ -52,7 +52,7 @@ function PVPGameMaster:init(sg_msg)
     print("in PVPGameMastser:init(): " .. sg_msg)
 	self:AddHeros(sg_msg)
 
-    self:addProps() --添加道具
+    --self:addProps() --添加道具
 
     stage = 0
     --math.randomseed(tostring(os.time()):reverse():sub(1, 6))
@@ -252,11 +252,12 @@ end
 --这里设置道具的运行轨迹
 function PVPGameMaster:showProp()
     local propID = math.random(1, 100) % propTypesCnt -- 2种道具
-    cclog(propID)
+    cclog("PVP: " .. propID)
     local curProp = PropManager[propID]
     curProp:setPosition3D(cc.V3(-1600, -1000, 100))
     curProp:setVisible(true)
     local function hideCurProp()
+        curProp:setPosition3D(cc.V3(-1600, -1000, 100))
         curProp:setVisible(false)
     end
     curProp:runAction(cc.Sequence:create(cc.MoveBy:create(10.0,cc.V3(0,1200,0)), cc.CallFunc:create(hideCurProp)))

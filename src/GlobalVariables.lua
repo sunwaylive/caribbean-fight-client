@@ -51,7 +51,7 @@ G =
     winSize = cc.Director:getInstance():getWinSize(),
     bloodPercentDropSpeed = 2,
 	-- 中心点以-2000，0
-    activearea = {left = -3000, right = -800, bottom = -800, top = 500},
+    activearea = {left = -3000, right = -800, bottom = -1250, top = 700},
 }
 --W values,这个是场景里河流的边界
 W=
@@ -109,7 +109,7 @@ ActorCommonValues =
     _curAnimation3d = nil,
     
     --runtime modified values
-    _curFacing      = 0, -- current direction the actor is facing, in radians, 0 is to the right
+    _curFacing      = 3.14, -- current direction the actor is facing, in radians, 0 is to the right
     _isalive        = true,
     _AITimer        = 0, -- accumulated timer before AI will execute, in seconds
     _AIEnabled      = false, --if false, AI will not run
@@ -239,7 +239,7 @@ MageValues = {
         speed    = 1200,
 		speed2	 = -1600, --钩子返回的速度
         criticalChance = 0.05,
-		attackLength	 = 1000 --新增的钩子长度属性
+		attackLength	 = 1300 --新增的钩子长度属性
     }, 
     _specialAttack   = {
         minRange = 0,
@@ -307,8 +307,8 @@ DragonValues = {
     _mass           = 100,
     _shadowSize     = 70,
 
-    _hp             = 100,
-    _maxhp          = 100,
+    _hp             = 5,
+    _maxhp          = 5,
     _defense        = 10,
     _attackFrequency = 5.2,
     _recoverTime    = 0.8,
@@ -339,8 +339,8 @@ SlimeValues = {
     _mass           = 20,
     _shadowSize     = 45,
 
-    _hp             = 100,
-    _maxhp          = 100,
+    _hp             = 5,
+    _maxhp          = 5,
     _defense        = 6,
     _attackFrequency = 1.5,
     _recoverTime    = 0.7,
@@ -372,8 +372,8 @@ PigletValues = {
     _mass           = 69,
     _shadowSize     = 60,
 
-    _hp             = 100,
-    _maxhp          = 100,
+    _hp             = 5,
+    _maxhp          = 5,
     _defense        = 6,
     _attackFrequency = 4.73,
     _recoverTime    = 0.9,
@@ -402,8 +402,8 @@ RatValues = {
     _mass           = 990,
     _shadowSize     = 90,
 
-    _hp             = 100,
-    _maxhp          = 100,
+    _hp             = 5,
+    _maxhp          = 5,
     _defense        = 2,
     _attackFrequency = 3.0,
     _recoverTime    = 0.4,
@@ -435,8 +435,8 @@ BossValues = {
     _mass           = 100,
     _shadowSize     = 65,
 
-    _hp             = 400,
-    _maxhp          = 450,
+    _hp             = 5,
+    _maxhp          = 5,
     _defense        = 170,
     _attackFrequency = 3.7,
     _recoverTime    = 0.4,

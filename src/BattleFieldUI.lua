@@ -50,7 +50,7 @@ function BattlefieldUI:avatarInit()
     self:addChild(self.KnightPngFrame,1)
     --]]
 
-    self.MagePng = cc.Sprite:createWithSpriteFrameName("UI-1136-640_18.png")
+    self.MagePng = cc.Sprite:createWithSpriteFrameName("UI-1136-640_03.png")
     --原始的位置，在屏幕的右下方
     --self.MagePng:setPosition3D(cc.V3(1070/1136 * G.winSize.width,70/640 * G.winSize.height,2))
     --换成屏幕左上方

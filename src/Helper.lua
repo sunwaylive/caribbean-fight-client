@@ -174,7 +174,7 @@ function List.removeObj(list, obj)
 	return index
 end
 
---在Actor中被用到
+--在Actor中被用到, t1:src, t2:dst
 function copyTable(t1, t2)
     for key, var in pairs(t1) do
         t2[key] = var

@@ -160,11 +160,6 @@ local function gameController(dt)
 	ArrowUpdate(dt)
     solveAttacks(dt)--伤害计算：由attackCommand来维护
     moveCamera(dt)--移动相机
-	-- local count = 000000
-	-- for i, val in pairs(t) do
-		-- count = count + 1
-	-- end
-	-- print(count)
 end
 
 --初始化UI层

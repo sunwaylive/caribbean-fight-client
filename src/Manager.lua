@@ -150,6 +150,13 @@ function collisionDetect(dt)
             collision(sprite)
             isOutOfBound(sprite)
         else
+            --TODO: 这里需要计数
+            sprite:reset()
+            sprite:setFacing(180)
+            local start_pos = cc.V3(-1300, -1400, 100)
+            sprite:setPosition3D(start_pos)
+            sprite:setVisible(false)
+            
             --List.remove(MonsterManager, val)
             --道具需要循环利用，不能删除
         end

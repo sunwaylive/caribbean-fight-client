@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5023812617EBBCE400990C9B"
-               BuildableName = "FantasyWarrior3D Mac.app"
+               BuildableName = "Caribbean Fight.app"
                BlueprintName = "FantasyWarrior3D Mac"
                ReferencedContainer = "container:FantasyWarrior3D.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5023812617EBBCE400990C9B"
-            BuildableName = "FantasyWarrior3D Mac.app"
+            BuildableName = "Caribbean Fight.app"
             BlueprintName = "FantasyWarrior3D Mac"
             ReferencedContainer = "container:FantasyWarrior3D.xcodeproj">
          </BuildableReference>
@@ -53,7 +53,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5023812617EBBCE400990C9B"
-            BuildableName = "FantasyWarrior3D Mac.app"
+            BuildableName = "Caribbean Fight.app"
             BlueprintName = "FantasyWarrior3D Mac"
             ReferencedContainer = "container:FantasyWarrior3D.xcodeproj">
          </BuildableReference>
@@ -72,7 +72,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5023812617EBBCE400990C9B"
-            BuildableName = "FantasyWarrior3D Mac.app"
+            BuildableName = "Caribbean Fight.app"
             BlueprintName = "FantasyWarrior3D Mac"
             ReferencedContainer = "container:FantasyWarrior3D.xcodeproj">
          </BuildableReference>

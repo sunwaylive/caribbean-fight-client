@@ -11,8 +11,8 @@ require "Archer"
 --require "Boss"
 
 local gloableZOrder = 1
-local monsterCount = {dragon=1,slime=7,piglet=2,rat = 0} --rat count must be 0.
-local propTypesCnt = 2 --假设3中类型的道具,修改这个数值，必须修改addProp中，往PropManager添加的道具的数量，否则会有nil值出现
+local monsterCount = {dragon=0,slime=0,piglet=0,rat = 0} --rat count must be 0.
+local propTypesCnt = 3 --假设3中类型的道具,修改这个数值，必须修改addProp中，往PropManager添加的道具的数量，否则会有nil值出现
 
 local EXIST_MIN_MONSTER = 4
 local scheduleid
@@ -32,7 +32,9 @@ function GameMaster:ctor()
 	self._logicFrq = 1.0
 
     self._totaltime_prop = 0 --用来控制道具的刷新
-    self._propFrq = 20.0 --每5秒钟刷新一个道具
+    self._propFrq = 5.0 --每5秒钟刷新一个道具
+    self._propNum = 10 --总共刷新道具的个数
+    self._propHitNum = 0 --集中道具的个数
 end
 
 function GameMaster.create()
@@ -263,6 +265,12 @@ function GameMaster:addProps()
     prop2:setVisible(false)
     prop2:setAIEnabled(false)
     List.pushlast(PropManager, prop2)
+    
+    local prop3 = Slime:create()
+    currentLayer:addChild(prop3)
+    prop3:setVisible(false)
+    prop3:setAIEnabled(false)
+    List.pushlast(PropManager,prop3)
 end
 
 function GameMaster:showDragon(isFront)
@@ -388,15 +396,25 @@ end
 
 --这里设置道具的运行轨迹
 function GameMaster:showProp()
-    local propID = math.random(1, 100) % propTypesCnt -- 2种道具
-    cclog(propID)
+    local propID = math.random(1, 100) % propTypesCnt -- 3种道具
+    cclog("propID" .. propID)
     local curProp = PropManager[propID]
-    curProp:setPosition3D(cc.V3(-1600, -1000, 100))
+    
+    local start_pos = cc.V3(-1600, -1100, 100)    
+    curProp:setPosition(cc.p(-1500, 0))
+    cclog("position x: " .. curProp:getPositionX())
+    cclog("position y: " .. curProp:getPositionY())
+    
+    curProp:setFacing(180)
+    curProp:setPosition3D(start_pos)
     curProp:setVisible(true)
+    --TODO: 设置alive 属性， 然后在勾中的函数中计数
     local function hideCurProp()
+        curProp:reset()
+        curProp:setPosition3D(start_pos)
         curProp:setVisible(false)
     end
-    curProp:runAction(cc.Sequence:create(cc.MoveBy:create(10.0,cc.V3(0,1200,0)), cc.CallFunc:create(hideCurProp)))
+    curProp:runAction(cc.Sequence:create(cc.MoveTo:create(13.0,cc.V3(-1600,1100,100)), cc.CallFunc:create(hideCurProp)))
     --当道具划过之后，如果中途没有被勾勾住，则需要隐藏掉
 end
 
