@@ -35,6 +35,7 @@ function GameMaster:ctor()
     self._propFrq = 5.0 --每5秒钟刷新一个道具
     self._propNum = 10 --总共刷新道具的个数
     self._propHitNum = 0 --集中道具的个数
+    self._score = 0
 end
 
 function GameMaster.create()
@@ -405,12 +406,19 @@ function GameMaster:showProp()
     cclog("position x: " .. curProp:getPositionX())
     cclog("position y: " .. curProp:getPositionY())
     
+    if curProp._isalive == false then
+        m_score = m_score + 10
+        curProp._isalive = true
+    end
+    
     curProp:setFacing(180)
     curProp:setPosition3D(start_pos)
     curProp:setVisible(true)
+    
     --TODO: 设置alive 属性， 然后在勾中的函数中计数
     local function hideCurProp()
         curProp:reset()
+        curProp:setFacing(180)
         curProp:setPosition3D(start_pos)
         curProp:setVisible(false)
     end

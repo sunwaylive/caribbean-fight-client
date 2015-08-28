@@ -1,6 +1,8 @@
 require "GlobalVariables"
 require "Actor"
 
+local fontPath = "chooseRole/actor_param.ttf"
+
 local BattlefieldUI = class("battlefieldUI",function() return cc.Layer:create() end)
 
 function BattlefieldUI.create()
@@ -16,11 +18,13 @@ function BattlefieldUI:ctor()
     self:timeInit()
     self:joystickInit()
     self:attackBtnInit()
+    self:timeLableInit()
+    self:scoreLabelInit()
 	self:backBtnInit()
     --self:showVictoryUI()
     
     ccexp.AudioEngine:stopAll()
-    AUDIO_ID.BATTLEFIELDBGM = ccexp.AudioEngine:play2d(BGM_RES.BATTLEFIELDBGM, true,0.6)
+    --AUDIO_ID.BATTLEFIELDBGM = ccexp.AudioEngine:play2d(BGM_RES.BATTLEFIELDBGM, true,0.6)
 end
 
 function BattlefieldUI:backBtnInit()
@@ -516,7 +520,9 @@ function BattlefieldUI:showGameResultUI(is_win, is_lose)
         --stop sound
         ccexp.AudioEngine:stop(AUDIO_ID.BATTLEFIELDBGM)
         --replace scene
-        cc.Director:getInstance():endToLua()
+        local scene = require("MainMenuScene")
+        cc.Director:getInstance():replaceScene(scene.create())
+        --cc.Director:getInstance():endToLua()
         --cc.Director:getInstance():replaceScene(require("PVPMainScene"):create())
     end
     local listener = cc.EventListenerTouchOneByOne:create()
@@ -585,6 +591,23 @@ function BattlefieldUI:attackBtnInit()
     self.AttackArrow:setGlobalZOrder(UIZorder - 1)
 	self:addChild(self.AttackArrow, 1)
 	self.AttackArrow:setVisible(false)
+end
+
+--添加计时器
+function BattlefieldUI:timeLableInit()
+    self.timeLabel = cc.Label:createWithTTF("Time Left",fontPath, 20)
+    self.timeLabel:setPosition(cc.p(250 / 1136 * G.winSize.width - 100, 70 / 640 * G.winSize.height + 500))
+    self.timeLabel:setGlobalZOrder(UIZorder - 1 )
+    print("added time label")
+    self:addChild(self.timeLabel, 1)
+end
+
+function BattlefieldUI:scoreLabelInit()
+    self.scoreLabel = cc.Label:createWithTTF("Score",fontPath, 20)
+    self.scoreLabel:setPosition(cc.p(250 / 1136 * G.winSize.width - 100, 70 / 640 * G.winSize.height + 400))
+    self.scoreLabel:setGlobalZOrder(UIZorder - 1 )
+    print("added score label")
+    self:addChild(self.scoreLabel, 1)
 end
 
 return BattlefieldUI

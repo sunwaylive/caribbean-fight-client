@@ -3,6 +3,8 @@ require "Manager"
 require "MessageDispatchCenter"
 require "BloodbarUI"
 
+local fontPath = "chooseRole/actor_param.ttf"
+
 bloodbarLayer = nil
 currentLayer = nil
 uiLayer = nil
@@ -10,6 +12,10 @@ gameMaster = nil
 circle = nil
 arrow = nil
 t = nil
+
+isGameOver = false
+totalTimeLeft = 60
+totalScore = 0
 
 local specialCamera = {valid = false, position = cc.p(0,0)}
 local size = cc.Director:getInstance():getWinSize()
@@ -82,6 +88,76 @@ local function updateParticlePos()
         end
     end
 end
+
+local function updateTimeLabel()
+    totalTimeLeft = totalTimeLeft - 1
+    if totalTimeLeft < 0 then totalTimeLeft = 0 end
+    
+    uiLayer.timeLabel:setString(tostring(totalTimeLeft))
+end
+
+local function updateScoreLabel()
+    totalScore = gameMaster._score
+    uiLayer.scoreLabel:setString(tostring(totalScore))
+end
+
+local function checkWinOrLose()
+    if totalTimeLeft > 0 or isGameOver then return end
+    
+    if totalScore < 10 then
+        uiLayer:showGameResultUI(false, true)
+    else
+        uiLayer:showGameResultUI(true, false)
+    end
+    isGameOver = true
+    scheduler:unscheduleScriptEntry(updateScoreLabelScheduleID)
+    scheduler:unscheduleScriptEntry(updateTimeLabelScheduleID)
+    scheduler:unscheduleScriptEntry(checkWinOrLoseScheduleID)
+end
+
+local function showStartPopup(UILayer)
+    --color layer
+    local layer = cc.LayerColor:create(cc.c4b(10,10,10,150))
+    layer:ignoreAnchorPointForPosition(false)
+    layer:setPosition3D(cc.V3(G.winSize.width*0.5, G.winSize.height*0.5,0))
+    
+    --add victory
+    local victory = cc.Sprite:createWithSpriteFrameName("victory.png")
+    --local victory = cc.Sprite:create("battlefieldUI/win.png")
+    
+    victory:setPosition3D(cc.V3(G.winSize.width*0.5,G.winSize.height*0.5,3))
+    victory:setScale(0.1)
+    victory:setGlobalZOrder(UIZorder)
+    layer:addChild(victory,1)
+    
+    --victory run action
+    local action = cc.EaseElasticOut:create(cc.ScaleTo:create(1.5,1))
+    victory:runAction(action)
+    
+    --touch event
+    local function onTouchBegan(touch, event)
+        return true
+    end
+    
+    local function onTouchEnded(touch,event)
+        --当用户点击开始这个popup的时候，开始播放背景音乐
+        AUDIO_ID.BATTLEFIELDBGM = ccexp.AudioEngine:play2d(BGM_RES.BATTLEFIELDBGM, true,0.6)
+        victory:setVisible(false)
+        layer:setVisible(false)
+        updateTimeLabelScheduleID  = scheduler:scheduleScriptFunc(updateTimeLabel, 1, false)
+        updateScoreLabelScheduleID = scheduler:scheduleScriptFunc(updateScoreLabel, 0.5, false)
+        checkWinOrLoseScheduleID = scheduler:scheduleScriptFunc(checkWinOrLose, 1, false)
+    end
+    
+    local listener = cc.EventListenerTouchOneByOne:create()
+    listener:registerScriptHandler(onTouchBegan,cc.Handler.EVENT_TOUCH_BEGAN )
+    listener:registerScriptHandler(onTouchEnded,cc.Handler.EVENT_TOUCH_ENDED )
+    local eventDispatcher = layer:getEventDispatcher()
+    eventDispatcher:addEventListenerWithSceneGraphPriority(listener,layer)
+    
+    UILayer:addChild(layer)
+end
+
 
 --设置主场景中的地图和背景
 local function createBackground()
@@ -610,6 +686,9 @@ function BattleScene.create()
     --当收到对应消息的时候，设置特写镜头
     MessageDispatchCenter:registerMessage(MessageDispatchCenter.MessageType.SPECIAL_PERSPECTIVE,specialPerspective)
 
+    --开始游戏的时候显示说明的PopUp
+    showStartPopup(uiLayer)
+    
     return scene
 end
 

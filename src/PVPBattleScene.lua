@@ -314,6 +314,8 @@ local function initUILayer()
     uiLayer:setScale(0.25)--设置UI的大小
     uiLayer:ignoreAnchorPointForPosition(false)
     uiLayer:setGlobalZOrder(5000)--确保UI盖在最上面
+    uiLayer.timeLabel:setVisible(false)
+    uiLayer.scoreLabel:setVisible(false)
 end
 
 function BloodbarUpdate(dt)
