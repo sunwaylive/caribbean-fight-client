@@ -97,7 +97,7 @@ local function updateTimeLabel()
 end
 
 local function updateScoreLabel()
-    totalScore = gameMaster._score
+    --totalScore = gameMaster._score
     uiLayer.scoreLabel:setString(tostring(totalScore))
 end
 
@@ -140,13 +140,15 @@ local function showStartPopup(UILayer)
     end
     
     local function onTouchEnded(touch,event)
-        --当用户点击开始这个popup的时候，开始播放背景音乐
-        AUDIO_ID.BATTLEFIELDBGM = ccexp.AudioEngine:play2d(BGM_RES.BATTLEFIELDBGM, true,0.6)
-        victory:setVisible(false)
-        layer:setVisible(false)
-        updateTimeLabelScheduleID  = scheduler:scheduleScriptFunc(updateTimeLabel, 1, false)
-        updateScoreLabelScheduleID = scheduler:scheduleScriptFunc(updateScoreLabel, 0.5, false)
-        checkWinOrLoseScheduleID = scheduler:scheduleScriptFunc(checkWinOrLose, 1, false)
+		if layer:isVisible() == true then
+			--当用户点击开始这个popup的时候，开始播放背景音乐
+			AUDIO_ID.BATTLEFIELDBGM = ccexp.AudioEngine:play2d(BGM_RES.BATTLEFIELDBGM, true,0.6)
+			victory:setVisible(false)
+			layer:setVisible(false)
+			updateTimeLabelScheduleID  = scheduler:scheduleScriptFunc(updateTimeLabel, 1, false)
+			updateScoreLabelScheduleID = scheduler:scheduleScriptFunc(updateScoreLabel, 0.5, false)
+			checkWinOrLoseScheduleID = scheduler:scheduleScriptFunc(checkWinOrLose, 1, false)
+		end
     end
     
     local listener = cc.EventListenerTouchOneByOne:create()
@@ -374,8 +376,11 @@ function BattleScene:enableTouch()
 			-- cc.Director:getInstance():endToLua()
 			-- package.loaded["MainMenuScene"] = nil
 			-- package.loaded["Helper"]=nil
-			cc.Director:getInstance():getScheduler():unscheduleScriptEntry(gameControllerScheduleID)
-			cc.Director:getInstance():getScheduler():unscheduleScriptEntry(uiLayer._tmSchedule)
+			scheduler:unscheduleScriptEntry(gameControllerScheduleID)
+			scheduler:unscheduleScriptEntry(uiLayer._tmSchedule)
+			scheduler:unscheduleScriptEntry(updateScoreLabelScheduleID)
+			scheduler:unscheduleScriptEntry(updateTimeLabelScheduleID)
+			scheduler:unscheduleScriptEntry(checkWinOrLoseScheduleID)
 			local scene = require("MainMenuScene")
             cc.Director:getInstance():replaceScene(scene.create())
         end
