@@ -569,7 +569,7 @@ end
 function BattlefieldUI:attackBtnInit()
     self.AttackBtn = cc.Sprite:createWithSpriteFrameName("attack.png")
     self.AttackBtn:setPosition(cc.V3(1070 / 1136 * G.winSize.width - 100, 70 / 640 * G.winSize.height + 100))
-    self.AttackBtn:setScale(0.6)
+    self.AttackBtn:setScale(1.0)
     --self.AttackBtn:setOpacity(50)
     self.AttackBtn:setGlobalZOrder(UIZorder - 1)
     self:addChild(self.AttackBtn, 1)

@@ -255,7 +255,7 @@ function MainMenuScene:addButton(layer)
     --local buttonPVE = ccui.Button:create("pve_start.png","","",ccui.TextureResType.plistType)
     local buttonPVE = ccui.Button:create("mainmenuscene/pve_start_2.png")
     buttonPVE:setPosition(self.size.width*0.5 - 200,self.size.height*0.15 - 5)
-    buttonPVE:setScale(0.6)
+    buttonPVE:setScale(1.0)
     --用这种方式添加按钮响应函数
     buttonPVE:addTouchEventListener(button_callback_pve)
     layer:addChild(buttonPVE,4)
@@ -288,7 +288,7 @@ function MainMenuScene:addButton(layer)
 
     --local buttonPVP = ccui.Button:create("pvp_start.png","","",ccui.TextureResType.plistType)
     local buttonPVP = ccui.Button:create("mainmenuscene/pvp_start_2.png")
-    buttonPVP:setScale(0.6)
+    buttonPVP:setScale(1.0)
     buttonPVP:setPosition(self.size.width*0.5 + 200 ,self.size.height*0.15 - 5)
     --用这种方式添加按钮响应函数
     buttonPVP:addTouchEventListener(button_callback_pvp)
