@@ -406,11 +406,6 @@ function GameMaster:showProp()
     cclog("position x: " .. curProp:getPositionX())
     cclog("position y: " .. curProp:getPositionY())
     
-    if curProp._isalive == false then
-        self._score = self._score + 10
-        curProp._isalive = true
-    end
-    
     curProp:setFacing(180)
     curProp:setPosition3D(start_pos)
     curProp:setVisible(true)

@@ -218,11 +218,13 @@ function Actor:hook(collider)
     --首先被钩中的人要活着
     if self._isalive == true then 
         --TODO add sound effect
+		totalScore = totalScore + 10	-- 钩中加分。小怪的阵营永远是A，所以单人模式里小怪中钩瞬间没有伤害。
         if collider.owner._camp == self._camp then
 			self._hookStyle = "friend"
 			self:hookMode(collider)
             self:hurtSoundEffects()
 		else
+			cclog("I'm enemy")
 			self._hookStyle = "enemy"
 			local damage = collider.damage
 			--calculate the real damage

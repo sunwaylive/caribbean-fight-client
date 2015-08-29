@@ -44,6 +44,9 @@ UIZorder = 2000
 FXZorder = 1999
 CelLine = 0.009
 
+
+totalScore = 0
+
 BossTaunt = "Let's Duel!!"
 
 --G values,这个是场景里面的有效范围
