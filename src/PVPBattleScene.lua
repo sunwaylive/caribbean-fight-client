@@ -315,7 +315,9 @@ local function initUILayer()
     uiLayer:ignoreAnchorPointForPosition(false)
     uiLayer:setGlobalZOrder(5000)--确保UI盖在最上面
     uiLayer.timeLabel:setVisible(false)
+    uiLayer.timeLabelPic:setVisible(false)
     uiLayer.scoreLabel:setVisible(false)
+    uiLayer.scoreLabelPic:setVisible(false)
 end
 
 function BloodbarUpdate(dt)

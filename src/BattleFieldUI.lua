@@ -593,21 +593,32 @@ function BattlefieldUI:attackBtnInit()
 	self.AttackArrow:setVisible(false)
 end
 
---添加计时器
-function BattlefieldUI:timeLableInit()
-    self.timeLabel = cc.Label:createWithTTF("Time Left",fontPath, 20)
-    self.timeLabel:setPosition(cc.p(250 / 1136 * G.winSize.width - 100, 70 / 640 * G.winSize.height + 500))
-    self.timeLabel:setGlobalZOrder(UIZorder - 1 )
-    print("added time label")
-    self:addChild(self.timeLabel, 1)
+--添加计分板
+function BattlefieldUI:scoreLabelInit()
+    self.scoreLabel = cc.Label:createWithTTF("0",fontPath, 20)
+    self.scoreLabel:setPosition(cc.p(153 / 1136 * G.winSize.width, 595 / 640 * G.winSize.height))
+    self.scoreLabel:setGlobalZOrder(UIZorder - 1 )
+    self:addChild(self.scoreLabel, 1)
+    
+    self.scoreLabelPic = cc.Sprite:createWithSpriteFrameName("score.png")
+    self.scoreLabelPic:setScale(0.6)
+    self.scoreLabelPic:setPosition(cc.p(70 / 1136 * G.winSize.width, 600 / 640 * G.winSize.height))
+    self.scoreLabelPic:setGlobalZOrder(UIZorder - 1 )
+    self:addChild(self.scoreLabelPic, 1)
 end
 
-function BattlefieldUI:scoreLabelInit()
-    self.scoreLabel = cc.Label:createWithTTF("Score",fontPath, 20)
-    self.scoreLabel:setPosition(cc.p(250 / 1136 * G.winSize.width - 100, 70 / 640 * G.winSize.height + 400))
-    self.scoreLabel:setGlobalZOrder(UIZorder - 1 )
-    print("added score label")
-    self:addChild(self.scoreLabel, 1)
+--添加计时器
+function BattlefieldUI:timeLableInit()
+    self.timeLabel = cc.Label:createWithTTF("60",fontPath, 20)
+    self.timeLabel:setPosition(cc.p(153 / 1136 * G.winSize.width, 525 / 640 * G.winSize.height))
+    self.timeLabel:setGlobalZOrder(UIZorder - 1 )
+    self:addChild(self.timeLabel, 1)
+    
+    self.timeLabelPic = cc.Sprite:createWithSpriteFrameName("time.png")
+    self.timeLabelPic:setScale(0.6)
+    self.timeLabelPic:setPosition(cc.p(70 / 1136 * G.winSize.width, 530 / 640 * G.winSize.height))
+    self.timeLabelPic:setGlobalZOrder(UIZorder - 1 )
+    self:addChild(self.timeLabelPic, 1)
 end
 
 return BattlefieldUI

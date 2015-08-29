@@ -90,13 +90,16 @@ local function updateParticlePos()
 end
 
 local function updateTimeLabel()
+    if uiLayer.timeLabel == nil then return end
+    
     totalTimeLeft = totalTimeLeft - 1
     if totalTimeLeft < 0 then totalTimeLeft = 0 end
-    
     uiLayer.timeLabel:setString(tostring(totalTimeLeft))
 end
 
 local function updateScoreLabel()
+    if gameMaster == nil or uiLayer.scoreLabel == nil then return end
+    
     totalScore = gameMaster._score
     uiLayer.scoreLabel:setString(tostring(totalScore))
 end
@@ -122,8 +125,7 @@ local function showStartPopup(UILayer)
     layer:setPosition3D(cc.V3(G.winSize.width*0.5, G.winSize.height*0.5,0))
     
     --add victory
-    local victory = cc.Sprite:createWithSpriteFrameName("victory.png")
-    --local victory = cc.Sprite:create("battlefieldUI/win.png")
+    local victory = cc.Sprite:createWithSpriteFrameName("rule.png")
     
     victory:setPosition3D(cc.V3(G.winSize.width*0.5,G.winSize.height*0.5,3))
     victory:setScale(0.1)

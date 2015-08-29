@@ -20,6 +20,7 @@ cc.SpriteFrameCache:getInstance():addSpriteFrames("battlefieldUI/battleFieldUI.p
 cc.SpriteFrameCache:getInstance():addSpriteFrames("battlefieldUI/JoystickAttackBtn.plist")
 cc.SpriteFrameCache:getInstance():addSpriteFrames("minigame/attackarrowcircle.plist")
 cc.SpriteFrameCache:getInstance():addSpriteFrames("battlefieldUI/winlose.plist")
+cc.SpriteFrameCache:getInstance():addSpriteFrames("battlefieldUI/timescorerule.plist")
 
 animationCache = cc.AnimationCache:getInstance()
 local hurtAnimation = cc.Animation:create()

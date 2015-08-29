@@ -407,7 +407,7 @@ function GameMaster:showProp()
     cclog("position y: " .. curProp:getPositionY())
     
     if curProp._isalive == false then
-        m_score = m_score + 10
+        self._score = self._score + 10
         curProp._isalive = true
     end
     
