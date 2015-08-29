@@ -100,7 +100,6 @@ end
 local function updateScoreLabel()
     if gameMaster == nil or uiLayer.scoreLabel == nil then return end
     
-    totalScore = gameMaster._score
     uiLayer.scoreLabel:setString(tostring(totalScore))
 end
 

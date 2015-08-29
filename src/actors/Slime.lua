@@ -12,6 +12,7 @@ end)
 function Slime:ctor()
     copyTable(ActorCommonValues, self)
     copyTable(SlimeValues,self)
+    self._camp = "B"
     self._angryFace = false
     self:init3D()
     self:initActions()

@@ -12,7 +12,7 @@ end)
 function Piglet:ctor()
     self._useWeaponId = 0
     self._useArmourId = 0
-    
+    self._camp = "B"
     copyTable(ActorCommonValues, self)
     copyTable(PigletValues,self)
     

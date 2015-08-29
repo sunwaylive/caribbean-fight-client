@@ -13,6 +13,7 @@ function Rat:ctor()
     copyTable(ActorCommonValues, self)
     copyTable(RatValues,self)
 
+    self._camp = "B"
     self:init3D()
     self:initActions()
 end

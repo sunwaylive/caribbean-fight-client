@@ -12,7 +12,7 @@ end)
 function Dragon:ctor()
     copyTable(ActorCommonValues, self)
     copyTable(DragonValues,self)
-    
+    self._camp = "B"
     self:init3D()
     self:initActions()
 end
