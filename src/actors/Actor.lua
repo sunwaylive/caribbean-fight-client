@@ -82,7 +82,7 @@ end
 function Actor:initShadow()
     self._circle = cc.Sprite:createWithSpriteFrameName("shadow.png")
     --use Shadow size for aesthetic, use radius to see collision size
-    self._circle:setScale(self._shadowSize/16)
+    self._circle:setScale(self._shadowSize/12)
     --self._circle:setScale(self._radius/8)
 	self._circle:setOpacity(255*0.7)
 	self:addChild(self._circle)
@@ -323,7 +323,6 @@ function Actor:idleMode() --switch into idle mode
 	if self._raceType == EnumRaceType.HERO then
 		print("HERO: idleMode")
     end
-	print(123141)
     self:setStateType(EnumStateType.IDLE)
     self:playAnimation("idle", true)
 end
@@ -433,6 +432,7 @@ function Actor:dyingMode()
             self:setVisible(false)
             List.pushlast(getPoolByName(self._name),self)
         end
+		self:stopAllActions()
         self:runAction(cc.Sequence:create(cc.DelayTime:create(3),cc.MoveBy:create(1.0,cc.V3(0,0,-50)),cc.CallFunc:create(recycle)))
     end
     
@@ -611,7 +611,7 @@ function Actor:attackUpdate(dt)
             self:setStateType(EnumStateType.IDLE)--打完一下之后，设置成idle状态，免得一直在攻击
 			print("IDLE")
             self:playAnimation("idle", true)
-            self._cooldown = false
+            
             self.m_is_state_changed_to_attack = false
         end
     
@@ -626,7 +626,8 @@ function Actor:attackUpdate(dt)
             self._sprite3d:stopAction(self._curAnimation3d)
             self._sprite3d:runAction(attackAction)
             self._curAnimation = attackAction
-            self._cooldown = true
+            self._cooldown = true -- 设置已进入冷却状态
+			self._coolDownTime = 2 -- 设置这次攻击的剩余冷却时间
             
         else--如果是special attack
             self:setCascadeColorEnabled(false)--special attack does not change color affected by its parent node    
@@ -643,6 +644,7 @@ function Actor:attackUpdate(dt)
             self._sprite3d:runAction(attackAction)
             self._curAnimation = attackAction
             self._cooldown = true
+			self._coolDownTime = 2
         end
     end
 end

@@ -20,7 +20,7 @@ totalScore = 0
 local specialCamera = {valid = false, position = cc.p(0,0)}
 local size = cc.Director:getInstance():getWinSize()
 local scheduler = cc.Director:getInstance():getScheduler()
-local cameraOffset =  cc.V3(0, -700, 300 * 0.5)
+local cameraOffset =  cc.V3(0, -600, 300 * 0.5)
 local cameraOffsetMin = {x=-300, y=-400}
 local cameraOffsetMax = {x=300, y=400}
 
@@ -46,9 +46,9 @@ local function moveCamera(dt)
           --                    cc.p(focusPoint.x + cameraOffset.x, cameraOffset.y + focusPoint.y - size.height * 3 / 4), 2 * dt)
         --上一句是为了平滑过渡相机，这里我们不需要，直接设置相机的位置和便宜更加有控制感
         local temp = cc.V3(focusPoint.x + cameraOffset.x, cameraOffset.y + focusPoint.y)
-        local position = cc.V3(temp.x, temp.y, 700)
+        local position = cc.V3(temp.x+500, temp.y, 600)
         camera:setPosition3D(position)
-        camera:lookAt(cc.V3(focusPoint.x, focusPoint.y + 0, 10.0), cc.V3(0.0, 0.0, 1.0)) --TODO: 要调整相机的视角，可以修改cameraOffset！！！
+        camera:lookAt(cc.V3(focusPoint.x+500, focusPoint.y, 10.0), cc.V3(0.0, 0.0, 1.0)) --TODO: 要调整相机的视角，可以修改cameraOffset！！！
         --cclog("\ncalf %f %f %f \ncalf %f %f 50.000000", position.x, position.y, position.z, focusPoint.x, focusPoint.y)            
     end
 end
@@ -115,6 +115,7 @@ local function checkWinOrLose()
     scheduler:unscheduleScriptEntry(updateScoreLabelScheduleID)
     scheduler:unscheduleScriptEntry(updateTimeLabelScheduleID)
     scheduler:unscheduleScriptEntry(checkWinOrLoseScheduleID)
+	scheduler:unscheduleScriptEntry(coolDownScheduleID)
 end
 
 local function showStartPopup(UILayer)
@@ -382,6 +383,8 @@ function BattleScene:enableTouch()
 			scheduler:unscheduleScriptEntry(updateScoreLabelScheduleID)
 			scheduler:unscheduleScriptEntry(updateTimeLabelScheduleID)
 			scheduler:unscheduleScriptEntry(checkWinOrLoseScheduleID)
+			scheduler:unscheduleScriptEntry(coolDownScheduleID)
+			List.removeAll(AttackManager)
 			local scene = require("MainMenuScene")
             cc.Director:getInstance():replaceScene(scene.create())
         end
@@ -607,53 +610,12 @@ function BattleScene.create()
     initUILayer()
 	--initBloodbarLayer()
 	
-	-- local sprite = cc.Sprite3D:create("minigame/maoRedoUv.c3b")
-	-- sprite:setScale(7,42)
-	-- sprite:setPosition3D(cc.V3(-2000,-500,30))
-	-- sprite:setRotation3D(cc.V3(0,0,0))
-	-- currentLayer:addChild(sprite,1,5)
-	
-	-- local sprite2 = cc.Sprite3D:create("minigame/maolianRedoUv.c3b")
-	-- sprite2:setScale(1)
-	-- sprite2:setPosition3D(cc.V3(-2300,-500,30))
-	-- sprite2:setRotation3D(cc.V3(90,0,90))
-	-- currentLayer:addChild(sprite2,1,5)
-	
-	-- local sprite3 = cc.Sprite3D:create("minigame/maoNEW.c3b")
-	-- sprite3:setScale(1)
-	-- sprite3:setPosition3D(cc.V3(-2500,-500,30))
-	-- sprite3:setRotation3D(cc.V3(90,0,90))
-	-- currentLayer:addChild(sprite3,1,5)
-	
-	-- local sprite4 = cc.Sprite3D:create("minigame/maolianNEW.c3b")
-	-- sprite4:setScale(5)
-	-- sprite4:setPosition3D(cc.V3(-2700,-500,30))
-	-- sprite4:setRotation3D(cc.V3(90,0,90))
-	-- currentLayer:addChild(sprite4,1,5)
-
-	-- LEFT
-	local sprite5 = cc.Sprite3D:create("minigame/maolianRedoUv.c3b")
-	sprite5:setScale(10)
-	sprite5:setPosition3D(cc.V3(G.activearea.left,G.activearea.bottom,100))
-	sprite5:setRotation3D(cc.V3(90,0,0))
-	sprite5:setVisible(false)
-	currentLayer:addChild(sprite5,1,30)
-	
-	-- BOTTOM
-	local sprite6 = cc.Sprite3D:create("minigame/maolianRedoUv.c3b")
-	sprite6:setScale(10)
-	sprite6:setPosition3D(cc.V3(G.activearea.left,G.activearea.bottom,100))
-	sprite6:setRotation3D(cc.V3(90,0,90))
-	sprite6:setVisible(false)
-	currentLayer:addChild(sprite6,1,30)
-	
-	-- RIGHT
-	local sprite7 = cc.Sprite3D:create("minigame/maolianRedoUv.c3b")
-	sprite7:setScale(10)
-	sprite7:setPosition3D(cc.V3(G.activearea.right,G.activearea.top,100))
-	sprite7:setRotation3D(cc.V3(270,0,0))
-	sprite7:setVisible(false)
-	currentLayer:addChild(sprite7,1,30)
+	local sprite = cc.Sprite3D:create("minigame/maoRedoUv.c3b")
+	sprite:setScale(7,42)
+	sprite:setPosition3D(cc.V3(-2000,-500,30))
+	sprite:setRotation3D(cc.V3(0,0,0))
+	sprite:setVisible(false)
+	currentLayer:addChild(sprite,1,5)
 	
 	-- TOP
 	local sprite8 = cc.Sprite3D:create("minigame/maolianRedoUv.c3b")
@@ -683,6 +645,7 @@ function BattleScene.create()
     setCamera()
     --这里每一帧都执行gamecontroller
     gameControllerScheduleID = scheduler:scheduleScriptFunc(gameController, 0, false)
+	coolDownScheduleID = scheduler:scheduleScriptFunc(coolDownUpdate, 1, false)
 
     --逻辑对象层(骑士，法师，弓箭手)通过发送消息的方式来和UI层交互。
     --掉血函数
@@ -696,6 +659,19 @@ function BattleScene.create()
     showStartPopup(uiLayer)
     
     return scene
+end
+
+function coolDownUpdate(dt)
+	for val = HeroManager.first, HeroManager.last do
+        local sprite = HeroManager[val]
+		if sprite._cooldown == false then return end
+        if sprite._coolDownTime >=0 then
+			sprite._coolDownTime = sprite._coolDownTime - 10
+		else
+			sprite._cooldown = false
+			sprite._coolDownTime = 2
+		end
+    end
 end
 
 return BattleScene

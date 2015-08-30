@@ -17,7 +17,7 @@ m_end_game_send_cnt = 0
 local specialCamera = {valid = false, position = cc.p(0,0)}
 local size = cc.Director:getInstance():getWinSize()
 local scheduler = cc.Director:getInstance():getScheduler()
-local cameraOffset =  cc.V3(0, -700, 300 * 0.5)
+local cameraOffset =  cc.V3(0, -600, 300 * 0.5)
 local cameraOffsetMin = {x=-300, y=-400}
 local cameraOffsetMax = {x=300, y=400}
 
@@ -174,9 +174,11 @@ local function moveCamera(dt)
           --                    cc.p(focusPoint.x + cameraOffset.x, cameraOffset.y + focusPoint.y - size.height * 3 / 4), 2 * dt)
         --上一句是为了平滑过渡相机，这里我们不需要，直接设置相机的位置和便宜更加有控制感
         local temp = cc.V3(focusPoint.x + cameraOffset.x, cameraOffset.y + focusPoint.y)
-        local position = cc.V3(temp.x, temp.y, 700)
+		local s = 0
+		if hero.boat == "left" then s = 500 else s = -500 end
+		local position = cc.V3(temp.x + s, temp.y, 600)
         camera:setPosition3D(position)
-        camera:lookAt(cc.V3(focusPoint.x, focusPoint.y + 0, 10.0), cc.V3(0.0, 0.0, 1.0)) --TODO: 要调整相机的视角，可以修改cameraOffset！！！
+        camera:lookAt(cc.V3(focusPoint.x + s, focusPoint.y + 0, 10.0), cc.V3(0.0, 0.0, 1.0)) --TODO: 要调整相机的视角，可以修改cameraOffset！！！
         --cclog("\ncalf %f %f %f \ncalf %f %f 50.000000", position.x, position.y, position.z, focusPoint.x, focusPoint.y)            
     end
 end
@@ -405,12 +407,12 @@ local function specialPerspective(param)
     local function restoreTimeScale()
         specialCamera.valid = false
         currentLayer:setColor(cc.c3b(255, 255, 255))--default white        
-        cc.Director:getInstance():getScheduler():setTimeScale(1.0)
+        scheduler:setTimeScale(1.0)
         param.target:setCascadeColorEnabled(true)--restore to the default state  
     end    
     delayExecute(currentLayer, restoreTimeScale, param.dur)
 
-    cc.Director:getInstance():getScheduler():setTimeScale(param.speed)
+    scheduler:setTimeScale(param.speed)
 end
 
 --控制英雄行走
@@ -456,8 +458,10 @@ function PVPBattleScene:enableTouch()
 			-- cc.Director:getInstance():endToLua()
 			-- package.loaded["MainMenuScene"] = nil
 			-- package.loaded["Helper"]=nil
-			cc.Director:getInstance():getScheduler():unscheduleScriptEntry(gameControllerScheduleID)
-			cc.Director:getInstance():getScheduler():unscheduleScriptEntry(uiLayer._tmSchedule)
+			scheduler:unscheduleScriptEntry(gameControllerScheduleID)
+			scheduler:unscheduleScriptEntry(uiLayer._tmSchedule)
+			scheduler:unscheduleScriptEntry(coolDownScheduleID)
+			List.removeAll(AttackManager)
 			package.loaded["PVPMainScene"]=nil
 			local scene = require("PVPMainScene")
             cc.Director:getInstance():replaceScene(scene.create())
@@ -691,6 +695,7 @@ function PVPBattleScene.create(sg_msg)
     setCamera()
     --这里每一帧都执行gamecontroller
     gameControllerScheduleID = scheduler:scheduleScriptFunc(gameController, 0, false)
+	coolDownScheduleID = scheduler:scheduleScriptFunc(coolDownUpdate, 1, false)
 
     --逻辑对象层(骑士，法师，弓箭手)通过发送消息的方式来和UI层交互。
     --掉血函数
@@ -701,6 +706,19 @@ function PVPBattleScene.create(sg_msg)
     MessageDispatchCenter:registerMessage(MessageDispatchCenter.MessageType.SPECIAL_PERSPECTIVE,specialPerspective)
 
     return scene
+end
+
+function coolDownUpdate(dt)
+	for val = HeroManager.first, HeroManager.last do
+        local sprite = HeroManager[val]
+		if sprite._cooldown == false then return end
+        if sprite._coolDownTime >=0 then
+			sprite._coolDownTime = sprite._coolDownTime - 10
+		else
+			sprite._cooldown = false
+			sprite._coolDownTime = 2
+		end
+    end
 end
 
 return PVPBattleScene

@@ -1,6 +1,6 @@
 require("Helper")
 
-local fontPath = "chooseRole/actor_param.ttf"
+local fontPath = "fonts/Font3.ttf"
 --导入socket库
 local socket = require("socket") --如果不行换这个试试 require('socket.core');
 
@@ -19,6 +19,7 @@ local num = 0
 local totalTime = 0.0
 local receiveDataFrq = 0.005
 local layer
+local my_roomID = -1
 
 local PVPMainScene  = class("PVPMainScene",function ()
                             return cc.Scene:create()
@@ -132,7 +133,7 @@ function PVPMainScene:createLayer()
     end
     
     --每次一进入，就向服务器查询房间的信息
-    if client_socket ~= nil then self:listRoom() end
+    --if client_socket ~= nil then self:listRoom() end
     
 	--List.pushlast(roomList,{roomID=1002,maxPlayerNum = 2, curPlayerNum = 1})
 	--self:addRoomLabel(layer, roomList)
@@ -166,17 +167,36 @@ function PVPMainScene:addRoomLabel(layer, list)
 	end
 	menu = cc.Menu:create()
     
-	for index = list.first, list.last do
-		-- label、menuItem、menu的坐标都能影响最终的菜单位置
-		local label = cc.Label:createWithTTF("RoomID: " .. list[index].roomID .. string.rep(" ",6) ..
-                                             "PlayerNum: " .. list[index].curPlayerNum .. "/" .. list[index].maxPlayerNum, fontPath, 40)
-        label:setColor(cc.V3(255,0,0))
-		label:setAnchorPoint(cc.p(0.5,0.5))
-		local menuItem = cc.MenuItemLabel:create(label)
-		--menuItem:setPosition(cc.p(self.size.width/2, self.size.height*0.7-index * LINE_SPACE))
-        menuItem:setPosition(cc.p(size.width/2, size.height*0.4-index * LINE_SPACE))
-		menuItem:registerScriptTapHandler(menuCallback)
-		menu:addChild(menuItem, index+10000, index+10000)
+	local roomIndex = 0
+	if my_roomID == -1 then	-- 表示我没有建立房间
+		for index = list.last, list.first, -1 do
+			-- label、menuItem、menu的坐标都能影响最终的菜单位置
+			local label = cc.Label:createWithTTF("房间号: " .. list[index].roomID .. string.rep(" ",4) ..
+												 "人数: " .. list[index].curPlayerNum .. "/" .. list[index].maxPlayerNum, fontPath, 40)
+			--label:setColor(cc.V3(111,255,0))
+			label:setAnchorPoint(cc.p(0.5,0.5))
+			local menuItem = cc.MenuItemLabel:create(label)
+			--menuItem:setPosition(cc.p(self.size.width/2, self.size.height*0.7-index * LINE_SPACE))
+			menuItem:setPosition(cc.p(size.width * 0.5, size.height*0.8-roomIndex * LINE_SPACE))
+			roomIndex = roomIndex + 1
+			menuItem:registerScriptTapHandler(menuCallback)
+			menu:addChild(menuItem, index+10000, index+10000)
+		end
+	else
+		for index = list.last, list.first, -1 do
+			if list[index].roomID == my_roomID then
+				-- label、menuItem、menu的坐标都能影响最终的菜单位置
+				local label = cc.Label:createWithTTF("房间号: " .. list[index].roomID .. string.rep(" ",4) ..
+													 "人数: " .. list[index].curPlayerNum .. "/" .. list[index].maxPlayerNum, fontPath, 40)
+				--label:setColor(cc.V3(111,255,0))
+				label:setAnchorPoint(cc.p(0.5,0.5))
+				local menuItem = cc.MenuItemLabel:create(label)
+				--menuItem:setPosition(cc.p(self.size.width/2, self.size.height*0.7-index * LINE_SPACE))
+				menuItem:setPosition(cc.p(size.width * 0.5, size.height*0.8-roomIndex * LINE_SPACE))
+				menuItem:registerScriptTapHandler(menuCallback)
+				menu:addChild(menuItem, index+10000, index+10000)
+			end
+		end
 	end
 	menu:setPosition(0,0)
 	menu:setContentSize(cc.size(size.width, List.getSize(list)*LINE_SPACE))
@@ -200,12 +220,12 @@ function PVPMainScene:addRoomLabel(layer, list)
             return
         end
 		
-		if (List.getSize(roomList) + 1) * LINE_SPACE - winSize.height * 0.4 < 0 then
+		if (List.getSize(roomList) + 1) * LINE_SPACE - winSize.height * 0.8 < 0 then
 			return
 		end
 
-        if nextPosy > ((List.getSize(roomList) + 1) * LINE_SPACE - winSize.height * 0.4) then
-            menu:setPosition(0, ((List.getSize(roomList) + 1) * LINE_SPACE - winSize.height * 0.4))
+        if nextPosy > ((List.getSize(roomList) + 1) * LINE_SPACE - winSize.height * 0.8) then
+            menu:setPosition(0, ((List.getSize(roomList) + 1) * LINE_SPACE - winSize.height * 0.8))
             return
         end
 
@@ -301,6 +321,7 @@ function PVPMainScene:createRoom(max_people)
         if i == nil then return end
         
         local t_roomID = string.sub(r,i+1,-1)
+		my_roomID = t_roomID;
         m_room_id = tonumber(t_roomID)
         
         cclog("Sucess! In createRoom(), I have received msg from server: " .. r)
@@ -331,7 +352,7 @@ function PVPMainScene:joinRoom(roomID)
             cclog("REVEIVE ERROR: In joinRoom() in PVPMainScene.lua! " .. re)
             return
         end
-        
+        my_roomID = roomID
         cclog("Success! In joinRoom(), I have received msg from server: " .. r)
     end
 end
@@ -425,13 +446,14 @@ function PVPMainScene:addBackBtn(layer)
                 cclog("back btn is pressed!")
 				--清空房间列表
 				List.removeAll(roomList)
+				menu = nil
                 cc.Director:getInstance():replaceScene(require("MainMenuScene").create())
             end
         end
     end
 
     local btnBack = ccui.Button:create("pvpmainscene/back.png")
-    btnBack:setPosition(0 + 120 ,self.size.height * 0.9)
+    btnBack:setPosition(self.size.width * 0.15 ,self.size.height * 0.1)
     --用这种方式添加按钮响应函数
     btnBack:setScale(0.5)
     btnBack:addTouchEventListener(btn_callback_back)
@@ -456,7 +478,7 @@ function PVPMainScene:addCreate1v1Btn(layer)
 
     local btnCreateRoom = ccui.Button:create("pvpmainscene/create1v1.png")
     --btnCreateRoom:setPosition(100 + btnCreateRoom:getContentSize().width + 100, self.size.height * 0.85)
-    btnCreateRoom:setPosition(self.size.width * 0.5, self.size.height * 0.75)
+    btnCreateRoom:setPosition(self.size.width * 0.15, self.size.height * 0.55)
     btnCreateRoom:setScale(0.6)
     --用这种方式添加按钮响应函数
     btnCreateRoom:addTouchEventListener(button_callback_createroom)
@@ -481,7 +503,7 @@ function PVPMainScene:addCreate2v2Btn(layer)
 
 local btnCreateRoom = ccui.Button:create("pvpmainscene/create2v2.png")
 --btnCreateRoom:setPosition(100 + btnCreateRoom:getContentSize().width + 100, self.size.height * 0.85)
-btnCreateRoom:setPosition(self.size.width * 0.5, self.size.height * 0.6)
+btnCreateRoom:setPosition(self.size.width * 0.15, self.size.height * 0.4)
 btnCreateRoom:setScale(0.6)
 --用这种方式添加按钮响应函数
 btnCreateRoom:addTouchEventListener(button_callback_createroom)
@@ -504,7 +526,7 @@ function PVPMainScene:addStartGameBtn(layer)
 
     local btnStartGame = ccui.Button:create("pvpmainscene/start.png")
     btnStartGame:setScale(0.5) -- 因为这个按钮和创建1v1/2v2按钮的分辨率不一致
-    btnStartGame:setPosition(self.size.width * 0.85, self.size.height * 0.9)
+    btnStartGame:setPosition(self.size.width * 0.85, self.size.height * 0.1)
     btnStartGame:addTouchEventListener(button_callback_startgame)
     layer:addChild(btnStartGame, 5)
 end
@@ -525,7 +547,7 @@ function PVPMainScene:addListRoomBtn(layer)
 end
 
 local btnListRoom = ccui.Button:create("pvpmainscene/list.png")
-btnListRoom:setPosition(self.size.width * 0.5, self.size.height * 0.9)
+btnListRoom:setPosition(self.size.width * 0.15, self.size.height * 0.7)
 btnListRoom:setScale(0.6)
 --用这种方式添加按钮响应函数
 btnListRoom:addTouchEventListener(button_callback_listroom)
