@@ -602,7 +602,7 @@ function Actor:attackUpdate(dt)
         uiLayer.label:setString(math.ceil(self._attackTimer*10))
     end
     
-    if self._attackTimer > self._attackFrequency then
+    --if self._attackTimer > self._attackFrequency then
 		if self._cooldown == true then
 			return
 		end
@@ -645,7 +645,7 @@ function Actor:attackUpdate(dt)
             self._cooldown = true
 			self._coolDownTime = 2
         end
-    end
+    --end
 end
 
 function Actor:walkUpdate(dt)

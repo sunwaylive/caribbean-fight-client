@@ -260,7 +260,7 @@ function PVPMainScene:connectToServer()
      --]]
     
     --设置状态同步的服务器
-    local state_server_port = 4455
+    local state_server_port = 8484
     client_socket = socket:tcp()
     client_socket:settimeout(0.05)
         

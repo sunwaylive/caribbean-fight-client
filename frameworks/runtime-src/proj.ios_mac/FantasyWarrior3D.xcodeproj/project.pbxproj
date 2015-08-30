@@ -1196,8 +1196,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: wei sun (38UF87VEFD)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: wei sun (38UF87VEFD)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: wei sun (8G48N37VX6)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: wei sun (8G48N37VX6)";
 				COMPRESS_PNG_FILES = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1211,7 +1211,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_NAME = "Caribbean Fight";
-				PROVISIONING_PROFILE = "bc303002-5f1e-4c48-b33d-7f73f699b8be";
+				PROVISIONING_PROFILE = "bb8a8816-fe0b-4bbd-b630-89ed2e5a2632";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../../cocos2d-x/cocos/platform/ios";
@@ -1223,8 +1223,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: wei sun (38UF87VEFD)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: wei sun (38UF87VEFD)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: wei sun (8G48N37VX6)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: wei sun (8G48N37VX6)";
 				COMPRESS_PNG_FILES = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ios/Prefix.pch;
@@ -1237,7 +1237,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_NAME = "Caribbean Fight";
-				PROVISIONING_PROFILE = "bc303002-5f1e-4c48-b33d-7f73f699b8be";
+				PROVISIONING_PROFILE = "bb8a8816-fe0b-4bbd-b630-89ed2e5a2632";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../../cocos2d-x/cocos/platform/ios";
@@ -1271,8 +1271,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: wei sun (38UF87VEFD)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: wei sun (38UF87VEFD)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: wei sun (8G48N37VX6)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: wei sun (8G48N37VX6)";
 				COMPRESS_PNG_FILES = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ios/Prefix.pch;
@@ -1285,7 +1285,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_NAME = "Caribbean Fight";
-				PROVISIONING_PROFILE = "bc303002-5f1e-4c48-b33d-7f73f699b8be";
+				PROVISIONING_PROFILE = "bb8a8816-fe0b-4bbd-b630-89ed2e5a2632";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../../cocos2d-x/cocos/platform/ios";

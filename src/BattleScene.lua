@@ -666,7 +666,7 @@ function coolDownUpdate(dt)
         local sprite = HeroManager[val]
 		if sprite._cooldown == false then return end
         if sprite._coolDownTime >=0 then
-			sprite._coolDownTime = sprite._coolDownTime - 10
+			sprite._coolDownTime = sprite._coolDownTime - 1
 		else
 			sprite._cooldown = false
 			sprite._coolDownTime = 2

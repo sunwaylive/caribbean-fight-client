@@ -551,7 +551,7 @@ function PVPBattleScene:enableTouch()
 				--sprite._curFacing = heroMoveDir --_curFacing 是一个number， 不能用dir去赋值！
 				sprite._heroMoveSpeed = 0
 				--攻击
-                if sprite:getStateType() ~= EnumStateType.ATTACKING then
+                if sprite:getStateType() ~= EnumStateType.ATTACKING and sprite._cooldown == false then
                     sprite.m_is_state_changed_to_attack = true --孙威添加，从非攻击状态到攻击状态
                     sprite:setStateType(EnumStateType.ATTACKING)
                 end
@@ -703,7 +703,7 @@ function PVPBattleScene.create(sg_msg)
     setCamera()
     --这里每一帧都执行gamecontroller
     gameControllerScheduleID = scheduler:scheduleScriptFunc(gameController, 0, false)
-	coolDownScheduleID = scheduler:scheduleScriptFunc(coolDownUpdate, 1, false)
+	coolDownScheduleID       = scheduler:scheduleScriptFunc(coolDownUpdate, 0.2, false)
 
     --逻辑对象层(骑士，法师，弓箭手)通过发送消息的方式来和UI层交互。
     --掉血函数
@@ -720,8 +720,9 @@ function coolDownUpdate(dt)
 	for val = HeroManager.first, HeroManager.last do
         local sprite = HeroManager[val]
 		if sprite._cooldown == false then return end
+        
         if sprite._coolDownTime >=0 then
-			sprite._coolDownTime = sprite._coolDownTime - 10
+			sprite._coolDownTime = sprite._coolDownTime - 0.2
 		else
 			sprite._cooldown = false
 			sprite._coolDownTime = 2
