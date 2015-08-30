@@ -404,7 +404,7 @@ function GameMaster:showProp()
 	cclog("propID" .. propID)
     local curProp = PropManager[propID]
     curProp._isalive = true
-    local start_pos = cc.V3(-1600, -1100, 100)    
+    local start_pos = cc.V3(-1500, -1100, 30)    
     curProp:setPosition(cc.p(-1500, 0))
     cclog("position x: " .. curProp:getPositionX())
     cclog("position y: " .. curProp:getPositionY())
@@ -423,7 +423,7 @@ function GameMaster:showProp()
         curProp:setVisible(false)
     end
 	curProp:stopAllActions()	-- 停止以前的动作，防止加速
-    curProp:runAction(cc.Sequence:create(cc.MoveTo:create(13.0,cc.V3(-1600,1100,100)), cc.CallFunc:create(hideCurProp)))
+    curProp:runAction(cc.Sequence:create(cc.MoveTo:create(13.0,cc.V3(-1500,1100,30)), cc.CallFunc:create(hideCurProp)))
     --当道具划过之后，如果中途没有被勾勾住，则需要隐藏掉
 end
 

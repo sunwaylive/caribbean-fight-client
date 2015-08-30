@@ -610,53 +610,12 @@ function BattleScene.create()
     initUILayer()
 	--initBloodbarLayer()
 	
-	-- local sprite = cc.Sprite3D:create("minigame/maoRedoUv.c3b")
-	-- sprite:setScale(7,42)
-	-- sprite:setPosition3D(cc.V3(-2000,-500,30))
-	-- sprite:setRotation3D(cc.V3(0,0,0))
-	-- currentLayer:addChild(sprite,1,5)
-	
-	-- local sprite2 = cc.Sprite3D:create("minigame/maolianRedoUv.c3b")
-	-- sprite2:setScale(1)
-	-- sprite2:setPosition3D(cc.V3(-2300,-500,30))
-	-- sprite2:setRotation3D(cc.V3(90,0,90))
-	-- currentLayer:addChild(sprite2,1,5)
-	
-	-- local sprite3 = cc.Sprite3D:create("minigame/maoNEW.c3b")
-	-- sprite3:setScale(1)
-	-- sprite3:setPosition3D(cc.V3(-2500,-500,30))
-	-- sprite3:setRotation3D(cc.V3(90,0,90))
-	-- currentLayer:addChild(sprite3,1,5)
-	
-	-- local sprite4 = cc.Sprite3D:create("minigame/maolianNEW.c3b")
-	-- sprite4:setScale(5)
-	-- sprite4:setPosition3D(cc.V3(-2700,-500,30))
-	-- sprite4:setRotation3D(cc.V3(90,0,90))
-	-- currentLayer:addChild(sprite4,1,5)
-
-	-- LEFT
-	local sprite5 = cc.Sprite3D:create("minigame/maolianRedoUv.c3b")
-	sprite5:setScale(10)
-	sprite5:setPosition3D(cc.V3(G.activearea.left,G.activearea.bottom,100))
-	sprite5:setRotation3D(cc.V3(90,0,0))
-	sprite5:setVisible(false)
-	currentLayer:addChild(sprite5,1,30)
-	
-	-- BOTTOM
-	local sprite6 = cc.Sprite3D:create("minigame/maolianRedoUv.c3b")
-	sprite6:setScale(10)
-	sprite6:setPosition3D(cc.V3(G.activearea.left,G.activearea.bottom,100))
-	sprite6:setRotation3D(cc.V3(90,0,90))
-	sprite6:setVisible(false)
-	currentLayer:addChild(sprite6,1,30)
-	
-	-- RIGHT
-	local sprite7 = cc.Sprite3D:create("minigame/maolianRedoUv.c3b")
-	sprite7:setScale(10)
-	sprite7:setPosition3D(cc.V3(G.activearea.right,G.activearea.top,100))
-	sprite7:setRotation3D(cc.V3(270,0,0))
-	sprite7:setVisible(false)
-	currentLayer:addChild(sprite7,1,30)
+	local sprite = cc.Sprite3D:create("minigame/maoRedoUv.c3b")
+	sprite:setScale(7,42)
+	sprite:setPosition3D(cc.V3(-2000,-500,30))
+	sprite:setRotation3D(cc.V3(0,0,0))
+	sprite:setVisible(false)
+	currentLayer:addChild(sprite,1,5)
 	
 	-- TOP
 	local sprite8 = cc.Sprite3D:create("minigame/maolianRedoUv.c3b")
