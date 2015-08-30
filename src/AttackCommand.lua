@@ -664,7 +664,7 @@ function HookAttack.create(pos,facing,attackInfo, target, owner)
 	ret.sp:setRotation3D(cc.V3(0,0,180+270 - facing * 180 / 3.14))
 	
     ret:addChild(ret.sp)
-	
+	ret._radius = 20
 	ret.startPos = pos;
 	ret.state = "ATTACK"
 	ret.hasTarget = false

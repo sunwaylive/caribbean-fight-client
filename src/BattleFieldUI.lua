@@ -1,5 +1,6 @@
 require "GlobalVariables"
 require "Actor"
+require "Helper"
 
 local fontPath = "chooseRole/actor_param.ttf"
 
@@ -514,9 +515,12 @@ function BattlefieldUI:showGameResultUI(is_win, is_lose)
     end
     
     local function onTouchEnded(touch,event)
+		List.removeAll(AttackManager)	--如果退出时有钩子在空中未消失，再次进入或开始游戏就会绿屏
         --stop schedule
         cc.Director:getInstance():getScheduler():unscheduleScriptEntry(self._tmSchedule)
         cc.Director:getInstance():getScheduler():unscheduleScriptEntry(gameControllerScheduleID)
+		cc.Director:getInstance():getScheduler():unscheduleScriptEntry(coolDownScheduleID)
+		cc.Director:getInstance():getScheduler():unscheduleScriptEntry(gameControllerScheduleID)
         --stop sound
         ccexp.AudioEngine:stop(AUDIO_ID.BATTLEFIELDBGM)
         --replace scene

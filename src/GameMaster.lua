@@ -26,6 +26,7 @@ local distanceWithHeroY = 150
 local GameMaster = class("GameMaster")
 
 local size = cc.Director:getInstance():getWinSize()
+local lastProp
 
 function GameMaster:ctor()
 	self._totaltime = 0
@@ -186,7 +187,7 @@ function GameMaster:AddHeros()
 
     --删除场景中的法师和射手，只留下战士，需要相应的删除左下角的方块头像
     local mage = Mage:create()
-   	mage:setPosition(battleSiteX[1], 100)--wei add.100
+   	mage:setPosition(battleSiteX[1]+500, -300)--wei add.100
    	currentLayer:addChild(mage)
    	mage:idleMode()
     --mage:setVisible(false)--wei add
@@ -398,7 +399,9 @@ end
 --这里设置道具的运行轨迹
 function GameMaster:showProp()
     local propID = math.random(1, 100) % propTypesCnt -- 3种道具
-    cclog("propID" .. propID)
+	if lastProp == propID then propID = (propID + 1) % propTypesCnt end --连续俩个数相同时会导致怪物消失前瞬移回起点
+    lastProp = propID
+	cclog("propID" .. propID)
     local curProp = PropManager[propID]
     
     local start_pos = cc.V3(-1600, -1100, 100)    
@@ -412,11 +415,12 @@ function GameMaster:showProp()
     
     --TODO: 设置alive 属性， 然后在勾中的函数中计数
     local function hideCurProp()
-        curProp:reset()
-        curProp:setFacing(180)
+        curProp:reset()	--这里会使怪物进入walkmode，转向3.14弧度，也就是向右
+		curProp:idleMode()	--变回静止状态
         curProp:setPosition3D(start_pos)
         curProp:setVisible(false)
     end
+	curProp:stopAllActions()	-- 停止以前的动作，防止加速
     curProp:runAction(cc.Sequence:create(cc.MoveTo:create(13.0,cc.V3(-1600,1100,100)), cc.CallFunc:create(hideCurProp)))
     --当道具划过之后，如果中途没有被勾勾住，则需要隐藏掉
 end

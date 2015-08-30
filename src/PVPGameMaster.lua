@@ -160,20 +160,23 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
         
         --0号位置的玩家
         local mage0 = Mage:create()
-        mage0:setPosition(battleSiteX[1], 100)
+        mage0:setPosition(battleSiteX[1]+500, -100)
         currentLayer:addChild(mage0)
         mage0:idleMode()
         mage0._camp = string.sub(sg_tbl[4], 3, 3)--camp
+		mage0.boat = "left"
         mage0:setVisible(true)
         List.pushlast(HeroManager, mage0)
         
         --1号位置的玩家
         local mage1 = Mage:create()
-        mage1:setPosition(battleSiteX[1] + 800, 500)
+        mage1:setPosition(battleSiteX[1] + 800, -500)
         currentLayer:addChild(mage1)
         mage1:idleMode()
         mage1._camp = string.sub(sg_tbl[5], 3, 3)--camp
-        mage1:setVisible(true)
+        mage1.boat = "right"
+		mage1._heroMoveDir = cc.p(-1,0)
+		mage1:setVisible(true)
         List.pushlast(HeroManager, mage1)
         
     elseif max_players_num == "4" then --如果是2v2，则后面应该跟本客户端的index和4个玩家的信息
@@ -187,37 +190,43 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
         
         --1号位置的玩家
         local mage0 = Mage:create()
-        mage0:setPosition(battleSiteX[1], 100)
+        mage0:setPosition(battleSiteX[1]+500, -100)
         currentLayer:addChild(mage0)
         mage0:idleMode()
         mage0._camp = string.sub(sg_tbl[4], 3, 3)--camp
+		mage0.boat = "left"
         mage0:setVisible(true)
         List.pushlast(HeroManager, mage0)
         
         --2号位置的玩家
         local mage1 = Mage:create()
-        mage1:setPosition(battleSiteX[1], 500)
+        mage1:setPosition(battleSiteX[1]+500, -500)
         currentLayer:addChild(mage1)
         mage1:idleMode()
         mage1._camp = string.sub(sg_tbl[5], 3, 3)--camp
+		mage1.boat = "left"
         mage1:setVisible(true)
         List.pushlast(HeroManager, mage1)
         
         --3号位置的玩家
         local mage2 = Mage:create()
-        mage2:setPosition(battleSiteX[1] + 1500, 100)
+        mage2:setPosition(battleSiteX[1] + 800, -100)
         currentLayer:addChild(mage2)
         mage2:idleMode()
         mage2._camp = string.sub(sg_tbl[6], 3, 3)--camp
+		mage2.boat = "right"
+		mage1._heroMoveDir = cc.p(-1,0)
         mage2:setVisible(true)
         List.pushlast(HeroManager, mage2)
         
         --4号位置的玩家
         local mage3 = Mage:create()
-        mage3:setPosition(battleSiteX[1] + 1500, 500)
+        mage3:setPosition(battleSiteX[1] + 800, -500)
         currentLayer:addChild(mage3)
         mage3:idleMode()
         mage3._camp = string.sub(sg_tbl[7], 3, 3)--camp
+		mage3.boat = "right"
+		mage1._heroMoveDir = cc.p(-1,0)
         mage3:setVisible(true)
         List.pushlast(HeroManager, mage3)
         print("4 在生成的时候， HeroManager 大小： " .. #HeroManager) --输出为3，因为自定义的List，下标从0开始，而#从下标为1的位置开始
