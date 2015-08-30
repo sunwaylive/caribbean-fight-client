@@ -609,9 +609,8 @@ function Actor:attackUpdate(dt)
         self._attackTimer = self._attackTimer - self._attackFrequency
 		local function playIdle()
             self:setStateType(EnumStateType.IDLE)--打完一下之后，设置成idle状态，免得一直在攻击
-			print("IDLE")
+            print("IDLE")
             self:playAnimation("idle", true)
-            
             self.m_is_state_changed_to_attack = false
         end
     

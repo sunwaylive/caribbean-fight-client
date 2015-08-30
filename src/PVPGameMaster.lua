@@ -71,11 +71,12 @@ function PVPGameMaster:update(dt)
 	end
  
     --这里控制道具的刷新
+    --[[
     self._totaltime_prop = self._totaltime_prop + dt
     if self._totaltime_prop > self._propFrq then
         self._totaltime_prop = self._totaltime_prop - self._propFrq
         self:showProp() --刷新道具
-    end
+    end--]]
 end
 
 --帧循环，主要负责控制英雄前进和小怪的刷新,每一阶段刷新出新的怪物

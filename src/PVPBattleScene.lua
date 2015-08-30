@@ -22,7 +22,7 @@ local cameraOffsetMin = {x=-300, y=-400}
 local cameraOffsetMax = {x=300, y=400}
 
 local totalTime = 0.0
-local receiveDataFrq = 0.00
+local receiveDataFrq = 0.01
 
 --对接受到的数据，分类处理
 local function handleMessage(msg)
@@ -44,8 +44,10 @@ local function handleMessage(msg)
         hero._heroMoveDir = cc.p(tonumber(msg_token[6]), tonumber(msg_token[7]))
         hero._heroMoveSpeed = tonumber(msg_token[8])
         hero._hp = tonumber(msg_token[9])
-        hero:setStateType(tonumber(msg_token[10]))
-		
+        --这里设置角色的状态表现
+        local state = tonumber(msg_token[10])
+        hero:setStateType(state)
+        
 		if hero._hp <=0 then
 			hero._isalive = false
 		end
@@ -55,7 +57,6 @@ end
 --包括： 所有玩家的位置 和 朝向； 玩家目前的状态(攻击， walk)
 local function onReceiveData()
     if client_socket == nil then return end
-    
     if pvpGameMaster._is_game_over then return end --如果游戏已经结束，则不接受任何数据
     
     --如果设置超时时间，则接受到的包可能不完整
@@ -191,10 +192,16 @@ local function moveHero(dt)
         
         sprite._curFacing = cc.pToAngleSelf(sprite._heroMoveDir)
         sprite:setRotation(-RADIANS_TO_DEGREES(sprite._curFacing))
-        local curPos = cc.p(sprite:getPositionX(), sprite:getPositionY())
-        local newPos = cc.pAdd(curPos, cc.p(sprite._heroMoveDir.x * sprite._heroMoveSpeed * dt, sprite._heroMoveDir.y * sprite._heroMoveSpeed * dt))
-        sprite:setPosition(newPos)
-        --sprite:setPosition(curPos) --不让客户端计算，直接使用从服务器来的位置数据
+        if val == pvpGameMaster._myIdx then
+            --如果是主像，则计算。
+            local curPos = cc.p(sprite:getPositionX(), sprite:getPositionY())
+            local newPos = cc.pAdd(curPos, cc.p(sprite._heroMoveDir.x * sprite._heroMoveSpeed * dt, sprite._heroMoveDir.y * sprite._heroMoveSpeed * dt))
+            sprite:setPosition(newPos)
+            --主像的状态表现全部在控制摇杆的函数里面了
+        else
+            --否则是影像，不让客户端计算，直接使用从服务器来的位置数据
+            --影像的状态表现需要在这里实现
+        end
     end
     return true
 end
@@ -483,6 +490,7 @@ function PVPBattleScene:enableTouch()
             
             local heroMoveDir = cc.pNormalize(cc.p(touchPoint.x - joystickFrameCenter.x, touchPoint.y - joystickFrameCenter.y))
             local heroMoveSpeed = 250 --设置玩家的移动速度
+            
             --只控制主玩家
             local sprite = pvpGameMaster:GetClientOwnPlayer()
             if sprite == nil then return end

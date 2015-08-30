@@ -522,7 +522,7 @@ function BattlefieldUI:showGameResultUI(is_win, is_lose)
 		cc.Director:getInstance():getScheduler():unscheduleScriptEntry(coolDownScheduleID)
 		cc.Director:getInstance():getScheduler():unscheduleScriptEntry(gameControllerScheduleID)
         --stop sound
-        ccexp.AudioEngine:stop(AUDIO_ID.BATTLEFIELDBGM)
+        ccexp.AudioEngine:stopAll()
         --replace scene
         local scene = require("MainMenuScene")
         cc.Director:getInstance():replaceScene(scene.create())
