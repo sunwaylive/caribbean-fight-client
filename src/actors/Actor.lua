@@ -432,6 +432,7 @@ function Actor:dyingMode()
             self:setVisible(false)
             List.pushlast(getPoolByName(self._name),self)
         end
+		self:stopAllActions()
         self:runAction(cc.Sequence:create(cc.DelayTime:create(3),cc.MoveBy:create(1.0,cc.V3(0,0,-50)),cc.CallFunc:create(recycle)))
     end
     

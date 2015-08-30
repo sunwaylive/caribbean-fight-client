@@ -403,12 +403,12 @@ function GameMaster:showProp()
     lastProp = propID
 	cclog("propID" .. propID)
     local curProp = PropManager[propID]
-    
+    curProp._isalive = true
     local start_pos = cc.V3(-1600, -1100, 100)    
     curProp:setPosition(cc.p(-1500, 0))
     cclog("position x: " .. curProp:getPositionX())
     cclog("position y: " .. curProp:getPositionY())
-    
+    curProp:idleMode()	--变回静止状态
     curProp:setFacing(180)
     curProp:setPosition3D(start_pos)
     curProp:setVisible(true)
@@ -416,7 +416,9 @@ function GameMaster:showProp()
     --TODO: 设置alive 属性， 然后在勾中的函数中计数
     local function hideCurProp()
         curProp:reset()	--这里会使怪物进入walkmode，转向3.14弧度，也就是向右
+		curProp._curFacing = 0
 		curProp:idleMode()	--变回静止状态
+		curProp._isalive = false -- 关闭碰撞
         curProp:setPosition3D(start_pos)
         curProp:setVisible(false)
     end
