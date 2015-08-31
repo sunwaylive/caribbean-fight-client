@@ -1,6 +1,8 @@
 require "Helper"
 require "GlobalVariables"
 
+isShowingNewbie = false
+
 --declare a class extends scene
 local MainMenuScene = class("MainMenuScene",function()
     return cc.Scene:create()
@@ -156,14 +158,6 @@ function MainMenuScene:addPointLight(layer)
     self._lightSprite:addChild(self._pointLight)
     self:addChild(self._lightSprite,10)
     self._lightSprite:setPositionZ(100)
-
-    -- effectNormalMap
-    --[[
-    local effectNormalMapped = cc.EffectNormalMapped:create("mainmenuscene/logo_normal.png");
-    effectNormalMapped:setPointLight(self._pointLight)
-    effectNormalMapped:setKBump(50)
-    self._logo:setEffect(effectNormalMapped)
-     --]]
     
     --action
     local function getBezierAction()
@@ -260,18 +254,6 @@ function MainMenuScene:addButton(layer)
     buttonPVE:addTouchEventListener(button_callback_pve)
     layer:addChild(buttonPVE,4)
 
-    --法相贴图实现凹凸效果
-    --[[
-    local effectNormalMapped = cc.EffectNormalMapped:create("mainmenuscene/start_normal.png")
-    effectNormalMapped:setPointLight(self._pointLight)
-    effectNormalMapped:setKBump(100)
-    
-    local effectSprite = cc.EffectSprite:create("mainmenuscene/start.png")
-    effectSprite:setPosition(self.size.width*0.5 - 100,self.size.height*0.15)
-    layer:addChild(effectSprite,5)
-    effectSprite:setEffect(effectNormalMapped)
-    --]]
-     
     --step2: 设置PVP start的按钮
     local isTouchButtonPVP = false
     local button_callback_pvp = function(sender, eventType)
@@ -293,16 +275,6 @@ function MainMenuScene:addButton(layer)
     --用这种方式添加按钮响应函数
     buttonPVP:addTouchEventListener(button_callback_pvp)
     layer:addChild(buttonPVP,4)
-
-    --法相贴图实现凹凸效果
-    --local effectNormalMappedPVP = cc.EffectNormalMapped:create("mainmenuscene/start_normal.png")
-    --effectNormalMappedPVP:setPointLight(self._pointLight)
-    --effectNormalMappedPVP:setKBump(100)
-
-    --local effectSpritePVP = cc.EffectSprite:create("mainmenuscene/start.png")
-    --effectSpritePVP:setPosition(self.size.width*0.5 + 100,self.size.height*0.15)
-    --layer:addChild(effectSpritePVP,5)
-    --effectSprite:setEffect(effectNormalMapped)
 	
 	--step3: 退出按钮
 	local isTouchButtonClose = false
@@ -325,6 +297,107 @@ function MainMenuScene:addButton(layer)
     --用这种方式添加按钮响应函数
     buttonClose:addTouchEventListener(button_callback_close)
     layer:addChild(buttonClose,4)
+
+    --step3: 新手指引
+    local isTouchButtonNewbie = false
+    local button_callback_newbie = function(sender, eventType)
+        if isTouchButtonNewbie == false then
+            --isTouchButtonNewbie = true
+            if eventType == ccui.TouchEventType.began then
+                ccexp.AudioEngine:play2d(BGM_RES.MAINMENUSTART, false, 1)
+                ccexp.AudioEngine:stop(AUDIO_ID.MAINMENUBGM)
+                -- 弹出新手指引
+                if not isShowingNewbie then
+                    isShowingNewbie = true
+                    self:showNewbiePopup()
+                else
+                    --do nothing
+                end
+            end
+        end
+    end
+
+    --local buttonClose = ccui.Button:create("close.png","","",ccui.TextureResType.plistType)
+    local buttonNewbie = ccui.Button:create("mainmenuscene/newbie_pic.png")
+    buttonNewbie:setPosition(self.size.width * 0.5 ,self.size.height * 0.5)
+    buttonNewbie:setScale(0.6)
+    --用这种方式添加按钮响应函数
+    buttonNewbie:addTouchEventListener(button_callback_newbie)
+    layer:addChild(buttonNewbie,4)
+end
+
+function MainMenuScene:showNewbiePopup()
+    --color layer
+    local layer = cc.LayerColor:create(cc.c4b(10,10,10,150))
+    layer:ignoreAnchorPointForPosition(false)
+    layer:setPosition3D(cc.V3(G.winSize.width*0.5,G.winSize.height*0.5,0))
+    
+    --add newbie_1
+    local newbie_1 = cc.Sprite:createWithSpriteFrameName("newbie_1.jpg")
+    newbie_1:setPosition3D(cc.V3(G.winSize.width*0.5,G.winSize.height*0.5,3))
+    newbie_1:setScale(0.1)
+    newbie_1:setGlobalZOrder(UIZorder)
+    layer:addChild(newbie_1,3)
+    
+    --add newbie_2
+    local newbie_2 = cc.Sprite:createWithSpriteFrameName("newbie_2.png")
+    newbie_2:setPosition3D(cc.V3(G.winSize.width*0.5,G.winSize.height*0.5,3))
+    newbie_2:setScale(0.1)
+    newbie_2:setGlobalZOrder(UIZorder)
+    layer:addChild(newbie_2,2)
+    
+    --add newbie_3
+    local newbie_3 = cc.Sprite:createWithSpriteFrameName("newbie_3.png")
+    newbie_3:setPosition3D(cc.V3(G.winSize.width*0.5,G.winSize.height*0.5,3))
+    newbie_3:setScale(0.1)
+    newbie_3:setGlobalZOrder(UIZorder)
+    layer:addChild(newbie_3,1)
+    
+    --run action
+    local touchCnt = 0
+    local action_1 = cc.EaseElasticOut:create(cc.ScaleTo:create(1.5,0.8))
+    newbie_1:runAction(action_1)
+    
+    --touch event
+    local function onTouchBegan(touch, event)
+        return true
+    end
+    
+    local function onTouchEnded(touch,event)
+        touchCnt = touchCnt + 1        
+        cclog("touchCnt: " .. touchCnt)
+        if touchCnt == 1 then
+            cclog("1")
+            newbie_1:stopAllActions()
+            newbie_1:setVisible(false)
+            layer:removeChild(newbie_1)
+            local action_2 = cc.EaseElasticOut:create(cc.ScaleTo:create(1.5,0.8))
+            newbie_2:runAction(action_2)
+        elseif touchCnt == 2 then
+            cclog("2")
+            newbie_2:stopAllActions()
+            newbie_2:setVisible(false)
+            layer:removeChild(newbie_2)
+            local action_3 = cc.EaseElasticOut:create(cc.ScaleTo:create(1.5,0.8))
+            newbie_3:runAction(action_3)
+        elseif touchCnt == 3 then
+            cclog("3")
+            newbie_3:stopAllActions()
+            newbie_3:setVisible(false)
+            layer:removeChild(newbie_3)
+            layer:setVisible(false)
+            self:removeChild(layer)
+            isShowingNewbie = false
+        end
+    end
+    
+    local listener = cc.EventListenerTouchOneByOne:create() --单点触摸事件
+    listener:registerScriptHandler(onTouchBegan,cc.Handler.EVENT_TOUCH_BEGAN )
+    listener:registerScriptHandler(onTouchEnded,cc.Handler.EVENT_TOUCH_ENDED )
+    local eventDispatcher = layer:getEventDispatcher()
+    eventDispatcher:addEventListenerWithSceneGraphPriority(listener,layer)
+    
+    self:addChild(layer)
 end
 
 
