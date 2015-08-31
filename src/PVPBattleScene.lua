@@ -186,7 +186,7 @@ local function moveCamera(dt)
         --上一句是为了平滑过渡相机，这里我们不需要，直接设置相机的位置和便宜更加有控制感
         local temp = cc.V3(focusPoint.x + cameraOffset.x, cameraOffset.y + focusPoint.y)
 		local s = 0
-		if hero.boat == "left" then s = 500 else s = -500 end
+		if hero.boat == "left" then s = 300 else s = -300 end
 		local position = cc.V3(temp.x + s, temp.y, 600)
         camera:setPosition3D(position)
         camera:lookAt(cc.V3(focusPoint.x + s, focusPoint.y + 0, 10.0), cc.V3(0.0, 0.0, 1.0)) --TODO: 要调整相机的视角，可以修改cameraOffset！！！
@@ -292,11 +292,11 @@ end
 --核心控制游戏的地方
 --TODO:这里应该从服务器拿到数据，更新客户端，其他玩家的状态
 local function gameController(dt)
+	if pvpGameMaster._is_game_over then return end
     --设置时间间隔，每隔一定的时间接受从服务器过来的数据，更新其它玩家的状态;并向服务器发送自己的状态
     totalTime = totalTime + dt
 	-- totalTime可能是receiveDateFrq的很多倍，因此要做多次收发处理。
 	while totalTime >= receiveDataFrq do
-		if pvpGameMaster._is_game_over then break end
 		if pvpGameMaster.max_players_num == "2" then
 			onSendData()
 			onReceiveData() --这里会阻塞, 设置了timeout之后就不会阻塞了
