@@ -145,11 +145,11 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
     print(#(sg_tbl))
     
     if #(sg_tbl) >= 2 then --确保回包种至少有2个元素，能拿到房间最大数量
-        max_players_num = sg_tbl[2]
-        cclog("当前玩家的最大数量: " .. max_players_num)
+        self.max_players_num = sg_tbl[2]
+        cclog("当前玩家的最大数量: " .. self.max_players_num)
     end
     
-    if max_players_num == "2" then --房间总人数 如果是1v1，则后面应该跟本客户端的index和两个玩家的信息
+    if self.max_players_num == "2" then --房间总人数 如果是1v1，则后面应该跟本客户端的index和两个玩家的信息
         print("in 1v1: " .. #(sg_tbl))
         if #(sg_tbl) < 5 then return end
         
@@ -180,7 +180,7 @@ function PVPGameMaster:AddHeros(sg_msg) --startgame string
 		mage1:setVisible(true)
         List.pushlast(HeroManager, mage1)
         
-    elseif max_players_num == "4" then --如果是2v2，则后面应该跟本客户端的index和4个玩家的信息
+    elseif self.max_players_num == "4" then --如果是2v2，则后面应该跟本客户端的index和4个玩家的信息
         print("in 2v2: " .. #(sg_tbl))
         if #(sg_tbl) < 7 then return end
     
