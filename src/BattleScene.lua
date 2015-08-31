@@ -106,7 +106,7 @@ end
 local function checkWinOrLose()
     if totalTimeLeft > 0 or isGameOver then return end
     
-    if totalScore < 10 then
+    if totalScore < 80 then
         uiLayer:showGameResultUI(false, true)
     else
         uiLayer:showGameResultUI(true, false)
