@@ -96,7 +96,7 @@ local function listRoomListener(dt)
                     showRoomList(back)
                 end
             end
-            else
+        else
             cclog("TCP Connection is closed!")
             client_socket = nil --if tcp is dis-connect
         end
@@ -260,7 +260,7 @@ function PVPMainScene:connectToServer()
      --]]
     
     --设置状态同步的服务器
-    local state_server_port = 8484
+    local state_server_port = 4455
     client_socket = socket:tcp()
     client_socket:settimeout(0.05)
         

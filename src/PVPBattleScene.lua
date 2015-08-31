@@ -22,7 +22,7 @@ local cameraOffsetMin = {x=-300, y=-400}
 local cameraOffsetMax = {x=300, y=400}
 
 local totalTime = 0.0
-local receiveDataFrq = 0.01
+local receiveDataFrq = 0.033
 
 --对接受到的数据，分类处理
 local function handleMessage(msg)
@@ -44,10 +44,14 @@ local function handleMessage(msg)
         hero._heroMoveDir = cc.p(tonumber(msg_token[6]), tonumber(msg_token[7]))
         hero._heroMoveSpeed = tonumber(msg_token[8])
         hero._hp = tonumber(msg_token[9])
-        --这里设置角色的状态表现
-        local state = tonumber(msg_token[10])
-        hero:setStateType(state)
+		local state = tonumber(msg_token[10])
         
+		if state == 0 then hero:idleMode()
+		elseif state == 1 then hero:walkMode()
+		else 
+			hero:setStateType(state)
+		end
+		
 		if hero._hp <=0 then
 			hero._isalive = false
 		end
@@ -57,6 +61,7 @@ end
 --包括： 所有玩家的位置 和 朝向； 玩家目前的状态(攻击， walk)
 local function onReceiveData()
     if client_socket == nil then return end
+    
     if pvpGameMaster._is_game_over then return end --如果游戏已经结束，则不接受任何数据
     
     --如果设置超时时间，则接受到的包可能不完整
@@ -93,10 +98,10 @@ local function onSendData()
        local hero = pvpGameMaster:GetClientOwnPlayer()
        --发送数据的时候进行有选择的进行判断
        --如果当前状态是攻击状态，并且不是从其他状态改变过来的话，说明之前英雄就已经是攻击状态了，则不发送包
-       if hero:getStateType() == EnumStateType.ATTACKING and not hero.m_is_state_changed_to_attack then
-           cclog("跳过同一个攻击动作中的 重复包！！")
-           return
-       end
+       -- if hero:getStateType() == EnumStateType.ATTACKING and not hero.m_is_state_changed_to_attack then
+           -- cclog("跳过同一个攻击动作中的 重复包！！")
+           -- return
+       -- end
        
        --打包当前玩家的数据，发送给服务器，然后由服务器转发
        local head = "updateGame"
@@ -131,10 +136,15 @@ local function onSendData()
        else
            cclog("sent successfully! " .. msg)
            --如果英雄是第一个进入攻击状态，在上面发送完一个包之后，立刻修改状态为false，以防止子啊同一个攻击动作中重复发送包
-           if hero:getStateType() == EnumStateType.ATTACKING and hero.m_is_state_changed_to_attack then
-               hero.m_is_state_changed_to_attack = false
-               return
-           end
+           -- if hero:getStateType() == EnumStateType.ATTACKING and hero.m_is_state_changed_to_attack then
+				-- if hero._frame <= 5 then
+					-- hero._frame = hero._frame + 1
+				-- else
+					-- hero._frame = 0
+					-- hero.m_is_state_changed_to_attack = false
+				-- end
+				-- return
+           -- end
        end
    else
         --cclog("Error: Tcp socket is dis-connect!")
@@ -192,16 +202,10 @@ local function moveHero(dt)
         
         sprite._curFacing = cc.pToAngleSelf(sprite._heroMoveDir)
         sprite:setRotation(-RADIANS_TO_DEGREES(sprite._curFacing))
-        if val == pvpGameMaster._myIdx then
-            --如果是主像，则计算。
-            local curPos = cc.p(sprite:getPositionX(), sprite:getPositionY())
-            local newPos = cc.pAdd(curPos, cc.p(sprite._heroMoveDir.x * sprite._heroMoveSpeed * dt, sprite._heroMoveDir.y * sprite._heroMoveSpeed * dt))
-            sprite:setPosition(newPos)
-            --主像的状态表现全部在控制摇杆的函数里面了
-        else
-            --否则是影像，不让客户端计算，直接使用从服务器来的位置数据
-            --影像的状态表现需要在这里实现
-        end
+        local curPos = cc.p(sprite:getPositionX(), sprite:getPositionY())
+        local newPos = cc.pAdd(curPos, cc.p(sprite._heroMoveDir.x * sprite._heroMoveSpeed * dt, sprite._heroMoveDir.y * sprite._heroMoveSpeed * dt))
+        sprite:setPosition(newPos)
+        --sprite:setPosition(curPos) --不让客户端计算，直接使用从服务器来的位置数据
     end
     return true
 end
@@ -290,11 +294,27 @@ end
 local function gameController(dt)
     --设置时间间隔，每隔一定的时间接受从服务器过来的数据，更新其它玩家的状态;并向服务器发送自己的状态
     totalTime = totalTime + dt
-    if totalTime > receiveDataFrq then
-        onSendData()
-        onReceiveData() --这里会阻塞, 设置了timeout之后就不会阻塞了
-        totalTime = totalTime - receiveDataFrq
-    end
+	-- totalTime可能是receiveDateFrq的很多倍，因此要做多次收发处理。
+	while totalTime >= receiveDataFrq do
+		if pvpGameMaster._is_game_over then break end
+		if pvpGameMaster.max_players_num == "2" then
+			onSendData()
+			onReceiveData() --这里会阻塞, 设置了timeout之后就不会阻塞了
+			totalTime = totalTime - receiveDataFrq
+		elseif pvpGameMaster.max_players_num == "4" then
+			onSendData()
+			onReceiveData() --这里会阻塞, 设置了timeout之后就不会阻塞了
+			onReceiveData()
+			onReceiveData()
+			totalTime = totalTime - receiveDataFrq
+		end
+	end
+	
+    -- if totalTime > receiveDataFrq then
+        -- onSendData()
+        -- onReceiveData() --这里会阻塞, 设置了timeout之后就不会阻塞了
+        -- totalTime = totalTime - receiveDataFrq
+    -- end
     
     pvpGameMaster:update(dt)--负责刷怪、刷新对话框、提示等等
     
@@ -490,7 +510,6 @@ function PVPBattleScene:enableTouch()
             
             local heroMoveDir = cc.pNormalize(cc.p(touchPoint.x - joystickFrameCenter.x, touchPoint.y - joystickFrameCenter.y))
             local heroMoveSpeed = 250 --设置玩家的移动速度
-            
             --只控制主玩家
             local sprite = pvpGameMaster:GetClientOwnPlayer()
             if sprite == nil then return end
@@ -544,17 +563,20 @@ function PVPBattleScene:enableTouch()
 		--松开手时，如果技能箭头可见，则说明应该释放技能
 			if uiLayer.AttackRange:isVisible() then
                 local sprite = pvpGameMaster:GetClientOwnPlayer()
-				--将角色转向调为箭头方向
-				local touchPoint = cc.p(touch:getLocation().x, touch:getLocation().y)
-				local heroMoveDir = cc.pNormalize(cc.p(touchPoint.x - uiLayer.AttackBtn:getPositionX(), touchPoint.y - uiLayer.AttackBtn:getPositionY()))
-				sprite._heroMoveDir = heroMoveDir
-				--sprite._curFacing = heroMoveDir --_curFacing 是一个number， 不能用dir去赋值！
-				sprite._heroMoveSpeed = 0
-				--攻击
-                if sprite:getStateType() ~= EnumStateType.ATTACKING and sprite._cooldown == false then
-                    sprite.m_is_state_changed_to_attack = true --孙威添加，从非攻击状态到攻击状态
-                    sprite:setStateType(EnumStateType.ATTACKING)
-                end
+				if hero._cooldown == false then
+					--将角色转向调为箭头方向
+					local touchPoint = cc.p(touch:getLocation().x, touch:getLocation().y)
+					local heroMoveDir = cc.pNormalize(cc.p(touchPoint.x - uiLayer.AttackBtn:getPositionX(), touchPoint.y - uiLayer.AttackBtn:getPositionY()))
+					sprite._heroMoveDir = heroMoveDir
+					--sprite._curFacing = heroMoveDir --_curFacing 是一个number， 不能用dir去赋值！
+					sprite._heroMoveSpeed = 0
+					print("TURNing")
+					--攻击
+					if sprite:getStateType() ~= EnumStateType.ATTACKING then
+						sprite.m_is_state_changed_to_attack = true --孙威添加，从非攻击状态到攻击状态
+						sprite:setStateType(EnumStateType.ATTACKING)
+					end
+				end
 			end
 			--重置技能UI为不可见
 			uiLayer.AttackRange:setVisible(false)
@@ -700,10 +722,25 @@ function PVPBattleScene.create(sg_msg)
 	
 	initArrowCircle(bloodbarLayer)
 	
+	local sprite = cc.Sprite3D:create("minigame/maoRedoUv.c3b")
+	sprite:setScale(7,42)
+	sprite:setPosition3D(cc.V3(-2000,-500,30))
+	sprite:setRotation3D(cc.V3(0,0,0))
+	sprite:setVisible(false)
+	currentLayer:addChild(sprite,1,5)
+	
+	-- TOP
+	local sprite8 = cc.Sprite3D:create("minigame/maolianRedoUv.c3b")
+	sprite8:setScale(10)
+	sprite8:setPosition3D(cc.V3(G.activearea.right,G.activearea.top,100))
+	sprite8:setRotation3D(cc.V3(270,0,90))
+	sprite8:setVisible(false)
+	currentLayer:addChild(sprite8,1,30)
+	
     setCamera()
     --这里每一帧都执行gamecontroller
     gameControllerScheduleID = scheduler:scheduleScriptFunc(gameController, 0, false)
-	coolDownScheduleID       = scheduler:scheduleScriptFunc(coolDownUpdate, 0.2, false)
+	coolDownScheduleID = scheduler:scheduleScriptFunc(coolDownUpdate, 1, false)
 
     --逻辑对象层(骑士，法师，弓箭手)通过发送消息的方式来和UI层交互。
     --掉血函数
@@ -717,16 +754,20 @@ function PVPBattleScene.create(sg_msg)
 end
 
 function coolDownUpdate(dt)
+	-- 遍历客户端，如果是自己就算冷却，是其他客户端直接重置。
+	local hero = pvpGameMaster:GetClientOwnPlayer()
 	for val = HeroManager.first, HeroManager.last do
         local sprite = HeroManager[val]
-		if sprite._cooldown == false then return end
-        
-        if sprite._coolDownTime >=0 then
-			sprite._coolDownTime = sprite._coolDownTime - 0.2
-		else
-			sprite._cooldown = false
-			sprite._coolDownTime = 2
-		end
+		--if hero == sprite then
+			if sprite._cooldown == true then 
+				if sprite._coolDownTime >=0 then
+					sprite._coolDownTime = sprite._coolDownTime - 10
+				else
+					sprite._cooldown = false
+					sprite._coolDownTime = 2
+				end
+			end
+		--end
     end
 end
 
