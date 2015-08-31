@@ -297,9 +297,17 @@ local function gameController(dt)
 	-- totalTime可能是receiveDateFrq的很多倍，因此要做多次收发处理。
 	while totalTime >= receiveDataFrq do
 		if pvpGameMaster._is_game_over then break end
-		onSendData()
-		onReceiveData() --这里会阻塞, 设置了timeout之后就不会阻塞了
-		totalTime = totalTime - receiveDataFrq
+		if pvpGameMaster.max_players_num == "2" then
+			onSendData()
+			onReceiveData() --这里会阻塞, 设置了timeout之后就不会阻塞了
+			totalTime = totalTime - receiveDataFrq
+		elseif pvpGameMaster.max_players_num == "4" then
+			onSendData()
+			onReceiveData() --这里会阻塞, 设置了timeout之后就不会阻塞了
+			onReceiveData()
+			onReceiveData()
+			totalTime = totalTime - receiveDataFrq
+		end
 	end
 	
     -- if totalTime > receiveDataFrq then
