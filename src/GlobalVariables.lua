@@ -22,6 +22,7 @@ cc.SpriteFrameCache:getInstance():addSpriteFrames("minigame/attackarrowcircle.pl
 cc.SpriteFrameCache:getInstance():addSpriteFrames("battlefieldUI/winlose.plist")
 cc.SpriteFrameCache:getInstance():addSpriteFrames("battlefieldUI/timescorerule.plist")
 cc.SpriteFrameCache:getInstance():addSpriteFrames("mainmenuscene/newbies.plist")
+cc.SpriteFrameCache:getInstance():addSpriteFrames("pvpmainscene/pvp_rule.plist")
 
 animationCache = cc.AnimationCache:getInstance()
 local hurtAnimation = cc.Animation:create()

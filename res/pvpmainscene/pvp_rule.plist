@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>frames</key>
+        <dict>
+            <key>pvp_rule2.png</key>
+            <dict>
+                <key>frame</key>
+                <string>{{2,2},{415,250}}</string>
+                <key>offset</key>
+                <string>{0,0}</string>
+                <key>rotated</key>
+                <false/>
+                <key>sourceColorRect</key>
+                <string>{{2,2},{415,250}}</string>
+                <key>sourceSize</key>
+                <string>{419,254}</string>
+            </dict>
+        </dict>
+        <key>metadata</key>
+        <dict>
+            <key>format</key>
+            <integer>2</integer>
+            <key>realTextureFileName</key>
+            <string>pvp_rule.png</string>
+            <key>size</key>
+            <string>{419,254}</string>
+            <key>smartupdate</key>
+            <string>$TexturePacker:SmartUpdate:e212b2a1669ca9923e6e30d76132156b:74f71ea8ac47b93fc686d2749fa634e2:117f04519a2e104a50a6ad76579d73a5$</string>
+            <key>textureFileName</key>
+            <string>pvp_rule.png</string>
+        </dict>
+    </dict>
+</plist>

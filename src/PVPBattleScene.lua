@@ -688,6 +688,50 @@ function PVPBattleScene:UIcontainsPoint(position)
     return message 
 end
 
+local function showStartPopup(UILayer)
+    --color layer
+    local layer = cc.LayerColor:create(cc.c4b(10,10,10,150))
+    layer:ignoreAnchorPointForPosition(false)
+    layer:setPosition3D(cc.V3(G.winSize.width*0.5, G.winSize.height*0.5,0))
+    
+    --add victory
+    local victory = cc.Sprite:createWithSpriteFrameName("pvp_rule2.png")
+    
+    victory:setPosition3D(cc.V3(G.winSize.width*0.5,G.winSize.height*0.5,3))
+    victory:setScale(0.1)
+    victory:setGlobalZOrder(UIZorder)
+    layer:addChild(victory,1)
+    
+    --victory run action
+    local action = cc.EaseElasticOut:create(cc.ScaleTo:create(1.5,1))
+    victory:runAction(action)
+    
+    --touch event
+    local function onTouchBegan(touch, event)
+        return true
+    end
+    
+    local function onTouchEnded(touch,event)
+        if layer:isVisible() == true then
+            --当用户点击开始这个popup的时候，开始播放背景音乐
+            AUDIO_ID.BATTLEFIELDBGM = ccexp.AudioEngine:play2d(BGM_RES.BATTLEFIELDBGM, true,0.6)
+            victory:setVisible(false)
+            layer:setVisible(false)
+            updateTimeLabelScheduleID  = scheduler:scheduleScriptFunc(updateTimeLabel, 1, false)
+            updateScoreLabelScheduleID = scheduler:scheduleScriptFunc(updateScoreLabel, 0.5, false)
+            checkWinOrLoseScheduleID = scheduler:scheduleScriptFunc(checkWinOrLose, 1, false)
+        end
+    end
+    
+    local listener = cc.EventListenerTouchOneByOne:create()
+    listener:registerScriptHandler(onTouchBegan,cc.Handler.EVENT_TOUCH_BEGAN )
+    listener:registerScriptHandler(onTouchEnded,cc.Handler.EVENT_TOUCH_ENDED )
+    local eventDispatcher = layer:getEventDispatcher()
+    eventDispatcher:addEventListenerWithSceneGraphPriority(listener,layer)
+    
+    UILayer:addChild(layer)
+end
+
 --创建场景
 function PVPBattleScene.create(sg_msg)
     local scene = PVPBattleScene:new()
@@ -749,12 +793,13 @@ function PVPBattleScene.create(sg_msg)
     MessageDispatchCenter:registerMessage(MessageDispatchCenter.MessageType.ANGRY_CHANGE, angryChange)
     --当收到对应消息的时候，设置特写镜头
     MessageDispatchCenter:registerMessage(MessageDispatchCenter.MessageType.SPECIAL_PERSPECTIVE,specialPerspective)
-
+    
+    showStartPopup(uiLayer)
     return scene
 end
 
 function coolDownUpdate(dt)
-	-- 遍历客户端，如果是自己就算冷却，是其他客户端直接重置。
+	-- 遍历客户端，如果是自己就算冷却，是其他。客户端直接重置。
 	local hero = pvpGameMaster:GetClientOwnPlayer()
 	for val = HeroManager.first, HeroManager.last do
         local sprite = HeroManager[val]
