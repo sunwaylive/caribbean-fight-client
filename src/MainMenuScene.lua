@@ -305,7 +305,7 @@ function MainMenuScene:addButton(layer)
             --isTouchButtonNewbie = true
             if eventType == ccui.TouchEventType.began then
                 ccexp.AudioEngine:play2d(BGM_RES.MAINMENUSTART, false, 1)
-                ccexp.AudioEngine:stop(AUDIO_ID.MAINMENUBGM)
+                --ccexp.AudioEngine:stop(AUDIO_ID.MAINMENUBGM)
                 -- 弹出新手指引
                 if not isShowingNewbie then
                     isShowingNewbie = true

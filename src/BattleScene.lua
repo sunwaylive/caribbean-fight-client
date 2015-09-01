@@ -145,7 +145,7 @@ local function showStartPopup(UILayer)
     local function onTouchEnded(touch,event)
 		if layer:isVisible() == true then
 			--当用户点击开始这个popup的时候，开始播放背景音乐
-			AUDIO_ID.BATTLEFIELDBGM = ccexp.AudioEngine:play2d(BGM_RES.BATTLEFIELDBGM, true,0.6)
+			--AUDIO_ID.BATTLEFIELDBGM = ccexp.AudioEngine:play2d(BGM_RES.BATTLEFIELDBGM, true, 1)
 			victory:setVisible(false)
 			layer:setVisible(false)
 			updateTimeLabelScheduleID  = scheduler:scheduleScriptFunc(updateTimeLabel, 1, false)

@@ -25,7 +25,7 @@ function BattlefieldUI:ctor()
     --self:showVictoryUI()
     
     ccexp.AudioEngine:stopAll()
-    --AUDIO_ID.BATTLEFIELDBGM = ccexp.AudioEngine:play2d(BGM_RES.BATTLEFIELDBGM, true,0.6)
+    AUDIO_ID.BATTLEFIELDBGM = ccexp.AudioEngine:play2d(BGM_RES.BATTLEFIELDBGM, true,0.6)
 end
 
 function BattlefieldUI:backBtnInit()
@@ -495,8 +495,10 @@ function BattlefieldUI:showGameResultUI(is_win, is_lose)
     --根据胜利活着失败创建对应的精灵
     if is_win then
         victory = cc.Sprite:createWithSpriteFrameName("win.png")--cc.Sprite:create("battlefieldUI/win.png")
+        music_path = "audios/win.mp3"
     elseif is_lose then
         victory = cc.Sprite:createWithSpriteFrameName("lose.png")--cc.Sprite:create("battlefieldUI/lose.png")
+        music_path = "audios/lose.mp3"
     end
     
     --local victory = cc.Sprite:createWithSpriteFrameName("victory.png")
@@ -508,7 +510,8 @@ function BattlefieldUI:showGameResultUI(is_win, is_lose)
     --victory runaction
     local action = cc.EaseElasticOut:create(cc.ScaleTo:create(1.5,1))
     victory:runAction(action)
-    
+    ccexp.AudioEngine:stopAll()
+    ccexp.AudioEngine:play2d(music_path, true, 1)
     --touch event
     local function onTouchBegan(touch, event)
         return true

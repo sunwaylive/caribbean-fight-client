@@ -70,9 +70,9 @@ W=
 --Audios
 BGM_RES = 
 {
-    MAINMENUBGM = "audios/01 Beast Hunt.mp3",
+    MAINMENUBGM = "audios/chooseMode.mp3",
     MAINMENUSTART= "audios/effects/magical_3.mp3",
-    BATTLEFIELDBGM = "audios/The_Last_Encounter_Short_Loop.mp3",
+    BATTLEFIELDBGM = "audios/battle.mp3", -- "audios/The_Last_Encounter_Short_Loop.mp3",
     CHOOSEROLESCENEBGM = "audios/Imminent Threat Beat B FULL Loop.mp3"
 }
 
