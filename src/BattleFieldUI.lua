@@ -25,7 +25,7 @@ function BattlefieldUI:ctor()
     --self:showVictoryUI()
     
     ccexp.AudioEngine:stopAll()
-    AUDIO_ID.BATTLEFIELDBGM = ccexp.AudioEngine:play2d(BGM_RES.BATTLEFIELDBGM, true,0.6)
+    AUDIO_ID.BATTLEFIELDBGM = ccexp.AudioEngine:play2d(BGM_RES.BATTLEFIELDBGM, true, 1)
 end
 
 function BattlefieldUI:backBtnInit()
