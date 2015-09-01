@@ -224,8 +224,8 @@ MageValues = {
     _mass           = 800,
     _shadowSize     = 70,
 
-    _hp             = 1100,
-    _maxhp          = 1100,
+    _hp             = 700,
+    _maxhp          = 700,
     _defense        = 120,
     _attackFrequency = 0.05, --原始攻击频率: 2.67
 	_coolDownTime = 2, --剩余的冷却时间，如果要改冷却时间，需要在Actor.lua里面attackupate里面设置，这儿只是初始值
