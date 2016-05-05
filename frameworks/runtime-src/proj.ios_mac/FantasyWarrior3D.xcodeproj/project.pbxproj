@@ -1086,7 +1086,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = ../../../runtime/mac;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1118,7 +1118,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = mac/Prefix.pch;
@@ -1150,6 +1150,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1166,7 +1167,9 @@
 				HEADER_SEARCH_PATHS = "";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../cocos2d-x $(SRCROOT)/../../cocos2d-x/cocos $(SRCROOT)/../../cocos2d-x/cocos/base $(SRCROOT)/../../cocos2d-x/cocos/physics $(SRCROOT)/../../cocos2d-x/cocos/math/kazmath $(SRCROOT)/../../cocos2d-x/cocos/2d $(SRCROOT)/../../cocos2d-x/cocos/ui $(SRCROOT)/../../cocos2d-x/cocos/network $(SRCROOT)/../../cocos2d-x/cocos/audio/include $(SRCROOT)/../../cocos2d-x/cocos/editor-support $(SRCROOT)/../../cocos2d-x/extensions $(SRCROOT)/../../cocos2d-x/external $(SRCROOT)/../../cocos2d-x/external/chipmunk/include/chipmunk $(SRCROOT)/../../cocos2d-x/external/lua/luajit/include $(SRCROOT)/../../cocos2d-x/external/lua/tolua $(SRCROOT)/../../cocos2d-x/cocos/scripting/lua-bindings/manual $(SRCROOT)/../../cocos2d-x/cocos/scripting/lua-bindings/auto";
+				VALID_ARCHS = armv7;
 			};
 			name = Debug;
 		};
@@ -1175,6 +1178,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					NDEBUG,
@@ -1187,8 +1191,10 @@
 				HEADER_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../cocos2d-x $(SRCROOT)/../../cocos2d-x/cocos $(SRCROOT)/../../cocos2d-x/cocos/base $(SRCROOT)/../../cocos2d-x/cocos/physics $(SRCROOT)/../../cocos2d-x/cocos/math/kazmath $(SRCROOT)/../../cocos2d-x/cocos/2d $(SRCROOT)/../../cocos2d-x/cocos/ui $(SRCROOT)/../../cocos2d-x/cocos/network $(SRCROOT)/../../cocos2d-x/cocos/audio/include $(SRCROOT)/../../cocos2d-x/cocos/editor-support $(SRCROOT)/../../cocos2d-x/extensions $(SRCROOT)/../../cocos2d-x/external $(SRCROOT)/../../cocos2d-x/external/chipmunk/include/chipmunk $(SRCROOT)/../../cocos2d-x/external/lua/luajit/include $(SRCROOT)/../../cocos2d-x/external/lua/tolua $(SRCROOT)/../../cocos2d-x/cocos/scripting/lua-bindings/manual $(SRCROOT)/../../cocos2d-x/cocos/scripting/lua-bindings/auto";
 				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = armv7;
 			};
 			name = Release;
 		};
@@ -1250,6 +1256,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					NDEBUG,
@@ -1262,8 +1269,10 @@
 				HEADER_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../cocos2d-x $(SRCROOT)/../../cocos2d-x/cocos $(SRCROOT)/../../cocos2d-x/cocos/base $(SRCROOT)/../../cocos2d-x/cocos/physics $(SRCROOT)/../../cocos2d-x/cocos/math/kazmath $(SRCROOT)/../../cocos2d-x/cocos/2d $(SRCROOT)/../../cocos2d-x/cocos/ui $(SRCROOT)/../../cocos2d-x/cocos/network $(SRCROOT)/../../cocos2d-x/cocos/audio/include $(SRCROOT)/../../cocos2d-x/cocos/editor-support $(SRCROOT)/../../cocos2d-x/extensions $(SRCROOT)/../../cocos2d-x/external $(SRCROOT)/../../cocos2d-x/external/chipmunk/include/chipmunk $(SRCROOT)/../../cocos2d-x/external/lua/luajit/include $(SRCROOT)/../../cocos2d-x/external/lua/tolua $(SRCROOT)/../../cocos2d-x/cocos/scripting/lua-bindings/manual $(SRCROOT)/../../cocos2d-x/cocos/scripting/lua-bindings/auto";
 				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = armv7;
 			};
 			name = "ad-hoc Profile";
 		};
@@ -1297,7 +1306,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = mac/Prefix.pch;

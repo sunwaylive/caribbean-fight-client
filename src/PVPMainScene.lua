@@ -21,6 +21,7 @@ local receiveDataFrq = 0.005
 local layer
 local my_roomID = -1
 
+--****** main code begins *********
 local PVPMainScene  = class("PVPMainScene",function ()
                             return cc.Scene:create()
                             end)
@@ -44,8 +45,7 @@ local function showRoomList(r)
     
     --label1:setString(r)
     --label2:setString(rType)
-    if rType == "listRoom" then
-        
+    if rType == "LISTROOM" then
         print("content: " .. rContent)
         rooms = rContent
         print("rooms: " .. rooms)
@@ -141,6 +141,7 @@ function PVPMainScene:createLayer()
 end
 
 function PVPMainScene:addRoomLabel(layer, list)
+    cclog("add room label")
     if layer == nil then return end
     
 	local function menuCallback(tag)
@@ -168,6 +169,7 @@ function PVPMainScene:addRoomLabel(layer, list)
 	menu = cc.Menu:create()
     
 	local roomIndex = 0
+    cclog("my room id: " .. m_room_id)
 	if my_roomID == -1 then	-- 表示我没有建立房间
 		for index = list.last, list.first, -1 do
 			-- label、menuItem、menu的坐标都能影响最终的菜单位置
@@ -186,6 +188,7 @@ function PVPMainScene:addRoomLabel(layer, list)
 		for index = list.last, list.first, -1 do
 			if list[index].roomID == my_roomID then
 				-- label、menuItem、menu的坐标都能影响最终的菜单位置
+                cclog("show label")
 				local label = cc.Label:createWithTTF("房间号: " .. list[index].roomID .. string.rep(" ",4) ..
 													 "人数: " .. list[index].curPlayerNum .. "/" .. list[index].maxPlayerNum, fontPath, 40)
 				--label:setColor(cc.V3(111,255,0))
@@ -241,9 +244,9 @@ function PVPMainScene:addRoomLabel(layer, list)
     eventDispatcher:addEventListenerWithSceneGraphPriority(listener, layer)
 end
 
---pvp establish tcp connect
+--********* pvp establish tcp connect *********
 function PVPMainScene:connectToServer()
-    local server_ip = "112.74.199.45"
+    local server_ip = "119.29.25.185"
     --[[
     local server_port =  2348 --8383--2348
     client_socket = socket.tcp()
@@ -260,7 +263,7 @@ function PVPMainScene:connectToServer()
      --]]
     
     --设置状态同步的服务器
-    local state_server_port = 4455
+    local state_server_port = 3008
     client_socket = socket:tcp()
     client_socket:settimeout(0.05)
         
@@ -278,7 +281,7 @@ function PVPMainScene:listRoom()
     cclog("send listRoom request!")
     
     if client_socket ~= nil then
-        sn, se = client_socket:send("listRoom\n")
+        sn, se = client_socket:send("LISTROOM\n")
         if se ~= nil then
             cclog("SEND ERROR: In listRoom() in PVPMainScene.lua!" .. se)
             return
@@ -301,7 +304,7 @@ end
 --PVP create room
 function PVPMainScene:createRoom(max_people)
     if client_socket ~= nil then
-        sn, se = client_socket:send("createRoom" .. " " .. max_people .. "\n") --房间总人数
+        sn, se = client_socket:send("CREATEROOM" .. " " .. max_people .. "\n") --房间总人数
         if se ~= nil then
             cclog("SEND ERROR: In createRoom() in PVPMainScene.lua!" .. se)
             return
@@ -338,12 +341,12 @@ function PVPMainScene:joinRoom(roomID)
     end
     
     if client_socket ~= nil then
-        sn, se = client_socket:send("joinRoom " .. roomID .. "\n")
+        sn, se = client_socket:send("JOINROOM " .. roomID .. "\n")
         if se ~= nil then
             cclog("SEND ERROR: In joinRoom() in PVPMainScene.lua!" .. se)
             return
         else
-            cclog("Success: join Room!")
+            cclog("Join Room send Succeed!")
         end
         
         client_socket:settimeout(-1) --block infinitely
@@ -352,6 +355,7 @@ function PVPMainScene:joinRoom(roomID)
             cclog("REVEIVE ERROR: In joinRoom() in PVPMainScene.lua! " .. re)
             return
         end
+
         my_roomID = roomID
         cclog("Success! In joinRoom(), I have received msg from server: " .. r)
     end
