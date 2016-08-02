@@ -163,13 +163,18 @@ function PVPMainScene:addRoomLabel(layer, list)
 	local index
     local size = cc.Director:getInstance():getVisibleSize()
 	if menu ~= nil then
-		menu:removeAllChildren() --清空所有的menuitem
+		--menu:removeAllChildren() --清空所有的menuitem
         menu = nil
 	end
 	menu = cc.Menu:create()
     
 	local roomIndex = 0
-    cclog("my room id: " .. m_room_id)
+    if m_room_id ~= nil then
+        cclog("my_room_id: " .. m_room_id)
+    else
+        cclog("my_room_id nil")
+    end
+
 	if my_roomID == -1 then	-- 表示我没有建立房间
 		for index = list.last, list.first, -1 do
 			-- label、menuItem、menu的坐标都能影响最终的菜单位置
@@ -364,7 +369,7 @@ end
 --test
 function PVPMainScene:joinRoomTest(roomID)
     if client_socket ~= nil then
-        sn, se = client_socket:send("joinRoom "..roomID.."\n")
+        sn, se = client_socket:send("JOINROOM "..roomID.."\n")
         if se ~= nil then
             cclog("SEND ERROR: In joinRoom() in PVPMainScene.lua!" .. se)
             return
@@ -389,7 +394,7 @@ function PVPMainScene:joinRoomTest(roomID)
 end
 
 
---开始游戏的时候，向状态同步的服务器发送请求
+--开始游戏的时候，向状态同步的服务器 发送请求
 function PVPMainScene:startGame()
     if client_socket ~= nil then
         --这里取消监听listRoom消息
@@ -400,7 +405,7 @@ function PVPMainScene:startGame()
             return
         end
         
-        sn, se = client_socket:send("startGame " .. m_room_id .. "\n")
+        sn, se = client_socket:send("STARTGAME " .. m_room_id .. "\n")
         if se ~= nil then
             cclog("ERROR: In startGame() in PVPMainScene.lua, I can't send! " .. se)
             return
@@ -416,7 +421,7 @@ function PVPMainScene:startGame()
         end
         
         print("in start game , I have received: " .. r)
-        if string.sub(r, 1, 1) == "s" then --如果是开始游戏
+        if string.sub(r, 1, 1) == "S" then --如果是开始游戏
             --这个时候只会有一个回包出现，就是响应开始游戏的回包
             local scene = require("PVPBattleScene")
             cc.Director:getInstance():replaceScene(scene.create(r))

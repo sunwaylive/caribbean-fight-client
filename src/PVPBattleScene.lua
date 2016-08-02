@@ -30,8 +30,9 @@ local function handleMessage(msg)
     
     local msg_token = mysplit(msg, '#')
     if msg_token == nil then return end
-    
-    if string.sub(msg_token[1], 1, 1) == 'u' then --加入 roomid, update room
+
+    --UPDATEGAME protocol
+    if string.sub(msg_token[1], 1, 1) == 'U' then --加入 roomid, update room
         if #(msg_token) < 10 then cclog("Error package from server!") return end
         
         local client_index = tonumber(msg_token[2])
@@ -52,7 +53,7 @@ local function handleMessage(msg)
 			hero:setStateType(state)
 		end
 		
-		if hero._hp <=0 then
+		if hero._hp <= 0 then
 			hero._isalive = false
 		end
     end
@@ -83,7 +84,7 @@ local function onSendData()
        --如果游戏已经结束， 则发送且只发送一次endGame
        if pvpGameMaster._is_game_over and m_end_game_send_cnt < 1 then
            cclog("游戏结束")
-           r, e = client_socket:send("endGame " .. m_room_id)
+           r, e = client_socket:send("ENDGAME " .. m_room_id)
            if r == nil then
                cclog("ERROR: I can't send endGame to Server: " .. e)
             else
@@ -104,7 +105,7 @@ local function onSendData()
        -- end
        
        --打包当前玩家的数据，发送给服务器，然后由服务器转发
-       local head = "updateGame"
+       local head = "UPDATEGAME"
        --柏伟修改协议, 加入房间号
        print("房间号: " .. m_room_id)
        head = head .. " " .. m_room_id .. " "
@@ -293,6 +294,7 @@ end
 --TODO:这里应该从服务器拿到数据，更新客户端，其他玩家的状态
 local function gameController(dt)
 	if pvpGameMaster._is_game_over then return end
+
     --设置时间间隔，每隔一定的时间接受从服务器过来的数据，更新其它玩家的状态;并向服务器发送自己的状态
     totalTime = totalTime + dt
 	-- totalTime可能是receiveDateFrq的很多倍，因此要做多次收发处理。

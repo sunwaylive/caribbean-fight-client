@@ -86,7 +86,7 @@ function PVPGameMaster:logicUpdate()
     if t_iswin == t_islose then
         --cclog("t_iswin == t_islose, error in logicUpdate()")
         return
-    end --如果同时赢活着同时输，则发生错误了，直接返回
+    end --如果同时赢or同时输，则发生错误了，直接返回
     
     if not self._is_game_over and (t_iswin or t_islose) then
         self._is_game_over = true
@@ -137,6 +137,8 @@ function PVPGameMaster:CheckWinOrLose()
 end
 
 --这里要根据服务器下发的位置 放置玩家
+-- STARTGAME#max_players_num#my_idx#0,A#1,A#2,B#3,B\n
+
 function PVPGameMaster:AddHeros(sg_msg) --startgame string
     cclog("in PVPGameMaster:AddHeros()")
     sg_tbl = mysplit(sg_msg, '#')
