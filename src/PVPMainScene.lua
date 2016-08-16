@@ -89,7 +89,7 @@ local function listRoomListener(dt)
                 cclog("listen Room Listener I have received msg: " .. back)
                 --TODO: 这里处理收到的房间信息，在界面上显示出来
                 --如果不幸收到了 开始游戏的协议包
-                if string.sub(back, 1, 1) == 's' then
+                if string.sub(back, 1, 1) == 'S' then
                     local scene = require("PVPBattleScene")
                     cc.Director:getInstance():replaceScene(scene.create(back))
                 else
@@ -251,6 +251,7 @@ end
 
 --********* pvp establish tcp connect *********
 function PVPMainScene:connectToServer()
+    --local server_ip = "127.0.0.1"
     local server_ip = "119.29.25.185"
     --[[
     local server_port =  2348 --8383--2348
