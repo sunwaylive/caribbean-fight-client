@@ -61,14 +61,14 @@ G =
 }
 --W values,这个是场景里河流的边界
 W=
-{	
+{
 	--中心 -2000，0
 	center = -2000,
 	activearea = {left = -2250, right = -1550, bottom = -10000, top = 10000},
 }
 
 --Audios
-BGM_RES = 
+BGM_RES =
 {
     MAINMENUBGM = "audios/chooseMode.mp3",
     MAINMENUSTART= "audios/effects/magical_3.mp3",
@@ -77,7 +77,7 @@ BGM_RES =
 }
 
 --play2d id
-AUDIO_ID = 
+AUDIO_ID =
 {
     MAINMENUBGM,
     BATTLEFIELDBGM,
@@ -86,12 +86,12 @@ AUDIO_ID =
     KNIGHTSPECIALATTACK,
     ARCHERATTACK
 }
-EnumRaceType = 
-    { 
+EnumRaceType =
+    {
         "HERO",  --only this
         "MONSTER", --and this
     }
-EnumRaceType = CreateEnumTable(EnumRaceType) 
+EnumRaceType = CreateEnumTable(EnumRaceType)
 
 EnumStateType =
     {
@@ -113,7 +113,7 @@ ActorCommonValues =
     _curSpeed       = 0, --current speed the actor is traveling in units/seconds
     _curAnimation   = nil,
     _curAnimation3d = nil,
-    
+
     --runtime modified values
     _curFacing      = 3.14, -- current direction the actor is facing, in radians, 0 is to the right
     _isalive        = true,
@@ -124,14 +124,14 @@ ActorCommonValues =
     _cooldown       = false, --if its true, then you are currently playing attacking animation,
     _hp             = 1000, --current hit point
     _goRight        = true,
-    
+
     --target variables
     _targetFacing   = 0, --direction the actor Wants to turn to
-    
-    _target         = nil, --the enemy actor 
+
+    _target         = nil, --the enemy actor
 
     _myPos = cc.p(0, 0),
-    
+
     _angry          = 0,
     _angryMax       = 500,
 }
@@ -140,7 +140,7 @@ ActorDefaultValues =
     _racetype       = EnumRaceType.HERO, --type of the actor
     _statetype      = nil, -- AI state machine
     _sprite3d       = nil, --place to hold 3d model
-    
+
     _radius         = 50, --actor collider size
     _mass           = 100, --weight of the role, it affects collision
     _shadowSize     = 70, --the size of the shadow under the actor
@@ -148,20 +148,20 @@ ActorDefaultValues =
     --character strength
     _maxhp          = 1000,
     _defense        = 100,
-    _specialAttackChance = 0, 
+    _specialAttackChance = 0,
     _recoverTime    = 0.8,--time takes to recover from knock, in seconds
-    
+
     _speed          = 500, --actor maximum movement speed in units/seconds
     _turnSpeed      = DEGREES_TO_RADIANS(225), --actor turning speed in radians/seconds
     _acceleration   = 750, --actor movement acceleration, in units/seconds
     _decceleration  = 750*1.7, --actor movement decceleration, in units/seconds
-    
+
     _AIFrequency    = 0.2, --how often AI executes in seconds
     _attackFrequency = 0.01, --an attack move every few seconds
     _searchDistance = 5000, --distance which enemy can be found
 
     _attackRange    = 100, --distance the actor will stop and commence attack
-    
+
     --attack collider info, it can be customized
     _normalAttack   = {--data for normal attack
         minRange = 0, -- collider inner radius
@@ -173,7 +173,7 @@ ActorDefaultValues =
         duration = 0, -- 0 duration means it will be removed upon calculation
         speed    = 0, -- speed the collider is traveling
         criticalChance=0
-    }, 
+    },
 }
 KnightValues = {
     _racetype       = EnumRaceType.HERO,
@@ -181,7 +181,7 @@ KnightValues = {
     _radius         = 50,
     _mass           = 1000,
     _shadowSize     = 70,
-    
+
     _hp             = 18500,
     _maxhp          = 18500,
     _defense        = 18000,
@@ -190,7 +190,7 @@ KnightValues = {
     _AIFrequency    = 1.1,
     _attackRange    = 140,
     _specialAttackChance = 0,
-    _specialSlowTime = 1, 
+    _specialSlowTime = 1,
 
     _normalAttack   = {
         minRange = 0,
@@ -203,7 +203,7 @@ KnightValues = {
         speed    = 0,
         criticalChance = 0.65
     },
-    
+
     _specialAttack   = {
         minRange = 0,
         maxRange = 250,
@@ -214,7 +214,7 @@ KnightValues = {
         duration = 0,
         speed    = 0,
         criticalChance = 0.65
-    }, 
+    },
 }
 
 MageValues = {
@@ -247,7 +247,7 @@ MageValues = {
 		speed2	 = -1600, --钩子返回的速度
         criticalChance = 0.05,
 		attackLength	 = 1300 --新增的钩子长度属性
-    }, 
+    },
     _specialAttack   = {
         minRange = 0,
         maxRange = 140,
@@ -261,7 +261,7 @@ MageValues = {
         DOTTimer = 0.75, --it will be able to hurt every 0.5 seconds
         curDOTTime = 0.75,
         DOTApplied = false
-    }, 
+    },
 }
 ArcherValues = {
     _racetype       = EnumRaceType.HERO,
@@ -279,7 +279,7 @@ ArcherValues = {
     _attackRange    = 450,
     _specialAttackChance = 0,
     _turnSpeed      = DEGREES_TO_RADIANS(360), --actor turning speed in radians/seconds
-    _specialSlowTime = 0.5, 
+    _specialSlowTime = 0.5,
 
     _normalAttack   = {
         minRange = 0,
@@ -291,7 +291,7 @@ ArcherValues = {
         duration = 1.3,
         speed    = 900,
         criticalChance = 0.33
-    }, 
+    },
     _specialAttack   = {
         minRange = 0,
         maxRange = 75,
@@ -305,7 +305,7 @@ ArcherValues = {
         DOTTimer = 0.3,
         curDOTTime = 0.3,
         DOTApplied = false
-    }, 
+    },
 }
 DragonValues = {
     _racetype       = EnumRaceType.MONSTER,
@@ -321,7 +321,7 @@ DragonValues = {
     _recoverTime    = 0.8,
     _AIFrequency    = 1.337,
     _attackRange    = 350,
-    
+
     _speed          = 40,
     _turnSpeed      = DEGREES_TO_RADIANS(180),
     _acceleration   = 250,
@@ -337,7 +337,7 @@ DragonValues = {
         duration = 1,
         speed    = 350,
         criticalChance = 0.15
-    }, 
+    },
 }
 SlimeValues = {
     _racetype       = EnumRaceType.MONSTER,
@@ -354,7 +354,7 @@ SlimeValues = {
     _AIFrequency    = 3.3,
     _AITimer        = 2.0,
     _attackRange    = 50,
-    
+
     _speed          = 40,
     _turnSpeed      = DEGREES_TO_RADIANS(270),
     _acceleration   = 9999,
@@ -370,7 +370,7 @@ SlimeValues = {
         duration = 0,
         speed    = 0,
         criticalChance = 0.13
-    }, 
+    },
 }
 PigletValues = {
     _racetype       = EnumRaceType.MONSTER,
@@ -400,7 +400,7 @@ PigletValues = {
         duration = 0,
         speed    = 0,
         criticalChance = 0.15
-    }, 
+    },
 }
 RatValues = {
     _racetype       = EnumRaceType.MONSTER,
@@ -433,7 +433,7 @@ RatValues = {
         duration = 0,
         speed    = 0,
         criticalChance =1
-    }, 
+    },
 }
 BossValues = {
     _racetype       = EnumRaceType.MONSTER,
@@ -466,7 +466,7 @@ BossValues = {
         duration = 0,
         speed    = 0,
         criticalChance = 0.15
-    }, 
+    },
     nova   = {
         minRange = 0,
         maxRange = 250,
@@ -480,7 +480,7 @@ BossValues = {
         DOTTimer = 0.3,
         curDOTTime = 0.3,
         DOTApplied = false
-    }, 
+    },
 }
 
 --Some common audios
@@ -497,7 +497,7 @@ MonsterSlimeValues =
 }
 
 --Monster Dragon
-MonsterDragonValues = 
+MonsterDragonValues =
 {
     fileName = "model/dragon/dragon.c3b",
     attack = "audios/effects/dragon/Fire.mp3",
@@ -507,7 +507,7 @@ MonsterDragonValues =
 }
 
 --Monster Rat
-MonsterRatValues = 
+MonsterRatValues =
     {
         fileName = "model/rat/rat.c3b",
         attack = "audios/effects/rat/attack.mp3",
@@ -516,7 +516,7 @@ MonsterRatValues =
     }
 
 --Monster Piglet
-MonsterPigletValues = 
+MonsterPigletValues =
 {
     fileName = "model/piglet/piglet.c3b",
     attack1 = "audios/effects/piglet/piglet1.mp3",
@@ -525,7 +525,7 @@ MonsterPigletValues =
     dead = "audios/effects/piglet/dead.mp3",
     hurt = "audios/effects/piglet/hurt.mp3",
 }
-    
+
 --Warroir property
 WarriorProperty =
 {
@@ -572,7 +572,7 @@ MageProperty =
     dead = "audios/effects/mage/dead.mp3"
 }
 
-ReSkin = 
+ReSkin =
 {
     knight = {weapon = 0, armour = 0, helmet = 0},
     archer = {weapon = 0, armour = 0, helmet = 0},

@@ -1,10 +1,16 @@
 require("Helper")
 
 local fontPath = "fonts/Font3.ttf"
+
 --导入socket库
 local socket = require("socket") --如果不行换这个试试 require('socket.core');
 
+--add to search path, 相对于本文件的路径
+package.path = package.path .. ';.\/fsp\/\?.lua'
+local FspClient = require("FspClient")
+
 client_socket = nil --房间管理的socket， 本客户端和服务器通信的tcp链接
+fsp_socket = nil --frame synchronize protocol, used for battle
 m_room_id = nil --加入房间之后的room id
 
 local label1
@@ -23,8 +29,8 @@ local my_roomID = -1
 
 --****** main code begins *********
 local PVPMainScene  = class("PVPMainScene",function ()
-                            return cc.Scene:create()
-                            end)
+return cc.Scene:create()
+end)
 
 --constructor init member variable
 function PVPMainScene:ctor()
@@ -76,9 +82,38 @@ local function showRoomList(r)
     end
 end
 
+local function startGameListener(dt)
+    if fsp_socket == nil then
+        --print "fsp socket is nil"
+        return
+    end
+
+    --totalTime = totalTime + dt
+    if totalTime > receiveDataFrq then
+        fsp_socket:settimeout(0.1) --stop block infinitely
+        back, err, partial = fsp_socket:receive("*l") --按行读取
+        if err ~= "closed" then
+            if back then
+                cclog("start game listener I have received msg: " .. back)
+                
+                if string.sub(back, 1, 1) == 'S' then
+                    local scene = require("PVPBattleScene")
+                    cc.Director:getInstance():replaceScene(scene.create(back))
+                else
+                    showRoomList(back)
+                end
+            end
+        else
+            cclog("fsp socket is closed!")
+            fsp_socket = nil --if tcp is dis-connect
+        end
+        --totalTime = totalTime - receiveDataFrq
+    end
+end
+
 local function listRoomListener(dt)
     if client_socket == nil then return end
-    
+
     totalTime = totalTime + dt
     if totalTime > receiveDataFrq then
         client_socket:settimeout(0.1) --stop block infinitely
@@ -88,6 +123,7 @@ local function listRoomListener(dt)
                 --print(string.len(back))
                 cclog("listen Room Listener I have received msg: " .. back)
                 --TODO: 这里处理收到的房间信息，在界面上显示出来
+                
                 --如果不幸收到了 开始游戏的协议包
                 if string.sub(back, 1, 1) == 'S' then
                     local scene = require("PVPBattleScene")
@@ -108,7 +144,8 @@ function PVPMainScene.create()
     local scene = PVPMainScene.new()
     layer = scene:createLayer()
     scene:addChild(layer)
-    listRoomListenerID = cc.Director:getInstance():getScheduler():scheduleScriptFunc(listRoomListener, 0, false)
+    listRoomListenerId = cc.Director:getInstance():getScheduler():scheduleScriptFunc(listRoomListener, 0, false)
+    startGameListenerId = cc.Director:getInstance():getScheduler():scheduleScriptFunc(startGameListener, 0, false)
     return scene
 end
 
@@ -253,32 +290,28 @@ end
 function PVPMainScene:connectToServer()
     --local server_ip = "127.0.0.1"
     local server_ip = "119.29.25.185"
-    --[[
-    local server_port =  2348 --8383--2348
-    client_socket = socket.tcp()
-    client_socket:settimeout(0.3)
-    
-    --In case of error, the method returns nil followed by a string describing the error. In case of success, the method returns 1.
-    if client_socket:connect(server_ip, server_port) == 1 then
-        cclog('Success! room management socket connect!')
-		self.label:setString("Yooooo!!")
-	else
-        cclog('Fail! room management socket!')
-		self.label:setString("Nooooo!!")
-    end
-     --]]
-    
+
     --设置状态同步的服务器
     local state_server_port = 3008
     client_socket = socket:tcp()
-    client_socket:settimeout(0.05)
-        
-    if client_socket:connect(server_ip, state_server_port) == 1 then
+    client_socket:settimeout(-1)
+
+    --if success, return 1; if error, return nil, followed by a sring message
+    e, msg = client_socket:connect(server_ip, state_server_port)
+    if e == 1 then
         client_socket:setoption('tcp-nodelay', true)
-        cclog('Success! state socket connect!')
+        cclog('TRACE: Success! state socket connect!')
     else
-        cclog('Fail! state socket!')
-        return
+        cclog('ERROR: Fail! state socket! ' .. msg)
+    end
+
+    --connect to fsp server
+    e, msg = FspClient.Connect()
+    if e == 1 then
+        cclog("TRACE: fsp socket success!")
+        fsp_socket = FspClient.GetSocket()
+    else
+        cclog("ERROR: In connectToServer() in PVPMainScene.lua, Fsp socket can not established!")
     end
 end
 
@@ -397,16 +430,16 @@ end
 
 --开始游戏的时候，向状态同步的服务器 发送请求
 function PVPMainScene:startGame()
-    if client_socket ~= nil then
-        --这里取消监听listRoom消息
-        cc.Director:getInstance():getScheduler():unscheduleScriptEntry(listRoomListenerID)
-        
-        if m_room_id == nil then
-            cclog("请选择一个房间加入!")
-            return
-        end
-        
-        sn, se = client_socket:send("STARTGAME " .. m_room_id .. "\n")
+    --这里取消监听listRoom消息
+    cc.Director:getInstance():getScheduler():unscheduleScriptEntry(listRoomListenerId)
+
+    if m_room_id == nil then
+        cclog("请选择一个房间加入!")
+        return
+    end
+
+    if fsp_socket ~= nil then
+        sn, se = fsp_socket:send("STARTGAME " .. m_room_id .. "\n")
         if se ~= nil then
             cclog("ERROR: In startGame() in PVPMainScene.lua, I can't send! " .. se)
             return
@@ -414,8 +447,8 @@ function PVPMainScene:startGame()
             cclog("Send start game!")
         end
         
-        client_socket:settimeout(-1) --block infinitely
-        r, e = client_socket:receive("*l")
+        fsp_socket:settimeout(-1) --block infinitely
+        r, e = fsp_socket:receive("*l")
         if e ~= nil then
             cclog("ERROR: In startGame() in PVPMainScene.lua, I can't receive! " .. e)
             return
@@ -424,24 +457,13 @@ function PVPMainScene:startGame()
         print("in start game , I have received: " .. r)
         if string.sub(r, 1, 1) == "S" then --如果是开始游戏
             --这个时候只会有一个回包出现，就是响应开始游戏的回包
+            cc.Director:getInstance():getScheduler():unscheduleScriptEntry(startGameListenerId)
             local scene = require("PVPBattleScene")
             cc.Director:getInstance():replaceScene(scene.create(r))
         end
-        
     else
         cclog("Can't connect to the server! client socket nil!")
     end
-        --[[
-        r, re = client_socket:receive("*l")
-        if re ~= nil then
-            cclog("ERROR: In startGame() in PVPMainScene.lua, I can't receive! " .. re)
-            return
-        end
-        
-        cclog("I have received msg from server: " .. r)
-        --这个时候只会有一个回包出现，就是响应开始游戏的回包
-        local scene = require("PVPBattleScene")
-        cc.Director:getInstance():replaceScene(scene.create(r))--]]
 end
 
 --below is for create UI elements

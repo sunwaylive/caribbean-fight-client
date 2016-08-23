@@ -413,9 +413,7 @@ function ArrowUpdate(dt)
 end
 
 --类定义
-local PVPBattleScene = class("PVPBattleScene",function()
-    return cc.Scene:create()
-end)
+local PVPBattleScene = class("PVPBattleScene",function() return cc.Scene:create() end)
 
 local function bloodMinus(heroActor)
         uiLayer:bloodDrop(heroActor)

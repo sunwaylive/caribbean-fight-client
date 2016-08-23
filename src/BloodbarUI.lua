@@ -1,7 +1,7 @@
 require "GlobalVariables"
 require "Actor"
 require "Manager"
-	
+
 local BloodbarLayer = class("bloodbarLayer",function() return cc.Layer:create() end)
 
 function BloodbarLayer.create()
@@ -22,7 +22,7 @@ end
 
 function BloodbarLayer:init(client_idx)
     if HeroManager == nil then return end
-    
+
 	for val = HeroManager.first, HeroManager.last do
         local actor = HeroManager[val]
 		bloodbar = cc.ProgressTimer:create(cc.Sprite:createWithSpriteFrameName("UI-1136-640_36_clone.png"))
@@ -30,7 +30,7 @@ function BloodbarLayer:init(client_idx)
         if client_idx ~= nil then
             if actor._camp == HeroManager[client_idx]._camp then
                 bloodbar:setColor(cc.c3b(149,254,26))
-                else 
+                else
                 bloodbar:setColor(cc.c3b(255,0,0))
             end
         else
