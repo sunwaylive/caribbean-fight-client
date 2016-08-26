@@ -400,34 +400,6 @@ function PVPMainScene:joinRoom(roomID)
     end
 end
 
---test
-function PVPMainScene:joinRoomTest(roomID)
-    if client_socket ~= nil then
-        sn, se = client_socket:send("JOINROOM "..roomID.."\n")
-        if se ~= nil then
-            cclog("SEND ERROR: In joinRoom() in PVPMainScene.lua!" .. se)
-            return
-        end
-        
-        client_socket:settimeout(-1) --block infinitely
-        r, re = client_socket:receive("*l")
-        if re ~= nil then
-            cclog("REVEIVE ERROR: In joinRoom() in PVPMainScene.lua! " .. re)
-            return
-        end
-        
-        cclog("Success! In joinRoom(), I have received msg from server: " .. r)
-        
-        --为了测试
-        if string.sub(r, 1, 1) == "s" then --如果是开始游戏
-            --这个时候只会有一个回包出现，就是响应开始游戏的回包
-            local scene = require("PVPBattleScene")
-            cc.Director:getInstance():replaceScene(scene.create(r))
-        end
-    end
-end
-
-
 --开始游戏的时候，向状态同步的服务器 发送请求
 function PVPMainScene:startGame()
     --这里取消监听listRoom消息

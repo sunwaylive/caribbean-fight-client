@@ -4,6 +4,8 @@ require "MessageDispatchCenter"
 require "BloodbarUI"
 require "PVPMainScene"
 
+local FspClient = require("FspClient")
+
 bloodbarLayer = nil
 currentLayer = nil
 uiLayer = nil
@@ -27,7 +29,9 @@ local receiveDataFrq = 0.033
 --对接受到的数据，分类处理
 local function handleMessage(msg)
     if msg == nil then return end
-    
+
+    cclog("TRACE: handle message " .. msg)
+
     local msg_token = mysplit(msg, '#')
     if msg_token == nil then return end
 
@@ -59,97 +63,58 @@ local function handleMessage(msg)
     end
 end
 
---包括： 所有玩家的位置 和 朝向； 玩家目前的状态(攻击， walk)
-local function onReceiveData()
-    if client_socket == nil then return end
-    
-    if pvpGameMaster._is_game_over then return end --如果游戏已经结束，则不接受任何数据
-    
-    --如果设置超时时间，则接受到的包可能不完整
-    back, err, partial = client_socket:receive("*l") --按行读取
-    if err ~= "closed" then
-        if back then
-            cclog("In onReceiveData(), I have received msg: " .. back)
-            handleMessage(back) --核心处理消息的函数
-        end
-    else
-        cclog("TCP Connection is closed!")
-        client_socket = nil --if tcp is dis-connect
-        return
-    end
-end
-
-local function onSendData()
-   if client_socket ~= nil then
-       --如果游戏已经结束， 则发送且只发送一次endGame
-       if pvpGameMaster._is_game_over and m_end_game_send_cnt < 1 then
-           cclog("游戏结束")
-           r, e = client_socket:send("ENDGAME " .. m_room_id)
-           if r == nil then
-               cclog("ERROR: I can't send endGame to Server: " .. e)
-            else
-                m_end_game_send_cnt = m_end_game_send_cnt + 1
-               cclog("sent endGame successfully! " .. msg)
-           end
-           return --游戏结束了，则不发送任何数据
-       end
-       
-       local client_index = pvpGameMaster._myIdx
-       cclog("client_index: " .. client_index)
-       local hero = pvpGameMaster:GetClientOwnPlayer()
-       --发送数据的时候进行有选择的进行判断
-       --如果当前状态是攻击状态，并且不是从其他状态改变过来的话，说明之前英雄就已经是攻击状态了，则不发送包
-       -- if hero:getStateType() == EnumStateType.ATTACKING and not hero.m_is_state_changed_to_attack then
-           -- cclog("跳过同一个攻击动作中的 重复包！！")
-           -- return
-       -- end
-       
-       --打包当前玩家的数据，发送给服务器，然后由服务器转发
-       local head = "UPDATEGAME"
-       --柏伟修改协议, 加入房间号
-       print("房间号: " .. m_room_id)
-       head = head .. " " .. m_room_id .. " "
-       print("head: " .. head)
-       
-       if hero == nil then return end
-       local pos_x = hero:getPositionX()
-       local pos_y = hero:getPositionY()
-       
-       --when two heros are two closed, curFacing will be nil, I don't know why
-       if hero._curFacing == nil then
-           curFacing = 0
+local function snapLocalFrame()
+    --如果游戏已经结束， 则发送且只发送一次endGame
+    if pvpGameMaster._is_game_over and m_end_game_send_cnt < 1 then
+        cclog("游戏结束")
+        r, e = client_socket:send("ENDGAME " .. m_room_id)
+        if r == nil then
+            cclog("ERROR: I can't send endGame to Server: " .. e)
         else
-            curFacing = hero._curFacing
+            m_end_game_send_cnt = m_end_game_send_cnt + 1
+            cclog("sent endGame successfully! " .. msg)
         end
-       
-       --local curFacing = hero._curFacing
-       local move_dir = hero._heroMoveDir
-       local speed = hero._heroMoveSpeed
-       local hp = hero._hp
-       local state = hero:getStateType() --state 是number类型
-       
-       msg = table.concat({head, client_index, pos_x, pos_y, curFacing, move_dir.x, move_dir.y, speed, hp, state}, "#")
-       msg = msg .. "\n"
-       
-       r, e = client_socket:send(msg)
-       if r == nil then
-           cclog("ERROR: I can't send data to Server: " .. e)
-       else
-           cclog("sent successfully! " .. msg)
-           --如果英雄是第一个进入攻击状态，在上面发送完一个包之后，立刻修改状态为false，以防止子啊同一个攻击动作中重复发送包
-           -- if hero:getStateType() == EnumStateType.ATTACKING and hero.m_is_state_changed_to_attack then
-				-- if hero._frame <= 5 then
-					-- hero._frame = hero._frame + 1
-				-- else
-					-- hero._frame = 0
-					-- hero.m_is_state_changed_to_attack = false
-				-- end
-				-- return
-           -- end
-       end
-   else
-        --cclog("Error: Tcp socket is dis-connect!")
-   end
+        return --游戏结束了，则不发送任何数据
+    end
+
+    local client_index = pvpGameMaster._myIdx
+    cclog("client_index: " .. client_index)
+    local hero = pvpGameMaster:GetClientOwnPlayer()
+    --发送数据的时候进行有选择的进行判断
+    --如果当前状态是攻击状态，并且不是从其他状态改变过来的话，说明之前英雄就已经是攻击状态了，则不发送包
+    -- if hero:getStateType() == EnumStateType.ATTACKING and not hero.m_is_state_changed_to_attack then
+    -- cclog("跳过同一个攻击动作中的 重复包！！")
+    -- return
+    -- end
+
+    --打包当前玩家的数据，发送给服务器，然后由服务器转发
+    local head = "UPDATEGAME"
+    --柏伟修改协议, 加入房间号
+    print("房间号: " .. m_room_id)
+    head = head .. " " .. m_room_id .. " "
+    print("head: " .. head)
+
+    if hero == nil then return end
+    local pos_x = hero:getPositionX()
+    local pos_y = hero:getPositionY()
+
+    --when two heros are two closed, curFacing will be nil, I don't know why
+    if hero._curFacing == nil then
+        curFacing = 0
+    else
+        curFacing = hero._curFacing
+    end
+
+    --local curFacing = hero._curFacing
+    local move_dir = hero._heroMoveDir
+    local speed = hero._heroMoveSpeed
+    local hp = hero._hp
+    local state = hero:getStateType() --state 是number类型
+
+    frame = table.concat({head, client_index, pos_x, pos_y, curFacing, move_dir.x, move_dir.y, speed, hp, state}, "#")
+    frame = frame .. "\n"
+    cclog("TRACE: frame: " .. frame)
+    return frame
 end
 
 --移动相机
@@ -293,31 +258,37 @@ end
 --核心控制游戏的地方
 --TODO:这里应该从服务器拿到数据，更新客户端，其他玩家的状态
 local function gameController(dt)
+    --游戏结束则停止更新游戏
 	if pvpGameMaster._is_game_over then return end
 
-    --设置时间间隔，每隔一定的时间接受从服务器过来的数据，更新其它玩家的状态;并向服务器发送自己的状态
-    totalTime = totalTime + dt
-	-- totalTime可能是receiveDateFrq的很多倍，因此要做多次收发处理。
-	while totalTime >= receiveDataFrq do
-		if pvpGameMaster.max_players_num == "2" then
-			onSendData()
-			onReceiveData() --这里会阻塞, 设置了timeout之后就不会阻塞了
-			totalTime = totalTime - receiveDataFrq
-		elseif pvpGameMaster.max_players_num == "4" then
-			onSendData()
-			onReceiveData() --这里会阻塞, 设置了timeout之后就不会阻塞了
-			onReceiveData()
-			onReceiveData()
-			totalTime = totalTime - receiveDataFrq
-		end
-	end
-	
-    -- if totalTime > receiveDataFrq then
-        -- onSendData()
-        -- onReceiveData() --这里会阻塞, 设置了timeout之后就不会阻塞了
-        -- totalTime = totalTime - receiveDataFrq
-    -- end
-    
+    --1. network tick
+    FspClient.RecvFrameFromServer()
+    FspClient.SendFrameToServer()
+
+    new_frame_list = FspCodec.GetFrameFromRecvQueue()
+    for i = 1, #new_frame_list do
+        local f = new_frame_list[i]
+        handleMessage(f)
+    end
+
+--    --设置时间间隔，每隔一定的时间接受从服务器过来的数据，更新其它玩家的状态;并向服务器发送自己的状态
+--    totalTime = totalTime + dt
+--	-- totalTime可能是receiveDateFrq的很多倍，因此要做多次收发处理。
+--	while totalTime >= receiveDataFrq do
+--		if pvpGameMaster.max_players_num == "2" then
+--			onSendData()
+--			onReceiveData() --这里会阻塞, 设置了timeout之后就不会阻塞了
+--			totalTime = totalTime - receiveDataFrq
+--		elseif pvpGameMaster.max_players_num == "4" then
+--			onSendData()
+--			onReceiveData() --这里会阻塞, 设置了timeout之后就不会阻塞了
+--			onReceiveData()
+--			onReceiveData()
+--			totalTime = totalTime - receiveDataFrq
+--		end
+--	end
+
+    --2. game logic
     pvpGameMaster:update(dt)--负责刷怪、刷新对话框、提示等等
     
     moveHero(dt) --监听角色控制的移动,这个必须要放到collisionDetect(dt)前面，来保证角色移动之后，能检测是否出界
@@ -325,15 +296,19 @@ local function gameController(dt)
 	if pvpGameMaster:GetClientOwnPlayer()._isalive ~= false then
 		collisionDetect(dt)--碰撞检测：由Manager.lua 来维护
 	end
+
 	BloodbarUpdate(dt)
 	ArrowUpdate(dt)
     solveAttacks(dt)--伤害计算：由attackCommand来维护
-    moveCamera(dt)--移动相机
-    -- local count = 000000
-    -- for i, val in pairs(t) do
-    -- count = count + 1
-    -- end
-    -- print(count)
+    moveCamera(dt)  --移动相机
+
+    --3.snap local frame, save it to send queue
+    local local_frame = snapLocalFrame()
+    cclog("TRACE: In gameController() local frame: " .. local_frame)
+
+    if local_frame ~= nil then
+        FspCodec.WriteToSendQueue(local_frame)
+    end
 end
 
 --初始化UI层

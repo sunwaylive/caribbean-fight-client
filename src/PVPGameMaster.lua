@@ -96,7 +96,7 @@ end
 
 function PVPGameMaster:GetClientOwnPlayer()    
     if HeroManager ~= nil and self._myIdx >= 0 and self._myIdx <= #(HeroManager) then
-        cclog("self._myIdx: " .. self._myIdx)
+        --cclog("self._myIdx: " .. self._myIdx)
         return HeroManager[self._myIdx]
     else
         cclog("Error: Can't get client Own Player!")
